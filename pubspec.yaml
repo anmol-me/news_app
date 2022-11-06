@@ -31,9 +31,9 @@ dependencies:
     sdk: flutter
 
   cupertino_icons: ^1.0.5
-  flutter_riverpod: ^2.0.2
+  flutter_riverpod: ^2.1.1
   flutter_hooks: ^0.18.5+1
-  hooks_riverpod: ^2.0.2
+  hooks_riverpod: ^2.1.1
   http: ^0.13.5
   webview_flutter: ^3.0.4
   intl: ^0.17.0
@@ -52,6 +52,7 @@ dependencies:
   cached_network_image: ^3.2.2
   json_annotation: ^4.7.0
   beautiful_soup_dart: ^0.3.0
+  loading_animation_widget: ^1.2.0+3
 
 flutter_native_splash:
   color: "#ff8a80"

@@ -14,6 +14,7 @@ import '../../../common/enums.dart';
 import '../../../common/backend_methods.dart';
 import '../../../common/frontend_methods.dart';
 import '../../../models/news.dart';
+import '../../starred/starred_screen.dart';
 import '../providers/home_providers.dart';
 
 /// Providers -----------------------------------------------------------------------------
@@ -27,7 +28,7 @@ final homeFeedProvider =
   final direction = ref.watch(homeSortDirectionProvider);
   var offsetNumber = ref.watch(homeOffsetProvider);
 
-  final isStarred = ref.watch(homeIsStarredProvider);
+  final isStarred = ref.watch(isStarredProvider);
   final isRead = ref.watch(homeIsShowReadProvider);
 
   return HomeFeedNotifier(
@@ -157,7 +158,6 @@ class HomeFeedNotifier extends StateNotifier<List<News>> {
       );
 
       log('${res.statusCode}');
-
     } on TimeoutException catch (e) {
       log('Timeout Error: $e');
       return showErrorDialogue(context, ref, ErrorString.requestTimeout.value);
@@ -223,7 +223,7 @@ class HomeFeedNotifier extends StateNotifier<List<News>> {
     int entryId,
   ) async {
     final res = await getHttpResp(
-      'https://read.rusi.me/v1/feeds/$feedId/entries/$entryId',
+      Uri.parse('https://read.rusi.me/v1/feeds/$feedId/entries/$entryId'),
       userPassEncoded,
     );
 

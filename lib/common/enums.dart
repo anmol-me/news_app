@@ -25,7 +25,13 @@ enum ErrorString {
   checkInternet('Please check Internet Connectivity'),
   timeout('Connection Timeout. Please retry.'),
   catAlreadyExists('This category already exists.'),
-  catCreated('Category successfully created.');
+  catCreated('Category successfully created.'),
+  catNotDelete('Could not delete category.'),
+  // catCreated('Category successfully created.'),
+  // catCreated('Category successfully created.'),
+  // catCreated('Category successfully created.'),
+  // catCreated('Category successfully created.')
+  ;
 
   final String value;
 

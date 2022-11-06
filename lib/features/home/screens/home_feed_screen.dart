@@ -15,17 +15,16 @@ import 'package:news_app/features/details/screens/news_details_screen.dart';
 import 'package:news_app/features/subscription/repository/category_repo.dart';
 import '../../../common/common_widgets.dart';
 import '../../../common/enums.dart';
+import '../../starred/starred_screen.dart';
 import '../providers/home_providers.dart';
 import '../repository/home_feed_repo.dart';
 import 'package:fade_shimmer/fade_shimmer.dart';
 
 import 'package:news_app/common/constants.dart';
 import 'package:news_app/models/news.dart';
-import 'package:news_app/widgets/app_drawer.dart';
+import 'package:news_app/features/app_bar/app_drawer.dart';
 import '../widgets/ExpansionWidget.dart';
 import '../widgets/widgets.dart';
-
-// TODO: 2 Loading Controllers
 
 class HomeFeedScreen extends ConsumerStatefulWidget {
   static const routeNamed = '/home-feed-screen';
@@ -42,11 +41,11 @@ class _HomeFeedScreenState extends ConsumerState<HomeFeedScreen> {
     super.initState();
     Timer(const Duration(seconds: 20), () => FlutterNativeSplash.remove());
 
-    final isLoadingNewsController =
-        ref.read(homeIsLoadingNewsProvider.notifier);
+    final isLoadingPageController =
+        ref.read(homeIsLoadingPageProvider.notifier);
 
     Future.delayed(Duration.zero).then(
-      (value) => isLoadingNewsController.update(
+      (value) => isLoadingPageController.update(
         (state) => true,
       ),
     );
@@ -54,7 +53,7 @@ class _HomeFeedScreenState extends ConsumerState<HomeFeedScreen> {
     ref.read(homeFeedProvider.notifier).fetchEntries(context).then(
       (_) {
         FlutterNativeSplash.remove();
-        return isLoadingNewsController.update((state) => false);
+        return isLoadingPageController.update((state) => false);
       },
     );
   }
@@ -63,8 +62,7 @@ class _HomeFeedScreenState extends ConsumerState<HomeFeedScreen> {
   Widget build(BuildContext context) {
     // log('************ HOME FEED SCREEN *****************');
 
-    final isLoadingNews = ref.watch(homeIsLoadingNewsProvider);
-
+    /// Providers ///
     // log('${ref.read(categoryListNotifierFuture(context)).whenData((value) => value).value}');
 
     // final catNames = ref.watch(categoryNamesProvider(context)).value;
@@ -73,18 +71,19 @@ class _HomeFeedScreenState extends ConsumerState<HomeFeedScreen> {
     // log(categoryNames.toString());
 
     final isLoadingPage = ref.watch(homeIsLoadingPageProvider);
-    final isLoadingPageController = ref.watch(homeIsLoadingPageProvider.state);
+    final isLoadingPageController =
+        ref.watch(homeIsLoadingPageProvider.notifier);
 
-    final isStarred = ref.watch(homeIsStarredProvider);
+    final isStarred = ref.watch(isStarredProvider);
 
-    var newsNotifier = ref.watch(homeFeedProvider);
-    final newsNotifierController = ref.watch(homeFeedProvider.notifier);
+    final newsNotifier = ref.watch(homeFeedProvider);
 
-    final sort = ref.watch(homeSortDirectionProvider);
-    final sortDirectionController = ref.watch(homeSortDirectionProvider.state);
+    final sortAs = ref.watch(homeSortDirectionProvider);
+    final sortDirectionController =
+        ref.watch(homeSortDirectionProvider.notifier);
 
     final isShowRead = ref.watch(homeIsShowReadProvider);
-    final isShowReadController = ref.watch(homeIsShowReadProvider.state);
+    final isShowReadController = ref.watch(homeIsShowReadProvider.notifier);
 
     // final isSelected = ref.watch(homeIsSelectedProvider);
     // final isSelectedController = ref.read(homeIsSelectedProvider.notifier);
@@ -92,13 +91,14 @@ class _HomeFeedScreenState extends ConsumerState<HomeFeedScreen> {
     final canGoToNextPage = ref.watch(homeIsNextProvider);
     final canGoToPreviousPage = ref.watch(homeOffsetProvider) != 0;
 
+    /// Functions ///
     void sortFunction() {
       isLoadingPageController.update((state) => true);
-      ref.refresh(homeOffsetProvider);
+      ref.refresh(homeOffsetProvider.notifier).update((state) => 0);
 
-      if (sort == Sort.ascending) {
+      if (sortAs == Sort.ascending) {
         sortDirectionController.update((state) => state = Sort.descending);
-      } else if (sort == Sort.descending) {
+      } else if (sortAs == Sort.descending) {
         sortDirectionController.update((state) => state = Sort.ascending);
       } else {
         sortDirectionController.update((state) => state = Sort.descending);
@@ -109,7 +109,17 @@ class _HomeFeedScreenState extends ConsumerState<HomeFeedScreen> {
           );
     }
 
-    void previous() {
+    void readFunction() {
+      isLoadingPageController.update((state) => true);
+
+      isShowReadController.update((state) => state = !state);
+
+      ref.refresh(homeFeedProvider.notifier).fetchEntries(context).then(
+            (value) => isLoadingPageController.update((state) => false),
+          );
+    }
+
+    void previousFunction() {
       isLoadingPageController.update((state) => true);
 
       ref.read(homePageHandlerProvider.notifier).update(
@@ -124,7 +134,7 @@ class _HomeFeedScreenState extends ConsumerState<HomeFeedScreen> {
           );
     }
 
-    void next() {
+    void nextFunction() {
       isLoadingPageController.update((state) => true);
 
       ref.read(homePageHandlerProvider.notifier).update((state) => state += 1);
@@ -137,28 +147,6 @@ class _HomeFeedScreenState extends ConsumerState<HomeFeedScreen> {
           isLoadingPageController.update((state) => false);
         },
       );
-    }
-
-    Future<void> refresh() async {
-      isLoadingPageController.update((state) => true);
-
-      ref.refresh(homeOffsetProvider);
-      ref.refresh(homeSortDirectionProvider);
-      ref.refresh(homeIsStarredProvider);
-      ref.refresh(homeIsShowReadProvider);
-
-      ref.refresh(homeFeedProvider.notifier).fetchEntries(context).then(
-            (value) => isLoadingPageController.update((state) => false),
-          );
-    }
-
-    void read() {
-      isLoadingPageController.update((state) => true);
-
-      isShowReadController.update((state) => state = !state);
-      ref.refresh(homeFeedProvider.notifier).fetchEntries(context).then(
-            (value) => isLoadingPageController.update((state) => false),
-          );
     }
 
     return Scaffold(
@@ -174,9 +162,9 @@ class _HomeFeedScreenState extends ConsumerState<HomeFeedScreen> {
           buildPopupMenuButton(
             ref: ref,
             isShowRead: isShowRead,
-            sort: sort,
+            sort: sortAs,
             sortFunction: sortFunction,
-            read: read,
+            read: readFunction,
           ),
         ],
       ),
@@ -187,17 +175,22 @@ class _HomeFeedScreenState extends ConsumerState<HomeFeedScreen> {
           buildTopColumn(
             isLoadingPage,
             canGoToPreviousPage,
-            previous,
+            previousFunction,
             canGoToNextPage,
-            next,
+            nextFunction,
           ),
-          if (isLoadingNews || isLoadingPage)
+          if (isLoadingPage)
             // const LinearLoader()
             const Text('Loading...')
           else
             Expanded(
               child: RefreshIndicator(
-                onRefresh: refresh,
+                onRefresh: () => refreshAll(
+                  Navigator.of(context),
+                  ref,
+                  context,
+                  isLoadingPageController,
+                ),
                 color: colorRed,
                 child: Scrollbar(
                   child: newsNotifier.isEmpty && isStarred
@@ -209,13 +202,16 @@ class _HomeFeedScreenState extends ConsumerState<HomeFeedScreen> {
                               itemCount: newsNotifier.length,
                               itemBuilder: (context, index) {
                                 final newsItem = newsNotifier[index];
-                                final dateTime = getDate(newsItem);
 
-                                return buildExpansionWidget(
-                                  newsItem,
-                                  dateTime,
-                                  context,
-                                  newsNotifierController,
+                                // return buildExpansionWidget(
+                                //   newsItem,
+                                //   dateTime,
+                                //   context,
+                                //   newsNotifierController,
+                                // );
+
+                                return BuildExpansionWidget(
+                                  newsItem: newsItem,
                                 );
                               },
                             ),
@@ -228,121 +224,248 @@ class _HomeFeedScreenState extends ConsumerState<HomeFeedScreen> {
   }
 }
 
-Padding buildExpansionWidget(
-  News newsItem,
-  String dateTime,
-  BuildContext context,
-  HomeFeedNotifier newsNotifierController,
-) {
-  return Padding(
-    padding: const EdgeInsets.only(
-      top: 5,
-      bottom: 5,
-      left: 16,
-      right: 16,
-    ),
-    child: ExpansionWidget(
-      topSection: topSectionRow(
-        newsItem,
-        dateTime,
+class BuildExpansionWidget extends HookConsumerWidget {
+  final News newsItem;
+
+  const BuildExpansionWidget({
+    super.key,
+    required this.newsItem,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isStarred = ref.watch(isStarredProvider);
+
+    final dateTime = getDate(newsItem);
+
+    return Padding(
+      padding: const EdgeInsets.only(
+        top: 5,
+        bottom: 5,
+        left: 16,
+        right: 16,
       ),
-      titleSection: Padding(
-        padding: const EdgeInsets.only(
-          top: 8.0,
+      child: ExpansionWidget(
+        topSection: topSectionRow(
+          newsItem,
+          dateTime,
         ),
-        child: Row(
-          children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(
-                2,
-              ),
-              child: CachedNetworkImage(
-                imageUrl: newsItem.imageUrl,
-                height: 90,
-                width: 120,
-                fit: BoxFit.cover,
-                placeholder: (context, url) {
-                  return Center(
-                    child: CircularProgressIndicator(
-                      color: colorRed,
-                      strokeWidth: 1,
-                    ),
-                  );
-                },
-                errorWidget: (
-                  context,
-                  url,
-                  error,
-                ) =>
-                    Image.network(
-                  ErrorString.image.value,
+        titleSection: Padding(
+          padding: const EdgeInsets.only(
+            top: 8.0,
+          ),
+          child: Row(
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(
+                  2,
+                ),
+                child: CachedNetworkImage(
+                  imageUrl: newsItem.imageUrl,
                   height: 90,
                   width: 120,
                   fit: BoxFit.cover,
+                  placeholder: (context, url) {
+                    return Center(
+                      child: CircularProgressIndicator(
+                        color: colorRed,
+                        strokeWidth: 1,
+                      ),
+                    );
+                  },
+                  errorWidget: (
+                    context,
+                    url,
+                    error,
+                  ) =>
+                      Image.network(
+                    ErrorString.image.value,
+                    height: 90,
+                    width: 120,
+                    fit: BoxFit.cover,
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(width: 10),
-            Expanded(
-              child: GestureDetector(
-                onTap: () async {
-                  log('ENTRY: ${newsItem.entryId}');
+              const SizedBox(width: 10),
+              Expanded(
+                child: GestureDetector(
+                  onTap: () async {
+                    log('ENTRY: ${newsItem.entryId}');
 
-                  Navigator.of(context).pushNamed(
-                    NewsDetailsScreen.routeNamed,
-                    arguments: {
-                      'id': newsItem.entryId,
-                      'image': newsItem.imageUrl,
-                      'content': newsItem.content,
-                      'categoryTitle': newsItem.categoryTitle,
-                      'title': newsItem.titleText,
-                      'link': newsItem.link,
-                      'publishedAt': newsItem.publishedTime,
-                    },
-                  );
-                },
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      newsItem.titleText,
-                      style: const TextStyle(
-                        fontSize: 19,
-                        fontWeight: FontWeight.w600,
-                        height: 1.1,
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(
-                        top: 4.0,
-                      ),
-                      child: Text(
-                        '${newsItem.readTime} min read',
-                        style: TextStyle(
-                          color: colorAppbarForeground,
+                    Navigator.of(context).pushNamed(
+                      NewsDetailsScreen.routeNamed,
+                      arguments: {
+                        'id': newsItem.entryId,
+                        'image': newsItem.imageUrl,
+                        'content': newsItem.content,
+                        'categoryTitle': newsItem.categoryTitle,
+                        'title': newsItem.titleText,
+                        'link': newsItem.link,
+                        'publishedAt': newsItem.publishedTime,
+                      },
+                    );
+                  },
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        newsItem.titleText,
+                        style: const TextStyle(
+                          fontSize: 19,
+                          fontWeight: FontWeight.w600,
+                          height: 1.1,
                         ),
                       ),
-                    ),
-                  ],
+                      Padding(
+                        padding: const EdgeInsets.only(
+                          top: 4.0,
+                        ),
+                        child: Text(
+                          '${newsItem.readTime} min read',
+                          style: TextStyle(
+                            color: colorAppbarForeground,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
+        ),
+        onExpanded: Padding(
+          padding: const EdgeInsets.only(top: 10.0),
+          child: Row(
+            children: [
+              if (!isStarred) StarredButton(entryId: newsItem.entryId),
+              if (isStarred) BookmarkStarredButton(entryId: newsItem.entryId),
+              const SizedBox(width: 30),
+              if (!isStarred) ReadButton(entryId: newsItem.entryId),
+              if (isStarred) BookmarkReadButton(entryId: newsItem.entryId),
+            ],
+          ),
         ),
       ),
-      onExpanded: Padding(
-        padding: const EdgeInsets.only(top: 10.0),
-        child: Row(
-          children: [
-            StarredButton(entryId: newsItem.entryId),
-            const SizedBox(width: 30),
-            ReadButton(entryId: newsItem.entryId),
-          ],
-        ),
-      ),
-    ),
-  );
+    );
+  }
 }
+
+// Padding buildExpansionWidget(
+//   News newsItem,
+//   String dateTime,
+//   BuildContext context,
+//   HomeFeedNotifier newsNotifierController,
+// ) {
+//   return Padding(
+//     padding: const EdgeInsets.only(
+//       top: 5,
+//       bottom: 5,
+//       left: 16,
+//       right: 16,
+//     ),
+//     child: ExpansionWidget(
+//       topSection: topSectionRow(
+//         newsItem,
+//         dateTime,
+//       ),
+//       titleSection: Padding(
+//         padding: const EdgeInsets.only(
+//           top: 8.0,
+//         ),
+//         child: Row(
+//           children: [
+//             ClipRRect(
+//               borderRadius: BorderRadius.circular(
+//                 2,
+//               ),
+//               child: CachedNetworkImage(
+//                 imageUrl: newsItem.imageUrl,
+//                 height: 90,
+//                 width: 120,
+//                 fit: BoxFit.cover,
+//                 placeholder: (context, url) {
+//                   return Center(
+//                     child: CircularProgressIndicator(
+//                       color: colorRed,
+//                       strokeWidth: 1,
+//                     ),
+//                   );
+//                 },
+//                 errorWidget: (
+//                   context,
+//                   url,
+//                   error,
+//                 ) =>
+//                     Image.network(
+//                   ErrorString.image.value,
+//                   height: 90,
+//                   width: 120,
+//                   fit: BoxFit.cover,
+//                 ),
+//               ),
+//             ),
+//             const SizedBox(width: 10),
+//             Expanded(
+//               child: GestureDetector(
+//                 onTap: () async {
+//                   log('ENTRY: ${newsItem.entryId}');
+//
+//                   Navigator.of(context).pushNamed(
+//                     NewsDetailsScreen.routeNamed,
+//                     arguments: {
+//                       'id': newsItem.entryId,
+//                       'image': newsItem.imageUrl,
+//                       'content': newsItem.content,
+//                       'categoryTitle': newsItem.categoryTitle,
+//                       'title': newsItem.titleText,
+//                       'link': newsItem.link,
+//                       'publishedAt': newsItem.publishedTime,
+//                     },
+//                   );
+//                 },
+//                 child: Column(
+//                   crossAxisAlignment: CrossAxisAlignment.start,
+//                   children: [
+//                     Text(
+//                       newsItem.titleText,
+//                       style: const TextStyle(
+//                         fontSize: 19,
+//                         fontWeight: FontWeight.w600,
+//                         height: 1.1,
+//                       ),
+//                     ),
+//                     Padding(
+//                       padding: const EdgeInsets.only(
+//                         top: 4.0,
+//                       ),
+//                       child: Text(
+//                         '${newsItem.readTime} min read',
+//                         style: TextStyle(
+//                           color: colorAppbarForeground,
+//                         ),
+//                       ),
+//                     ),
+//                   ],
+//                 ),
+//               ),
+//             ),
+//           ],
+//         ),
+//       ),
+//       onExpanded: Padding(
+//         padding: const EdgeInsets.only(top: 10.0),
+//         child: Row(
+//           children: [
+//             StarredButton(entryId: newsItem.entryId),
+//             const SizedBox(width: 30),
+//             ReadButton(entryId: newsItem.entryId),
+//           ],
+//         ),
+//       ),
+//     ),
+//   );
+// }
 
 /// ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -354,7 +477,7 @@ PopupMenuButton<DropItems> buildPopupMenuButton({
   required void Function() read,
 }) {
   final isCatLoading = ref.watch(isCatLoadingProvider);
-  final isHomeLoading = ref.watch(homeIsLoadingNewsProvider);
+  final isStarredLoading = ref.watch(isLoadingStarredProvider);
   final isHomeLoadingPage = ref.watch(homeIsLoadingPageProvider);
 
   return PopupMenuButton<DropItems>(
@@ -397,7 +520,7 @@ PopupMenuButton<DropItems> buildPopupMenuButton({
       ),
     ],
     onSelected: (selected) {
-      if (isCatLoading || isHomeLoading || isHomeLoadingPage) {
+      if (isCatLoading || isStarredLoading || isHomeLoadingPage) {
         null;
       } else {
         if (selected == DropItems.sort) {

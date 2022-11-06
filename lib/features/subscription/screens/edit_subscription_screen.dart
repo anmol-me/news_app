@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import 'package:news_app/common/constants.dart';
-
-import '../repository/add_new_subscription_repo.dart';
+import '../../../common/common_widgets.dart';
+import '../../category/repository/category_feed_repository.dart';
 
 final isTitleUpdatingProvider = StateProvider((ref) => false);
 
@@ -25,20 +24,18 @@ class EditSubscription extends HookConsumerWidget {
     final formKey = GlobalKey<FormState>();
     final newTitleController = useTextEditingController();
 
-    final subscriptionRepo = ref.watch(addNewSubscriptionProvider.notifier);
+    final catFeedRepo = ref.watch(catFeedRepoProvider.notifier);
 
     final isTitleUpdating = ref.watch(isTitleUpdatingProvider);
-    final isTitleUpdatingController = ref.watch(isTitleUpdatingProvider.state);
+    final isTitleUpdatingController =
+        ref.watch(isTitleUpdatingProvider.notifier);
 
     return Scaffold(
       appBar: AppBar(
         title: Text('Edit $oldTitle'),
       ),
       body: isTitleUpdating
-          ? LinearProgressIndicator(
-              color: colorRed,
-              backgroundColor: colorAppbarBackground,
-            )
+          ? const LinearLoader()
           : Form(
               key: formKey,
               child: Padding(
@@ -56,14 +53,16 @@ class EditSubscription extends HookConsumerWidget {
                     ElevatedButton(
                       onPressed: () {
                         isTitleUpdatingController.update((state) => true);
-                        subscriptionRepo
-                            .updateFeed(
+                        catFeedRepo
+                            .updateCatFeed(
                               context,
                               listItemId,
                               newTitleController.text,
                             )
-                            .then((value) => isTitleUpdatingController
-                                .update((state) => false));
+                            .then(
+                              (_) => isTitleUpdatingController
+                                  .update((state) => false),
+                            );
                       },
                       child: const Text('Update'),
                     ),

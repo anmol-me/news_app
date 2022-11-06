@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:news_app/features/subscription/repository/add_new_subscription_repo.dart';
+import 'package:news_app/features/subscription/repository/category_list_repo.dart';
 
 import '../../../common/common_widgets.dart';
 import '../../../common/constants.dart';
@@ -73,8 +74,10 @@ class AddCatSheetButton extends ConsumerWidget {
 
     /// Create Category
     void createCategory(StateSetter setState) {
-      final addNewSubsController =
-          ref.read(addNewSubscriptionProvider.notifier);
+      // final addNewSubsController =
+      //     ref.read(addNewSubscriptionProvider.notifier);
+
+      final categoryListController = ref.read(categoryListNotifierProvider.notifier);
 
       // final isCreateCatLoadingController =
       // ref.read(isCreateCatLoadingProvider.notifier);
@@ -83,14 +86,15 @@ class AddCatSheetButton extends ConsumerWidget {
 
       setState(() => isLoading = true);
 
-      addNewSubsController
-          .createCategory(
+      // addNewSubsController
+
+      categoryListController.createCategory(
         catNameController.text,
         context,
       )
           .then((_) {
         setState(() => isLoading = false);
-        Navigator.of(context).pushNamed(SelectSubscriptionScreen.routeNamed);
+        // Navigator.of(context).pushNamed(SelectSubscriptionScreen.routeNamed);
       });
     }
 

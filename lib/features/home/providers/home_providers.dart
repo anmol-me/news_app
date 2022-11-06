@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:news_app/features/home/repository/home_feed_repo.dart';
 
 import '../../../common/enums.dart';
+import '../../starred/starred_screen.dart';
 
 final homeOffsetProvider = StateProvider((ref) => 0);
 
@@ -13,11 +14,9 @@ final homeOrderProvider = StateProvider<OrderBy>((ref) => OrderBy.publishedAt);
 
 final homeIsShowReadProvider = StateProvider<bool>((ref) => false);
 
-final homeIsLoadingNewsProvider = StateProvider<bool>((ref) => false);
+// final homeIsLoadingBookmarkProvider = StateProvider<bool>((ref) => false);
 
 final homeIsLoadingPageProvider = StateProvider<bool>((ref) => false);
-
-final homeIsStarredProvider = StateProvider<bool>((ref) => false);
 
 // final homeIsSelectedProvider =
 //     StateProvider<List<bool>>((ref) => [true, false, false]);
@@ -49,6 +48,19 @@ final homeIsNextProvider = StateProvider(
     }
   },
 );
+
+void refreshProviders(WidgetRef ref) {
+  log('1');
+  ref.refresh(homeOffsetProvider.notifier).update((state) => 0);
+  log('2');
+  ref.refresh(homeSortDirectionProvider).value;
+  log('3');
+  ref.refresh(isStarredProvider.notifier).update((state) => false);
+  log('4');
+  ref.refresh(homeIsShowReadProvider.notifier).update((state) => false);
+  log('5');
+  log('6');
+}
 
 // final sortProvider = StateProvider<bool>((ref) => false);
 //

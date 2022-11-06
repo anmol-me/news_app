@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 
@@ -52,20 +50,13 @@ class SearchScreen extends HookConsumerWidget {
             .then((value) {
           if (value.isEmpty) {
             showResultsController.update((state) => false);
-            log('isEmpty: ${value.length}');
           } else {
             showResultsController.update((state) => true);
-            log('Not Empty: ${value.length}');
           }
 
           showSearchLoaderController.update((state) => false);
-          log('All Else: ${value.length}');
         });
-
-        log('After Loading: ${searchNotifier.length}');
       }
-
-      log(searchTextController.text);
     }
 
     return Scaffold(
@@ -108,13 +99,17 @@ class SearchScreen extends HookConsumerWidget {
                             itemCount: searchNotifier.length,
                             itemBuilder: (context, index) {
                               final newsItem = searchNotifier[index];
-                              final dateTime = getDate(newsItem);
+                              // final dateTime = getDate(newsItem);
 
-                              return buildExpansionWidget(
-                                newsItem,
-                                dateTime,
-                                context,
-                                newsNotifierController,
+                              // return buildExpansionWidget(
+                              //   newsItem,
+                              //   dateTime,
+                              //   context,
+                              //   newsNotifierController,
+                              // );
+
+                              return BuildExpansionWidget(
+                                newsItem: newsItem,
                               );
                             },
                           ),

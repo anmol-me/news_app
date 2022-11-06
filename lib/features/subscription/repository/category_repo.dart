@@ -21,31 +21,6 @@ final menuProvider = StateProvider<DropItems>((ref) => DropItems.refresh);
 
 // final isNextCatProvider = StateProvider<bool>((ref) => false);
 
-class NewsCategory {
-  final int entryId;
-  final String title;
-  final int userId;
-
-  NewsCategory({
-    required this.entryId,
-    required this.title,
-    required this.userId,
-  });
-
-  NewsCategory copyWith(
-    int? entryId,
-    String? title,
-    int? userId,
-    int? totalCat,
-  ) {
-    return NewsCategory(
-      entryId: entryId ?? this.entryId,
-      title: title ?? this.title,
-      userId: userId ?? this.userId,
-    );
-  }
-}
-
 class CategoryNotifier extends StateNotifier<List<News>> {
   final StateNotifierProviderRef ref;
   final UserPreferences userPrefs;

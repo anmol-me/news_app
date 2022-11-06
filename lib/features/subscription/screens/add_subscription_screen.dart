@@ -6,6 +6,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../../common/common_widgets.dart';
 import '../../../common/constants.dart';
+import '../../../models/model.dart';
 import '../category_providers.dart';
 import '../repository/category_list_repo.dart';
 import '../repository/add_new_subscription_repo.dart';

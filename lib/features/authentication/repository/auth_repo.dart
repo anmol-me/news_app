@@ -4,8 +4,6 @@ import 'dart:developer' show log;
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:news_app/features/authentication/screens/auth_screen.dart';
-import 'package:news_app/features/search/ff.dart';
-import 'package:news_app/widgets/snack_bar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../common/common_widgets.dart';
@@ -77,7 +75,7 @@ class AuthRepo {
       final navigator = Navigator.of(context);
       String userPassEncoded;
 
-      final authRepoController = ref.read(authRepoProvider);
+      // final authRepoController = ref.read(authRepoProvider);
       final userPrefs = ref.read(userPrefsProvider);
 
       final bool isTestUser = usernameController.text == demoUser &&
@@ -165,9 +163,7 @@ class UserPreferences {
 
   String? getUrlData() => prefs!.getString(keyUrlData);
 
-  void clearPrefs() {
-    prefs?.clear();
-  }
+  void clearPrefs() => prefs?.clear();
 }
 
 // /// Provider & Class ------------------------------------------------------------------------

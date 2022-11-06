@@ -10,21 +10,18 @@ import 'package:html/parser.dart' as html_parser;
 import 'package:news_app/common/enums.dart';
 import 'package:news_app/features/authentication/repository/auth_repo.dart';
 
-import '../error_screen.dart';
+import 'error_screen.dart';
 import '../features/authentication/screens/auth_screen.dart';
-import '../widgets/snack_bar.dart';
 import 'common_widgets.dart';
 
-Future<http.Response> getHttpResp(uri, userPassEncoded) async {
-  return await http.get(
-    uri,
-    headers: {
-      'Content-Type': 'application/json; charset=UTF-8',
-      // 'X-Auth-Token': '-5YfpcHn8F__jMhC0MFA-AaMrqLl5ehBaesPuvjCOzg=',
-      'authorization': userPassEncoded,
-    },
-  );
-}
+Future<http.Response> getHttpResp(Uri uri, String userPassEncoded) async =>
+    await http.get(
+      uri,
+      headers: {
+        'Content-Type': 'application/json; charset=UTF-8',
+        'authorization': userPassEncoded,
+      },
+    );
 
 Future<http.Response> putHttpResp({
   String? url,
@@ -107,9 +104,19 @@ Future<http.Response> postHttpResp({
   );
 }
 
-void checkAuth(context, userPassEncoded) {
-  if (userPassEncoded == null) {
+void checkAuth(
+  BuildContext context,
+  String? userPassEncoded,
+  String? baseUrl,
+  UserPreferences userPrefs,
+) {
+  if (userPassEncoded == null ||
+      userPassEncoded.isEmpty ||
+      baseUrl == null ||
+      baseUrl.isEmpty) {
     Navigator.of(context).pushNamed(AuthScreen.routeNamed);
+
+    userPrefs.clearPrefs();
 
     showSnackBar(
       context: context,

@@ -6,7 +6,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:news_app/common/common_widgets.dart';
 import 'package:news_app/features/subscription/repository/category_repo.dart';
-import 'package:news_app/widgets/app_drawer.dart';
+import 'package:news_app/features/app_bar/app_drawer.dart';
 import 'package:news_app/features/subscription/category_providers.dart';
 
 import '../../../common/constants.dart';
@@ -103,16 +103,16 @@ class CategoryScreen extends HookConsumerWidget {
     Future<void> refresh() async {
       isCatLoadingController.update((state) => true);
 
-      ref.refresh(catSortProvider);
-      ref.refresh(catOffsetProvider);
-      ref.refresh(isShowReadCatProvider);
+      ref.refresh(catSortProvider).value;
+      ref.refresh(catOffsetProvider.notifier).update((state) => 0);
+      ref.refresh(isShowReadCatProvider.notifier).update((state) => false);
       // ref.refresh(homeSortDirectionProvider);
 
       ref
           .refresh(categoryNotifierProvider.notifier)
           .fetchCategoryEntries(catId, catSort)
           .then(
-            (value) => isCatLoadingController.update((state) => false),
+            (_) => isCatLoadingController.update((state) => false),
           );
     }
 
@@ -145,8 +145,8 @@ class CategoryScreen extends HookConsumerWidget {
     /// Sort
     void sortFunction() {
       isCatLoadingController.update((state) => true);
-      ref.refresh(homeOffsetProvider);
-      ref.refresh(catOffsetProvider);
+      ref.refresh(homeOffsetProvider.notifier).update((state) => 0);
+      ref.refresh(catOffsetProvider.notifier).update((state) => 0);
 
       if (catSort == Sort.ascending) {
         catSortController.update((state) => state = Sort.descending);
@@ -157,7 +157,7 @@ class CategoryScreen extends HookConsumerWidget {
           .refresh(categoryNotifierProvider.notifier)
           .fetchCategoryEntries(catId, catSort)
           .then(
-            (value) => isCatLoadingController.update((state) => false),
+            (_) => isCatLoadingController.update((state) => false),
           );
     }
 
@@ -222,11 +222,15 @@ class CategoryScreen extends HookConsumerWidget {
                       final newsItem = catNewsNotifier[index];
                       final dateTime = getDate(newsItem);
 
-                      return buildExpansionWidget(
-                        newsItem,
-                        dateTime,
-                        context,
-                        newsNotifierController,
+                      // return buildExpansionWidget(
+                      //   newsItem,
+                      //   dateTime,
+                      //   context,
+                      //   newsNotifierController,
+                      // );
+
+                      return BuildExpansionWidget(
+                        newsItem: newsItem,
                       );
                     },
                   ),

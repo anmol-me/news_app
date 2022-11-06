@@ -1,19 +1,24 @@
 import 'package:flutter/material.dart';
-import 'package:news_app/error_screen.dart';
+import 'package:news_app/common/error_screen.dart';
+import 'package:news_app/features/app_bar/app_drawer.dart';
 import 'package:news_app/features/authentication/screens/auth_screen.dart';
+import 'package:news_app/features/starred/starred_screen.dart';
 import 'package:news_app/features/subscription/screens/add_subscription_screen.dart';
 import 'package:news_app/features/subscription/screens/category_screen.dart';
 import 'package:news_app/features/subscription/screens/edit_subscription_screen.dart';
 import 'package:news_app/features/subscription/screens/select_subscription_screen.dart';
 import 'package:news_app/features/details/screens/news_details_screen.dart';
 
-import 'features/category/screens/manage_categories_screen.dart';
-import 'features/category/screens/show_category_feeds_screen.dart';
+import 'features/category/screens/category_feeds_screen.dart';
 import 'features/home/screens/home_feed_screen.dart';
 import 'features/search/screens/search_screen.dart';
 
 Route onGenerateRoute(RouteSettings routeSettings) {
   switch (routeSettings.name) {
+
+  /// Starred Screen
+    case StarredScreen.routeNamed:
+      return MaterialPageRoute(builder: (context) => const StarredScreen());
 
     /// Auth Screen
     case AuthScreen.routeNamed:
@@ -73,21 +78,21 @@ Route onGenerateRoute(RouteSettings routeSettings) {
         ),
       );
 
-    /// Manage Categories Screen
-    case AllFeedsScreen.routeNamed:
-      // final arguments = routeSettings.arguments as Map<String, dynamic>;
-      return MaterialPageRoute(
-          builder: (context) => AllFeedsScreen(
-              // oldTitle: arguments['oldTitle'],
-              // listItemId: arguments['listItemId'],
-              ));
+    // /// Manage Categories Screen
+    // case AllFeedsScreen.routeNamed:
+    //   // final arguments = routeSettings.arguments as Map<String, dynamic>;
+    //   return MaterialPageRoute(
+    //       builder: (context) => AllFeedsScreen(
+    //           // oldTitle: arguments['oldTitle'],
+    //           // listItemId: arguments['listItemId'],
+    //           ));
 
     /// Show Category Feeds Screen
-    case ShowCategoryFeedsScreen.routeNamed:
+    case CategoryFeedsScreen.routeNamed:
       final arguments = routeSettings.arguments as Map<String, dynamic>;
       return MaterialPageRoute(
-          builder: (context) => ShowCategoryFeedsScreen(
-                categoryTitle: arguments['title'],
+          builder: (context) => CategoryFeedsScreen(
+                listItem: arguments['listItem'],
                 // oldTitle: arguments['oldTitle'],
               ));
 

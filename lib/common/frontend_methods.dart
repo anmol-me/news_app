@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../error_screen.dart';
+import 'error_screen.dart';
 import '../features/authentication/repository/auth_repo.dart';
 import '../features/authentication/screens/auth_screen.dart';
 

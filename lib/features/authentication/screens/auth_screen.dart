@@ -11,7 +11,7 @@ import 'package:news_app/features/home/screens/home_feed_screen.dart';
 
 import '../../../common/constants.dart';
 import '../../../common/enums.dart';
-import '../../../sizer.dart';
+import '../../../common/sizer.dart';
 
 final modeProvider = StateProvider<Mode>((ref) => Mode.basic);
 
