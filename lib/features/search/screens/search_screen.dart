@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:news_app/common/common_widgets.dart';
 import 'package:news_app/features/home/screens/home_feed_screen.dart';
 import 'package:news_app/features/search/repository/search_repo.dart';
 
+import '../../../common/common_methods.dart';
 import '../../home/repository/home_feed_repo.dart';
 
 /// Providers
@@ -68,13 +70,13 @@ class SearchScreen extends HookConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'Search through feeds',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w400,
-              ),
-            ),
+            // const Text(
+            //   'Search through feeds',
+            //   style: TextStyle(
+            //     fontSize: 16,
+            //     fontWeight: FontWeight.w400,
+            //   ),
+            // ),
             const SizedBox(height: 5),
             TextField(
               controller: searchTextController,
@@ -89,7 +91,7 @@ class SearchScreen extends HookConsumerWidget {
             ),
             const SizedBox(height: 5),
             showSearchLoader
-                ? const Expanded(child: Center(child: Text('Loading...')))
+                ? const LinearLoader()
                 : !showResults
                     ? const Center(child: Text('No results'))
                     : Expanded(
@@ -99,18 +101,16 @@ class SearchScreen extends HookConsumerWidget {
                             itemCount: searchNotifier.length,
                             itemBuilder: (context, index) {
                               final newsItem = searchNotifier[index];
-                              // final dateTime = getDate(newsItem);
+                              final dateTime = getDate(newsItem);
 
-                              // return buildExpansionWidget(
-                              //   newsItem,
-                              //   dateTime,
-                              //   context,
-                              //   newsNotifierController,
-                              // );
-
-                              return BuildExpansionWidget(
-                                newsItem: newsItem,
+                              return buildExpansionWidget(
+                                newsItem,
+                                dateTime,
+                                context,
+                                newsNotifierController,
+                                ref,
                               );
+
                             },
                           ),
                         ),

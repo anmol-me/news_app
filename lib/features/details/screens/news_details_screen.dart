@@ -1,13 +1,6 @@
-import 'dart:convert';
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/gestures.dart';
-import 'package:html/parser.dart';
-
 import 'package:flutter/rendering.dart';
 import 'package:intl/intl.dart';
 import 'package:news_app/common/common_widgets.dart';
-import 'package:news_app/common/enums.dart';
 import 'package:share_plus/share_plus.dart';
 
 import 'package:flutter/material.dart';
@@ -16,8 +9,10 @@ import 'package:webview_flutter/webview_flutter.dart';
 
 import '../../../common/constants.dart';
 import '../../home/repository/home_feed_repo.dart';
-
-final isFabButtonProvider = StateProvider<bool>((ref) => true);
+import '../components/card_header_row.dart';
+import '../components/header_image.dart';
+import '../components/methods.dart';
+import '../components/providers.dart';
 
 class NewsDetailsScreen extends ConsumerWidget {
   static const routeNamed = '/details';
@@ -51,42 +46,20 @@ class NewsDetailsScreen extends ConsumerWidget {
 
     var newsItem = newsNotifier.firstWhere((e) => e.entryId == entryId);
 
-    /// Content
-    // final contentStripped = Bidi.stripHtmlIfNeeded(content);
-    final document = parse(content);
-    final contentStripped = parse(document.body!.text).documentElement!.text;
-    final contentFormatted = utf8.decode(contentStripped.runes.toList());
+    final contentFormatted = getContent(content);
 
     final feedDate = DateFormat.yMMMMd().format(publishedAt);
     final feedTime = DateFormat.jm().format(publishedAt);
+
+    final webController = WebViewController()
+      ..setJavaScriptMode(JavaScriptMode.unrestricted)
+      ..loadRequest(Uri.parse(link));
 
     return DefaultTabController(
       length: 2,
       child: Scaffold(
         appBar: AppBar(
           actions: [
-            // InkWell(
-            //   onTap: () {
-            //     Status stat;
-            //
-            //     newsItem.status == Status.read
-            //         ? stat = Status.unread
-            //         : stat = Status.read;
-            //
-            //     newsNotifierController.toggleRead(
-            //       entryId,
-            //       stat,
-            //       context,
-            //     );
-            //   },
-            //   child: Icon(
-            //     size: 27,
-            //     color: colorRed,
-            //     newsItem.status == Status.unread
-            //         ? Icons.circle
-            //         : Icons.circle_outlined,
-            //   ),
-            // ),
             Row(
               children: [
                 ReadButton(entryId: entryId),
@@ -95,7 +68,7 @@ class NewsDetailsScreen extends ConsumerWidget {
                   icon: Icon(Icons.share, color: colorRed),
                 ),
               ],
-            )
+            ),
           ],
           bottom: const TabBar(
             tabs: [
@@ -127,6 +100,7 @@ class NewsDetailsScreen extends ConsumerWidget {
             return true;
           },
           child: TabBarView(
+            physics: const NeverScrollableScrollPhysics(),
             children: [
               SafeArea(
                 child: SingleChildScrollView(
@@ -161,30 +135,7 @@ class NewsDetailsScreen extends ConsumerWidget {
                             ? const SizedBox(height: 10)
                             : Padding(
                                 padding: const EdgeInsets.all(8.0),
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(2),
-                                  child: CachedNetworkImage(
-                                    imageUrl: imageUrl!,
-                                    height: MediaQuery.of(context).size.height *
-                                        0.30,
-                                    width: MediaQuery.of(context).size.width *
-                                        0.90,
-                                    fit: BoxFit.cover,
-                                    placeholder: (context, url) => Center(
-                                      child: CircularProgressIndicator(
-                                        color: colorRed,
-                                        strokeWidth: 1,
-                                      ),
-                                    ),
-                                    errorWidget: (context, url, error) =>
-                                        Image.network(
-                                      ErrorString.image.value,
-                                      height: 90,
-                                      width: 120,
-                                      fit: BoxFit.cover,
-                                    ),
-                                  ),
-                                ),
+                                child: HeaderImage(imageUrl: imageUrl),
                               ),
                         Text(
                           contentFormatted,
@@ -197,14 +148,17 @@ class NewsDetailsScreen extends ConsumerWidget {
                   ),
                 ),
               ),
-              WebView(
-                javascriptMode: JavascriptMode.unrestricted,
-                initialUrl: link,
-                zoomEnabled: true,
-                gestureRecognizers: {
-                  Factory<VerticalDragGestureRecognizer>(
-                      () => VerticalDragGestureRecognizer())
-                },
+              // WebView(
+              //   javascriptMode: JavascriptMode.unrestricted,
+              //   initialUrl: link,
+              //   zoomEnabled: true,
+              //   gestureRecognizers: {
+              //     Factory<VerticalDragGestureRecognizer>(
+              //         () => VerticalDragGestureRecognizer())
+              //   },
+              // ),
+              WebViewWidget(
+                controller: webController,
               ),
             ],
             // child: isWeb
@@ -230,44 +184,5 @@ class NewsDetailsScreen extends ConsumerWidget {
   }
 }
 
-class CardHeaderRow extends StatelessWidget {
-  const CardHeaderRow({
-    Key? key,
-    required this.categoryTitle,
-    required this.feedDate,
-    required this.feedTime,
-  }) : super(key: key);
 
-  final String categoryTitle;
-  final String feedDate;
-  final String feedTime;
 
-  @override
-  Widget build(BuildContext context) {
-    return Wrap(
-      children: [
-        Text(
-          categoryTitle,
-          style: TextStyle(
-            color: colorRed,
-            fontSize: 15,
-          ),
-        ),
-        Text(
-          ' / ',
-          style: TextStyle(
-            color: colorSubtitle,
-            fontSize: 15,
-          ),
-        ),
-        Text(
-          '$feedDate at $feedTime',
-          style: TextStyle(
-            color: colorSubtitle,
-            fontSize: 15,
-          ),
-        ),
-      ],
-    );
-  }
-}

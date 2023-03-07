@@ -27,7 +27,7 @@ enum ErrorString {
   catAlreadyExists('This category already exists.'),
   catCreated('Category successfully created.'),
   catNotDelete('Could not delete category.'),
-  // catCreated('Category successfully created.'),
+  listEmpty('List is empty.'),
   // catCreated('Category successfully created.'),
   // catCreated('Category successfully created.'),
   // catCreated('Category successfully created.')

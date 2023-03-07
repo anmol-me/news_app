@@ -1,30 +1,35 @@
 import 'dart:async';
-import 'dart:convert';
-import 'dart:developer' show log;
+
+export '../../../common_widgets/build_expansion_widget.dart';
+import 'package:go_router/go_router.dart';
+
+import '../../../common/common_methods.dart';
+import '../../../common_widgets/build_popup_menu_button.dart';
+import '../../../common_widgets/build_top_bar.dart';
+import '../../../common_widgets/build_expansion_widget.dart';
 
 import 'package:flutter/material.dart';
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:html/parser.dart' as html_parser;
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:jiffy/jiffy.dart';
 
 import 'package:news_app/features/search/screens/search_screen.dart';
-import 'package:news_app/features/details/screens/news_details_screen.dart';
-import 'package:news_app/features/subscription/repository/category_repo.dart';
 import '../../../common/common_widgets.dart';
 import '../../../common/enums.dart';
-import '../../starred/starred_screen.dart';
+import '../../authentication/repository/auth_repo.dart';
 import '../providers/home_providers.dart';
 import '../repository/home_feed_repo.dart';
 import 'package:fade_shimmer/fade_shimmer.dart';
 
 import 'package:news_app/common/constants.dart';
-import 'package:news_app/models/news.dart';
 import 'package:news_app/features/app_bar/app_drawer.dart';
-import '../widgets/ExpansionWidget.dart';
-import '../widgets/widgets.dart';
+
+import '../widgets/check_again_widget.dart';
+import '../widgets/welcome_view_widget.dart';
+import '../repository/home_methods.dart';
+
+final isHomeDrawerOpened = StateProvider((ref) => false);
 
 class HomeFeedScreen extends ConsumerStatefulWidget {
   static const routeNamed = '/home-feed-screen';
@@ -41,26 +46,24 @@ class _HomeFeedScreenState extends ConsumerState<HomeFeedScreen> {
     super.initState();
     Timer(const Duration(seconds: 20), () => FlutterNativeSplash.remove());
 
-    final isLoadingPageController =
-        ref.read(homeIsLoadingPageProvider.notifier);
+    final isLoadingHomePageController =
+        ref.read(homePageLoadingProvider.notifier);
 
     Future.delayed(Duration.zero).then(
-      (value) => isLoadingPageController.update(
-        (state) => true,
-      ),
+      (_) => isLoadingHomePageController.update((state) => true),
     );
 
     ref.read(homeFeedProvider.notifier).fetchEntries(context).then(
       (_) {
         FlutterNativeSplash.remove();
-        return isLoadingPageController.update((state) => false);
+        return isLoadingHomePageController.update((state) => false);
       },
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    // log('************ HOME FEED SCREEN *****************');
+    final scrollController = ScrollController();
 
     /// Providers ///
     // log('${ref.read(categoryListNotifierFuture(context)).whenData((value) => value).value}');
@@ -70,20 +73,16 @@ class _HomeFeedScreenState extends ConsumerState<HomeFeedScreen> {
 
     // log(categoryNames.toString());
 
-    final isLoadingPage = ref.watch(homeIsLoadingPageProvider);
-    final isLoadingPageController =
-        ref.watch(homeIsLoadingPageProvider.notifier);
-
-    final isStarred = ref.watch(isStarredProvider);
+    final isLoadingHomePage = ref.watch(homePageLoadingProvider);
+    final isLoadingHomePageController =
+        ref.watch(homePageLoadingProvider.notifier);
 
     final newsNotifier = ref.watch(homeFeedProvider);
+    final newsNotifierController = ref.watch(homeFeedProvider.notifier);
 
+    final isStarred = ref.watch(isStarredProvider);
     final sortAs = ref.watch(homeSortDirectionProvider);
-    final sortDirectionController =
-        ref.watch(homeSortDirectionProvider.notifier);
-
     final isShowRead = ref.watch(homeIsShowReadProvider);
-    final isShowReadController = ref.watch(homeIsShowReadProvider.notifier);
 
     // final isSelected = ref.watch(homeIsSelectedProvider);
     // final isSelectedController = ref.read(homeIsSelectedProvider.notifier);
@@ -91,97 +90,74 @@ class _HomeFeedScreenState extends ConsumerState<HomeFeedScreen> {
     final canGoToNextPage = ref.watch(homeIsNextProvider);
     final canGoToPreviousPage = ref.watch(homeOffsetProvider) != 0;
 
-    /// Functions ///
-    void sortFunction() {
-      isLoadingPageController.update((state) => true);
-      ref.refresh(homeOffsetProvider.notifier).update((state) => 0);
-
-      if (sortAs == Sort.ascending) {
-        sortDirectionController.update((state) => state = Sort.descending);
-      } else if (sortAs == Sort.descending) {
-        sortDirectionController.update((state) => state = Sort.ascending);
-      } else {
-        sortDirectionController.update((state) => state = Sort.descending);
-      }
-
-      ref.refresh(homeFeedProvider.notifier).fetchEntries(context).then(
-            (value) => isLoadingPageController.update((state) => false),
-          );
-    }
-
-    void readFunction() {
-      isLoadingPageController.update((state) => true);
-
-      isShowReadController.update((state) => state = !state);
-
-      ref.refresh(homeFeedProvider.notifier).fetchEntries(context).then(
-            (value) => isLoadingPageController.update((state) => false),
-          );
-    }
-
-    void previousFunction() {
-      isLoadingPageController.update((state) => true);
-
-      ref.read(homePageHandlerProvider.notifier).update(
-            (state) => state != 1 ? state -= 1 : 0,
-          );
-
-      ref.read(homeOffsetProvider.notifier).update((state) => state -= 100);
-      // log('PREVIOUS-OFFSET: ${ref.watch(offsetProvider)}');
-
-      ref.read(homeFeedProvider.notifier).fetchEntries(context).then(
-            (_) => isLoadingPageController.update((state) => false),
-          );
-    }
-
-    void nextFunction() {
-      isLoadingPageController.update((state) => true);
-
-      ref.read(homePageHandlerProvider.notifier).update((state) => state += 1);
-
-      ref.read(homeOffsetProvider.notifier).update((state) => state += 100);
-
-      ref.read(homeFeedProvider.notifier).fetchEntries(context).then(
-        (_) {
-          // log(newsNotifier.length.toString());
-          isLoadingPageController.update((state) => false);
-        },
-      );
-    }
+    final homeMethods = ref.watch(homeMethodsProvider(context));
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Feeds'),
+        title: Text(isStarred ? 'Starred' : 'Feeds'),
         actions: [
           IconButton(
             onPressed: () {
-              Navigator.of(context).pushNamed(SearchScreen.routeNamed);
+              context.pushNamed(SearchScreen.routeNamed);
+
+              /// Todo: Nav
+              // Navigator.of(context).pushNamed(SearchScreen.routeNamed);
             },
             icon: const Icon(Icons.search),
+          ),
+
+          /// Todo: Temporary Clear Button
+          IconButton(
+            onPressed: () => ref.refresh(homeFeedProvider).clear(),
+            icon: Icon(
+              Icons.clear,
+              color: colorRed,
+            ),
+          ),
+          IconButton(
+            onPressed: () => ref.refresh(userPrefsProvider).clearPrefs(),
+            icon: Icon(
+              Icons.delete,
+              color: colorRed,
+            ),
           ),
           buildPopupMenuButton(
             ref: ref,
             isShowRead: isShowRead,
             sort: sortAs,
-            sortFunction: sortFunction,
-            read: readFunction,
+            sortFunction: homeMethods.sortFunction,
+            readFunction: homeMethods.readFunction,
           ),
         ],
       ),
       drawer: const AppDrawer(),
+      onDrawerChanged: (isOpened) {
+        print('Drawer Checker: $isOpened');
+        ref.read(isHomeDrawerOpened.notifier).update((state) => isOpened);
+      },
       body: Column(
         children: [
-          // Top Column
-          buildTopColumn(
-            isLoadingPage,
-            canGoToPreviousPage,
-            previousFunction,
-            canGoToNextPage,
-            nextFunction,
-          ),
-          if (isLoadingPage)
-            // const LinearLoader()
-            const Text('Loading...')
+          // Sidebar
+          // Expanded(
+          //   child: const ResponsiveVisibility(
+          //     hiddenWhen: [Condition.smallerThan(name: DESKTOP)],
+          //     child: AppDrawer(),
+          //   ),
+          // ),
+
+          // Top Column Bar
+          newsNotifier.isEmpty
+              ? const SizedBox.shrink()
+              : buildTopBar(
+                  isLoadingHomePage,
+                  canGoToPreviousPage,
+                  homeMethods.previousFunction,
+                  canGoToNextPage,
+                  homeMethods.nextFunction,
+                  ref,
+                ),
+          if (isLoadingHomePage)
+            const LinearLoader()
           else
             Expanded(
               child: RefreshIndicator(
@@ -189,33 +165,33 @@ class _HomeFeedScreenState extends ConsumerState<HomeFeedScreen> {
                   Navigator.of(context),
                   ref,
                   context,
-                  isLoadingPageController,
+                  isLoadingHomePageController,
                 ),
                 color: colorRed,
-                child: Scrollbar(
-                  child: newsNotifier.isEmpty && isStarred
-                      ? const Text('No Favourites')
-                      : newsNotifier.isEmpty
-                          ? const Text('List is Empty')
-                          : ListView.builder(
+                child: newsNotifier.isEmpty && isStarred
+                    ? const CheckAgainWidget()
+                    : newsNotifier.isEmpty
+                        ? const WelcomeViewWidget()
+                        : Scrollbar(
+                            controller: scrollController,
+                            child: ListView.builder(
+                              controller: scrollController,
                               shrinkWrap: true,
                               itemCount: newsNotifier.length,
                               itemBuilder: (context, index) {
                                 final newsItem = newsNotifier[index];
+                                final dateTime = getDate(newsItem);
 
-                                // return buildExpansionWidget(
-                                //   newsItem,
-                                //   dateTime,
-                                //   context,
-                                //   newsNotifierController,
-                                // );
-
-                                return BuildExpansionWidget(
-                                  newsItem: newsItem,
+                                return buildExpansionWidget(
+                                  newsItem,
+                                  dateTime,
+                                  context,
+                                  newsNotifierController,
+                                  ref,
                                 );
                               },
                             ),
-                ),
+                          ),
               ),
             ),
         ],
@@ -224,420 +200,7 @@ class _HomeFeedScreenState extends ConsumerState<HomeFeedScreen> {
   }
 }
 
-class BuildExpansionWidget extends HookConsumerWidget {
-  final News newsItem;
-
-  const BuildExpansionWidget({
-    super.key,
-    required this.newsItem,
-  });
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final isStarred = ref.watch(isStarredProvider);
-
-    final dateTime = getDate(newsItem);
-
-    return Padding(
-      padding: const EdgeInsets.only(
-        top: 5,
-        bottom: 5,
-        left: 16,
-        right: 16,
-      ),
-      child: ExpansionWidget(
-        topSection: topSectionRow(
-          newsItem,
-          dateTime,
-        ),
-        titleSection: Padding(
-          padding: const EdgeInsets.only(
-            top: 8.0,
-          ),
-          child: Row(
-            children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(
-                  2,
-                ),
-                child: CachedNetworkImage(
-                  imageUrl: newsItem.imageUrl,
-                  height: 90,
-                  width: 120,
-                  fit: BoxFit.cover,
-                  placeholder: (context, url) {
-                    return Center(
-                      child: CircularProgressIndicator(
-                        color: colorRed,
-                        strokeWidth: 1,
-                      ),
-                    );
-                  },
-                  errorWidget: (
-                    context,
-                    url,
-                    error,
-                  ) =>
-                      Image.network(
-                    ErrorString.image.value,
-                    height: 90,
-                    width: 120,
-                    fit: BoxFit.cover,
-                  ),
-                ),
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: GestureDetector(
-                  onTap: () async {
-                    log('ENTRY: ${newsItem.entryId}');
-
-                    Navigator.of(context).pushNamed(
-                      NewsDetailsScreen.routeNamed,
-                      arguments: {
-                        'id': newsItem.entryId,
-                        'image': newsItem.imageUrl,
-                        'content': newsItem.content,
-                        'categoryTitle': newsItem.categoryTitle,
-                        'title': newsItem.titleText,
-                        'link': newsItem.link,
-                        'publishedAt': newsItem.publishedTime,
-                      },
-                    );
-                  },
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        newsItem.titleText,
-                        style: const TextStyle(
-                          fontSize: 19,
-                          fontWeight: FontWeight.w600,
-                          height: 1.1,
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(
-                          top: 4.0,
-                        ),
-                        child: Text(
-                          '${newsItem.readTime} min read',
-                          style: TextStyle(
-                            color: colorAppbarForeground,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-        onExpanded: Padding(
-          padding: const EdgeInsets.only(top: 10.0),
-          child: Row(
-            children: [
-              if (!isStarred) StarredButton(entryId: newsItem.entryId),
-              if (isStarred) BookmarkStarredButton(entryId: newsItem.entryId),
-              const SizedBox(width: 30),
-              if (!isStarred) ReadButton(entryId: newsItem.entryId),
-              if (isStarred) BookmarkReadButton(entryId: newsItem.entryId),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-// Padding buildExpansionWidget(
-//   News newsItem,
-//   String dateTime,
-//   BuildContext context,
-//   HomeFeedNotifier newsNotifierController,
-// ) {
-//   return Padding(
-//     padding: const EdgeInsets.only(
-//       top: 5,
-//       bottom: 5,
-//       left: 16,
-//       right: 16,
-//     ),
-//     child: ExpansionWidget(
-//       topSection: topSectionRow(
-//         newsItem,
-//         dateTime,
-//       ),
-//       titleSection: Padding(
-//         padding: const EdgeInsets.only(
-//           top: 8.0,
-//         ),
-//         child: Row(
-//           children: [
-//             ClipRRect(
-//               borderRadius: BorderRadius.circular(
-//                 2,
-//               ),
-//               child: CachedNetworkImage(
-//                 imageUrl: newsItem.imageUrl,
-//                 height: 90,
-//                 width: 120,
-//                 fit: BoxFit.cover,
-//                 placeholder: (context, url) {
-//                   return Center(
-//                     child: CircularProgressIndicator(
-//                       color: colorRed,
-//                       strokeWidth: 1,
-//                     ),
-//                   );
-//                 },
-//                 errorWidget: (
-//                   context,
-//                   url,
-//                   error,
-//                 ) =>
-//                     Image.network(
-//                   ErrorString.image.value,
-//                   height: 90,
-//                   width: 120,
-//                   fit: BoxFit.cover,
-//                 ),
-//               ),
-//             ),
-//             const SizedBox(width: 10),
-//             Expanded(
-//               child: GestureDetector(
-//                 onTap: () async {
-//                   log('ENTRY: ${newsItem.entryId}');
-//
-//                   Navigator.of(context).pushNamed(
-//                     NewsDetailsScreen.routeNamed,
-//                     arguments: {
-//                       'id': newsItem.entryId,
-//                       'image': newsItem.imageUrl,
-//                       'content': newsItem.content,
-//                       'categoryTitle': newsItem.categoryTitle,
-//                       'title': newsItem.titleText,
-//                       'link': newsItem.link,
-//                       'publishedAt': newsItem.publishedTime,
-//                     },
-//                   );
-//                 },
-//                 child: Column(
-//                   crossAxisAlignment: CrossAxisAlignment.start,
-//                   children: [
-//                     Text(
-//                       newsItem.titleText,
-//                       style: const TextStyle(
-//                         fontSize: 19,
-//                         fontWeight: FontWeight.w600,
-//                         height: 1.1,
-//                       ),
-//                     ),
-//                     Padding(
-//                       padding: const EdgeInsets.only(
-//                         top: 4.0,
-//                       ),
-//                       child: Text(
-//                         '${newsItem.readTime} min read',
-//                         style: TextStyle(
-//                           color: colorAppbarForeground,
-//                         ),
-//                       ),
-//                     ),
-//                   ],
-//                 ),
-//               ),
-//             ),
-//           ],
-//         ),
-//       ),
-//       onExpanded: Padding(
-//         padding: const EdgeInsets.only(top: 10.0),
-//         child: Row(
-//           children: [
-//             StarredButton(entryId: newsItem.entryId),
-//             const SizedBox(width: 30),
-//             ReadButton(entryId: newsItem.entryId),
-//           ],
-//         ),
-//       ),
-//     ),
-//   );
-// }
-
 /// ///////////////////////////////////////////////////////////////////////////////////////
-
-PopupMenuButton<DropItems> buildPopupMenuButton({
-  required WidgetRef ref,
-  required bool isShowRead,
-  required Sort sort,
-  required void Function() sortFunction,
-  required void Function() read,
-}) {
-  final isCatLoading = ref.watch(isCatLoadingProvider);
-  final isStarredLoading = ref.watch(isLoadingStarredProvider);
-  final isHomeLoadingPage = ref.watch(homeIsLoadingPageProvider);
-
-  return PopupMenuButton<DropItems>(
-    icon: Icon(
-      Icons.filter_alt,
-      color: isShowRead || sort == Sort.ascending
-          ? colorRed
-          : colorAppbarForeground,
-    ),
-    itemBuilder: (context) => [
-      PopupMenuItem(
-        value: DropItems.sort,
-        child: Row(
-          children: [
-            Icon(
-              sort == Sort.ascending
-                  ? Icons.arrow_upward
-                  : Icons.arrow_downward,
-              color: Colors.black,
-            ),
-            const SizedBox(width: 10),
-            Text(
-              sort == Sort.ascending ? 'Sort Latest' : 'Sort Oldest',
-            ),
-          ],
-        ),
-      ),
-      PopupMenuItem(
-        value: DropItems.read,
-        child: Row(
-          children: [
-            Icon(
-              Icons.circle_outlined,
-              color: isShowRead ? colorRed : Colors.black,
-            ),
-            const SizedBox(width: 10),
-            Text(isShowRead ? 'Show All' : 'Show Read'),
-          ],
-        ),
-      ),
-    ],
-    onSelected: (selected) {
-      if (isCatLoading || isStarredLoading || isHomeLoadingPage) {
-        null;
-      } else {
-        if (selected == DropItems.sort) {
-          sortFunction();
-        } else if (selected == DropItems.read) {
-          read();
-        }
-      }
-    },
-  );
-}
-
-Column buildTopColumn(
-  bool isLoadingPage,
-  bool canGoToPreviousPage,
-  void Function() previous,
-  bool canGoToNextPage,
-  void Function() next,
-) {
-  return Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            isLoadingPage
-                ? const DisabledPreviousButton()
-                : InkWell(
-                    onTap: () {
-                      canGoToPreviousPage ? previous() : null;
-                    },
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.arrow_back,
-                          size: 16,
-                          color: canGoToPreviousPage
-                              ? Colors.redAccent
-                              : Colors.grey,
-                        ),
-                        const SizedBox(width: 5),
-                        Text(
-                          'Previous',
-                          style: TextStyle(
-                            fontSize: 17,
-                            color: canGoToPreviousPage
-                                ? Colors.redAccent
-                                : Colors.grey,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-            isLoadingPage
-                ? const DisabledMoreButton()
-                : InkWell(
-                    onTap: () => canGoToNextPage ? next() : null,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          'More',
-                          style: TextStyle(
-                            fontSize: 17,
-                            color: canGoToNextPage
-                                ? Colors.redAccent[200]
-                                : Colors.grey,
-                          ),
-                        ),
-                        const SizedBox(width: 5),
-                        Icon(
-                          Icons.arrow_forward,
-                          size: 16,
-                          color: canGoToNextPage
-                              ? Colors.redAccent[200]
-                              : Colors.grey,
-                        ),
-                      ],
-                    ),
-                  ),
-          ],
-        ),
-      ),
-    ],
-  );
-}
-
-Row topSectionRow(News newsItem, String dateTime) {
-  return Row(
-    children: [
-      Text(
-        newsItem.categoryTitle,
-        style: TextStyle(
-          color: colorRed,
-          // fontSize: 15,
-        ),
-      ),
-      Text(
-        ' / ',
-        style: TextStyle(
-          color: Colors.grey[500],
-          // fontSize: 15,
-        ),
-      ),
-      Text(
-        dateTime,
-        style: TextStyle(
-          color: Colors.grey[500],
-          // fontSize: 15,
-        ),
-      ),
-    ],
-  );
-}
 
 // extension Extract on String {
 //   String? extractImage() {
@@ -681,35 +244,3 @@ Row topSectionRow(News newsItem, String dateTime) {
 
     log('LENGth: ${nowList.length}');
  */
-
-String getDate(newsItem) {
-  final dateFormatted = DateFormat('dd MMM yyyy').format(
-    newsItem.publishedTime,
-  );
-
-  final now = DateFormat('dd MMM yyyy').format(
-    DateTime.now(),
-  );
-
-  final yesterday = DateFormat('dd MMM yyyy').format(
-    DateTime.now().subtract(const Duration(days: 1)),
-  );
-
-  final twoDaysAgo = DateFormat('dd MMM yyyy').format(
-    DateTime.now().subtract(const Duration(days: 2)),
-  );
-
-  final todayTime = Jiffy(
-    newsItem.publishedTime,
-  ).fromNow().toString();
-
-  var dateUsed = dateFormatted == now
-      ? todayTime
-      : dateFormatted == yesterday
-          ? 'Yesterday'
-          : dateFormatted == twoDaysAgo
-              ? '2 days ago'
-              : dateFormatted;
-
-  return dateUsed;
-}

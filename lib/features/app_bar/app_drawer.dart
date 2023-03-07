@@ -2,16 +2,21 @@ import 'dart:developer' show log;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:go_router/go_router.dart';
 
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:news_app/common/enums.dart';
+import 'package:news_app/features/app_bar/app_bar_repo.dart';
 import 'package:news_app/features/app_bar/user.dart';
-import 'package:news_app/features/subscription/screens/select_subscription_screen.dart';
+import 'package:news_app/features/subscription/screens/select_subscription_screen/select_subscription_screen.dart';
 import 'package:news_app/features/home/screens/home_feed_screen.dart';
 
 import '../../common/common_widgets.dart';
+import '../../common/constants.dart';
 import '../authentication/repository/auth_repo.dart';
 import '../home/providers/home_providers.dart';
 import '../home/repository/home_feed_repo.dart';
+import '../settings/screens/settings_screen.dart';
 import '../starred/starred_screen.dart';
 import '../subscription/screens/category_screen.dart';
 import 'user_providers.dart';
@@ -47,45 +52,18 @@ class AppDrawer extends HookConsumerWidget {
                   (_) => isLoadingNameController.update((state) => false),
                 ),
           );
-        }
 
-        Future.delayed(Duration.zero).then(
-          (_) => ref.read(isInitProvider.notifier).update((state) => false),
-        );
+          Future.delayed(Duration.zero).then(
+            (_) => ref.read(isInitProvider.notifier).update((state) => false),
+          );
+        }
         return null;
       },
       [],
     );
 
-    void starredFunction(
-      StateController<bool> isLoadingPageController,
-      StateController<bool> isStarredController,
-      NavigatorState navigator,
-    ) {
-      isLoadingPageController.update((state) => true);
-
-      isStarredController.update((state) => !state);
-      navigator.pop();
-
-      if (ModalRoute.of(context)!.settings.name == '/') {
-        ref.refresh(homeFeedProvider.notifier).fetchEntries(context).then(
-              (_) => isLoadingPageController.update((state) => false),
-            );
-      } else {
-        isLoadingPageController.update((state) => false);
-        navigator.pushNamed(HomeFeedScreen.routeNamed);
-      }
-    }
-
+    final appBarRepo = ref.read(appBarRepoProvider);
     final isStarred = ref.watch(isStarredProvider);
-    final isStarredController = ref.watch(isStarredProvider.notifier);
-
-    final isLoadingStarred = ref.watch(isLoadingStarredProvider);
-    final isLoadingStarredController =
-        ref.watch(isLoadingStarredProvider.notifier);
-
-    final isLoadingPageController =
-        ref.watch(homeIsLoadingPageProvider.notifier);
 
     final navigator = Navigator.of(context);
 
@@ -94,43 +72,64 @@ class AppDrawer extends HookConsumerWidget {
         child: Column(
           children: [
             const BuildHeader(),
+            SizedBox(
+              // width: MediaQuery.of(context).size.width * 0.60,
+              child: Divider(
+                color: colorRed,
+                thickness: 1.5,
+                indent: 60,
+                endIndent: 60,
+              ),
+            ),
             Wrap(
               runSpacing: 1,
               children: [
                 ListTile(
                   leading: const Icon(Icons.home_outlined),
                   title: const Text('All Items'),
-                  onTap: () => refreshAll(
-                    navigator,
-                    ref,
-                    context,
-                    isLoadingPageController,
-                  ),
+
+                  /// TODO: Old code cleanup
+                  // onTap: () => refreshAllDrawer(
+                  //   navigator,
+                  //   ref,
+                  //   context,
+                  //   isLoadingPageController,
+                  // ),
+                  onTap: () => appBarRepo.refreshAllDrawer(context),
                 ),
                 ListTile(
                   leading: Icon(
                     isStarred ? Icons.star : Icons.star_border_outlined,
                   ),
                   title: const Text('Starred Items'),
-                  onTap: () {
-                    isStarredController.update((state) => true);
 
-                    navigator.pushNamed(StarredScreen.routeNamed);
-                    //   starredFunction(
-                    //   isLoadingPageController,
-                    //   isStarredController,
-                    //   navigator,
-                    // );
-                  },
+                  /// TODO: Old code cleanup
+                  // onTap: () {
+                  // starredFunction(
+                  //   isLoadingPageController,
+                  //   isStarredController,
+                  //   context,
+                  // );
+                  // },
+                  onTap: () => appBarRepo.starredFunction(context),
                 ),
                 ListTile(
                   leading: const Icon(Icons.subscriptions_rounded),
                   title: const Text('Subscription'),
                   onTap: () {
-                    navigator.pop();
+                    if (ref.read(isHomeDrawerOpened)) {
+                      navigator.pop();
+                    }
                     ref.refresh(catSortProvider).value;
-                    refreshProviders(ref);
-                    navigator.pushNamed(SelectSubscriptionScreen.routeNamed);
+                    refreshWidgetProviders(ref);
+                    context.pushNamed(SelectSubscriptionScreen.routeNamed);
+
+                    /// Todo: Nav
+                    // navigator.push(
+                    //   MaterialPageRoute(
+                    //     builder: (context) => const SelectSubscriptionScreen(),
+                    //   ),
+                    // );
                   },
                 ),
                 const Divider(
@@ -140,18 +139,17 @@ class AppDrawer extends HookConsumerWidget {
                 ListTile(
                   leading: const Icon(Icons.settings),
                   title: const Text('Settings'),
-                  onTap: () {
-                    // TODO: Settings
-                    navigator.pop();
-                  },
+                  onTap: () => context.pushNamed(SettingsScreen.routeNamed),
+
+                  /// Todo: Nav
+                  // onTap: () {
+                  //   navigator.pushNamed(SettingsScreen.routeNamed);
+                  // },
                 ),
                 ListTile(
                   leading: const Icon(Icons.logout),
                   title: const Text('Logout'),
-                  onTap: () {
-                    navigator.pop();
-                    ref.read(authRepoProvider).logout(context);
-                  },
+                  onTap: () => ref.read(authRepoProvider).logout(context),
                 ),
               ],
             ),
@@ -172,33 +170,28 @@ class BuildHeader extends HookConsumerWidget {
     final size = MediaQuery.of(context).size;
 
     final userNameLoaded =
-        ref.read(userNotifierProvider)?.username.capitalize() ?? ' to App';
+        ref.read(userNotifierProvider)?.username.capitalize() ?? ' Loading...';
 
     return Material(
       child: Container(
         height: size.height * 0.20,
-        padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
-        child: Column(
+        padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top + 40),
+        child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+            Column(
               children: [
-                Column(
-                  children: [
-                    const Text(
-                      'Feeds',
-                      style: TextStyle(fontSize: 26),
-                    ),
-                    Text(
-                      isLoadingName ? 'Loading...' : 'Welcome $userNameLoaded',
-                      style: const TextStyle(
-                        fontSize: 16,
-                        color: Colors.grey,
-                      ),
-                    ),
-                  ],
-                )
+                const Text(
+                  'Feeds',
+                  style: TextStyle(fontSize: 26),
+                ),
+                Text(
+                  isLoadingName ? 'Loading...' : 'Welcome $userNameLoaded',
+                  style: const TextStyle(
+                    fontSize: 16,
+                    color: Colors.grey,
+                  ),
+                ),
               ],
             ),
           ],
@@ -223,27 +216,6 @@ class BuildHeader extends HookConsumerWidget {
 extension StringExtension on String {
   String capitalize() {
     return "${this[0].toUpperCase()}${this.substring(1).toLowerCase()}";
-  }
-}
-
-Future<void> refreshAll(
-  NavigatorState navigator,
-  WidgetRef ref,
-  BuildContext context,
-  StateController<bool> isLoadingPageController,
-) async {
-  navigator.pop();
-  log(ModalRoute.of(context)!.settings.name.toString());
-
-  refreshProviders(ref);
-
-  if (ModalRoute.of(context)!.settings.name == '/') {
-    isLoadingPageController.update((state) => true);
-    ref.refresh(homeFeedProvider.notifier).fetchEntries(context).then(
-          (_) => isLoadingPageController.update((state) => false),
-        );
-  } else {
-    navigator.pushNamed('/');
   }
 }
 

@@ -1,22 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import 'error_screen.dart';
 import '../features/authentication/repository/auth_repo.dart';
 import '../features/authentication/screens/auth_screen.dart';
 
 void navigateError(
-    BuildContext context,
-    String message,
-    ) {
-  Navigator.of(context).pushNamed(
+  BuildContext context,
+  String message,
+) {
+  return context.pushNamed(
     ErrorScreen.routeNamed,
-    arguments: {'message': message},
+    queryParams: {'message': message},
   );
 }
 
 Future showErrorDialogue(
-    BuildContext context, StateNotifierProviderRef ref, e) {
+  BuildContext context,
+  StateNotifierProviderRef ref,
+  e,
+) {
   return showDialog(
     context: context,
     builder: (ctx) => AlertDialog(
@@ -26,14 +30,14 @@ Future showErrorDialogue(
         TextButton(
           onPressed: () {
             Navigator.of(ctx).pop();
+            ref.read(userPrefsProvider).clearPrefs();
+            Navigator.of(context).pushNamed(AuthScreen.routeNamed);
           },
-          child: const Text('Take me back'),
+          child: const Text('Exit'),
         ),
         TextButton(
           onPressed: () {
             Navigator.of(ctx).pop();
-            ref.read(userPrefsProvider).clearPrefs();
-            Navigator.of(context).pushNamed(AuthScreen.routeNamed);
           },
           child: const Text('Okay'),
         ),

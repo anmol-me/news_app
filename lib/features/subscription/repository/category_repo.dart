@@ -79,6 +79,7 @@ class CategoryNotifier extends StateNotifier<List<News>> {
         final createdNews = News(
           entryId: info['id'],
           feedId: info['feed_id'],
+          catId: info['feed']['category']['id'],
           categoryTitle: categoryTitleTextDecoded,
           titleText: titleTextDecoded,
           author: info['author'],

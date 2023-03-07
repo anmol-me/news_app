@@ -1,0 +1,89 @@
+import 'dart:developer';
+
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../../../common/enums.dart';
+import '../providers/home_providers.dart';
+import 'home_feed_repo.dart';
+
+final homeMethodsProvider = Provider.family<HomeMethods, BuildContext>(
+  (ref, context) => HomeMethods(
+    ref: ref,
+    context: context,
+    isLoadingHomePageController: ref.watch(homePageLoadingProvider.notifier),
+  ),
+);
+
+class HomeMethods {
+  final ProviderRef ref;
+  final BuildContext context;
+  final StateController<bool> isLoadingHomePageController;
+
+  HomeMethods({
+    required this.ref,
+    required this.context,
+    required this.isLoadingHomePageController,
+  });
+
+  void nextFunction() {
+    isLoadingHomePageController.update((state) => true);
+
+    ref.read(homeCurrentPageProvider.notifier).update((state) => state += 1);
+
+    ref.read(homeOffsetProvider.notifier).update((state) => state += 100);
+
+    ref.read(homeFeedProvider.notifier).fetchEntries(context).then(
+      (_) {
+        // log(newsNotifier.length.toString());
+        isLoadingHomePageController.update((state) => false);
+      },
+    );
+  }
+
+  void previousFunction() {
+    isLoadingHomePageController.update((state) => true);
+
+    ref.read(homeCurrentPageProvider.notifier).update(
+          (state) => state != 1 ? state -= 1 : 1,
+        );
+
+    ref.read(homeOffsetProvider.notifier).update((state) => state -= 100);
+    // log('PREVIOUS-OFFSET: ${ref.watch(offsetProvider)}');
+
+    ref.read(homeFeedProvider.notifier).fetchEntries(context).then(
+          (_) => isLoadingHomePageController.update((state) => false),
+        );
+  }
+
+  void sortFunction() {
+    isLoadingHomePageController.update((state) => true);
+    ref.refresh(homeOffsetProvider.notifier).update((state) => 0);
+
+    final sortAs = ref.read(homeSortDirectionProvider);
+    final sortDirectionController =
+        ref.read(homeSortDirectionProvider.notifier);
+
+    if (sortAs == Sort.ascending) {
+      sortDirectionController.update((state) => state = Sort.descending);
+    } else if (sortAs == Sort.descending) {
+      sortDirectionController.update((state) => state = Sort.ascending);
+    } else {
+      sortDirectionController.update((state) => state = Sort.descending);
+    }
+
+    ref.refresh(homeFeedProvider.notifier).fetchEntries(context).then(
+          (value) => isLoadingHomePageController.update((state) => false),
+        );
+  }
+
+  void readFunction() {
+    isLoadingHomePageController.update((state) => true);
+
+    ref.read(homeIsShowReadProvider.notifier).update((state) => state = !state);
+
+    ref.refresh(homeFeedProvider.notifier).fetchEntries(context).then(
+          (value) => isLoadingHomePageController.update((state) => false),
+        );
+  }
+}

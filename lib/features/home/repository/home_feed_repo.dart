@@ -22,11 +22,11 @@ import '../providers/home_providers.dart';
 final homeFeedProvider =
     StateNotifierProvider<HomeFeedNotifier, List<News>>((ref) {
   final userPrefs = ref.watch(userPrefsProvider);
-  final userPassEncoded = ref.watch(userPrefsProvider).getAuthData();
+  final userPassEncoded = ref.watch(userPrefsProvider).getAuthData() ?? '';
 
-  var orderBy = ref.watch(homeOrderProvider);
+  final orderBy = ref.watch(homeOrderProvider);
   final direction = ref.watch(homeSortDirectionProvider);
-  var offsetNumber = ref.watch(homeOffsetProvider);
+  final offsetNumber = ref.watch(homeOffsetProvider);
 
   final isStarred = ref.watch(isStarredProvider);
   final isRead = ref.watch(homeIsShowReadProvider);
@@ -34,7 +34,7 @@ final homeFeedProvider =
   return HomeFeedNotifier(
     ref,
     userPrefs,
-    userPassEncoded!,
+    userPassEncoded,
     direction,
     offsetNumber,
     isStarred,
@@ -104,6 +104,7 @@ class HomeFeedNotifier extends StateNotifier<List<News>> {
         final createdNews = News(
           entryId: info['id'],
           feedId: info['feed_id'],
+          catId: info['feed']['category']['id'],
           categoryTitle: info['feed']['category']['title'],
           titleText: titleTextDecoded,
           author: info['author'],
@@ -119,6 +120,9 @@ class HomeFeedNotifier extends StateNotifier<List<News>> {
         fetchedNewsList.add(createdNews);
       }
       state = fetchedNewsList;
+      // state = [];
+
+      /// Todo: On error, goto authScreen
     } on TimeoutException catch (e) {
       log('Timeout Error: $e');
       return showErrorDialogue(context, ref, ErrorString.requestTimeout.value);
@@ -127,6 +131,39 @@ class HomeFeedNotifier extends StateNotifier<List<News>> {
       return showErrorDialogue(context, ref, ErrorString.socket.value);
     } catch (e) {
       log('General Error: $e');
+      return showErrorDialogue(
+          context, ref, ErrorString.somethingWrongAdmin.value);
+    }
+  }
+
+  Future<void> refreshAll(
+    BuildContext context,
+  ) async {
+    final url = userPrefs.getUrlData();
+
+    try {
+      Uri uri = Uri.https(url!, '/v1/feeds/refresh');
+
+      final res = await putHttpResp(
+        url: null,
+        uri: uri,
+        bodyMap: null,
+        userPassEncoded: userPassEncoded,
+      );
+
+      log('${res.statusCode}');
+    } on TimeoutException catch (e) {
+      log('Timeout Error: $e');
+      return showErrorDialogue(context, ref, ErrorString.requestTimeout.value);
+    } on SocketException catch (e) {
+      log('Socket Error: $e');
+      return showErrorDialogue(context, ref, ErrorString.socket.value);
+    } on Error catch (e) {
+      log('General Error HFR: $e');
+      return showErrorDialogue(
+          context, ref, ErrorString.somethingWrongAdmin.value);
+    } catch (e) {
+      log('All other Errors: $e');
       return showErrorDialogue(
           context, ref, ErrorString.somethingWrongAdmin.value);
     }

@@ -1,22 +1,23 @@
-import 'dart:developer' show log;
-
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:intl/intl.dart';
 import 'package:news_app/common/common_widgets.dart';
 import 'package:news_app/features/subscription/repository/category_repo.dart';
 import 'package:news_app/features/app_bar/app_drawer.dart';
 import 'package:news_app/features/subscription/category_providers.dart';
 
+import '../../../common/common_methods.dart';
 import '../../../common/constants.dart';
 import '../../../common/enums.dart';
+import '../../../common_widgets/build_popup_menu_button.dart';
+import '../../../common_widgets/build_top_bar.dart';
+import '../../../components/app_back_button.dart';
 import '../../home/providers/home_providers.dart';
 import '../../home/repository/home_feed_repo.dart';
-import '../../details/screens/news_details_screen.dart';
 import '../../home/screens/home_feed_screen.dart';
 import '../../search/screens/search_screen.dart';
 
+/// Providers
 final catSortProvider = StateProvider<Sort>((ref) => Sort.descending);
 
 final isShowReadCatProvider = StateProvider<bool>((ref) => false);
@@ -45,22 +46,23 @@ final catIsNextProvider = StateProvider.family<bool, int>(
   },
 );
 
+/// Widgets
 class CategoryScreen extends HookConsumerWidget {
   static const routeNamed = '/category-screen';
 
   final int catId;
   final String catTitle;
+  final bool isBackButton;
 
   const CategoryScreen({
     super.key,
     required this.catId,
     required this.catTitle,
+    required this.isBackButton,
   });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    log('************ CATEGORY SCREEN *****************');
-
     final isCatLoading = ref.watch(isCatLoadingProvider);
     final isCatLoadingController = ref.watch(isCatLoadingProvider.notifier);
 
@@ -143,7 +145,7 @@ class CategoryScreen extends HookConsumerWidget {
     }
 
     /// Sort
-    void sortFunction() {
+    void sortCatFunction() {
       isCatLoadingController.update((state) => true);
       ref.refresh(homeOffsetProvider.notifier).update((state) => 0);
       ref.refresh(catOffsetProvider.notifier).update((state) => 0);
@@ -162,7 +164,7 @@ class CategoryScreen extends HookConsumerWidget {
     }
 
     /// Show Read
-    void showRead() {
+    void readCatFunction() {
       isCatLoadingController.update((state) => true);
 
       isShowReadCatController.update((state) => state = !state);
@@ -173,34 +175,55 @@ class CategoryScreen extends HookConsumerWidget {
     }
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(catTitle),
-        actions: [
-          IconButton(
-            onPressed: () {
-              Navigator.of(context).pushNamed(SearchScreen.routeNamed);
-            },
-            icon: const Icon(Icons.search),
-          ),
-          buildPopupMenuButton(
-            ref: ref,
-            isShowRead: isShowReadCat,
-            sort: catSort,
-            sortFunction: sortFunction,
-            read: showRead,
-          ),
-        ],
-      ),
+      appBar: isBackButton == true
+          ? AppBar(
+              title: Text(catTitle),
+              leading: const AppBackButton(controller: false),
+              actions: [
+                IconButton(
+                  onPressed: () {
+                    Navigator.of(context).pushNamed(SearchScreen.routeNamed);
+                  },
+                  icon: const Icon(Icons.search),
+                ),
+                buildPopupMenuButton(
+                  ref: ref,
+                  isShowRead: isShowReadCat,
+                  sort: catSort,
+                  sortFunction: sortCatFunction,
+                  readFunction: readCatFunction,
+                ),
+              ],
+            )
+          : AppBar(
+              title: Text(catTitle),
+              actions: [
+                IconButton(
+                  onPressed: () {
+                    Navigator.of(context).pushNamed(SearchScreen.routeNamed);
+                  },
+                  icon: const Icon(Icons.search),
+                ),
+                buildPopupMenuButton(
+                  ref: ref,
+                  isShowRead: isShowReadCat,
+                  sort: catSort,
+                  sortFunction: sortCatFunction,
+                  readFunction: readCatFunction,
+                ),
+              ],
+            ),
       drawer: const AppDrawer(),
       body: Column(
         children: [
           // Top Column
-          buildTopColumn(
+          buildTopBar(
             isCatLoading,
             canGoToPreviousPage,
             previous,
             canGoToNextPage,
             next,
+            ref,
           ),
 
           // DISPLAY BODY //
@@ -222,15 +245,12 @@ class CategoryScreen extends HookConsumerWidget {
                       final newsItem = catNewsNotifier[index];
                       final dateTime = getDate(newsItem);
 
-                      // return buildExpansionWidget(
-                      //   newsItem,
-                      //   dateTime,
-                      //   context,
-                      //   newsNotifierController,
-                      // );
-
-                      return BuildExpansionWidget(
-                        newsItem: newsItem,
+                      return buildExpansionWidget(
+                        newsItem,
+                        dateTime,
+                        context,
+                        newsNotifierController,
+                        ref,
                       );
                     },
                   ),

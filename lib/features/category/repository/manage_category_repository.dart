@@ -14,7 +14,6 @@ import '../../../common/enums.dart';
 import '../../../models/model.dart';
 import '../../authentication/repository/auth_repo.dart';
 
-
 // /// Future Provider
 // final catFeedRepoFuture =
 //     FutureProvider.family<List<CategoryList>, BuildContext>((ref, context) {
@@ -27,15 +26,15 @@ import '../../authentication/repository/auth_repo.dart';
 // });
 
 /// State Provider
-final catFeedRepoProvider =
-    StateNotifierProvider<CategoryFeedRepository, List<CategoryList>>((ref) {
+final manageCateNotifierProvider =
+    StateNotifierProvider<ManageCategoryRepository, List<CategoryList>>((ref) {
   final userPrefs = ref.watch(userPrefsProvider);
   final userPassEncoded = userPrefs.getAuthData();
   final baseUrl = userPrefs.getUrlData();
 
   // final catId = ref.watch(categoryIdProvider);
 
-  return CategoryFeedRepository(
+  return ManageCategoryRepository(
     ref,
     userPrefs,
     // catId,
@@ -45,7 +44,7 @@ final catFeedRepoProvider =
 });
 
 /// State Notifier
-class CategoryFeedRepository extends StateNotifier<List<CategoryList>> {
+class ManageCategoryRepository extends StateNotifier<List<CategoryList>> {
   final StateNotifierProviderRef ref;
   final UserPreferences userPrefs;
 
@@ -53,7 +52,7 @@ class CategoryFeedRepository extends StateNotifier<List<CategoryList>> {
   final String? userPassEncoded;
   final String? baseUrl;
 
-  CategoryFeedRepository(
+  ManageCategoryRepository(
     this.ref,
     this.userPrefs,
     // this.categoryId,
@@ -121,10 +120,10 @@ class CategoryFeedRepository extends StateNotifier<List<CategoryList>> {
 
   /// Delete
   Future<void> deleteCatFeed(
-    BuildContext currentContext,
+    BuildContext context,
     CategoryList categoryItem,
   ) async {
-    final int itemId = categoryItem.id; // Feed item id
+    final int itemId = categoryItem.id;
     final String catTitle = categoryItem.title;
 
     final catItem = state.firstWhere((e) => e.id == itemId);
@@ -149,14 +148,14 @@ class CategoryFeedRepository extends StateNotifier<List<CategoryList>> {
 
       if (res.statusCode == 204) {
         showSnackBar(
-          context: currentContext,
+          context: context,
           text: 'Successfully deleted $catTitle',
         );
       } else {
         state = [...state]..insert(itemIndex, catItem);
 
         showErrorSnackBar(
-          context: currentContext,
+          context: context,
           text: ErrorString.catNotDelete.value,
         );
       }
@@ -165,50 +164,58 @@ class CategoryFeedRepository extends StateNotifier<List<CategoryList>> {
       // state = [...state].insert(itemIndex, catItem);
 
       showErrorSnackBar(
-          context: currentContext,
+          context: context,
           text:
               '${ErrorString.catNotDelete.value} ${ErrorString.timeout.value}');
     } on SocketException catch (_) {
       state = [...state]..insert(itemIndex, catItem);
 
       showErrorSnackBar(
-        context: currentContext,
+        context: context,
         text:
             '${ErrorString.catNotDelete.value} ${ErrorString.checkInternet.value}',
       );
     } catch (e) {
       state = [...state]..insert(itemIndex, catItem);
 
-      showErrorSnackBar(context: currentContext, text: '$e');
+      showErrorSnackBar(context: context, text: '$e');
     }
   }
 
-  ///
-  Future<void> updateCatFeed(
-    BuildContext context, // currentScaffoldKey
-    int id,
-    String newCategoryTitle,
-  ) async {
-    checkAuth(context, userPassEncoded, baseUrl, userPrefs);
+  Future<void> updateCatFeedName({
+    required BuildContext listContext,
+    required int feedId,
+    required int catId,
+    required String newFeedTitle,
+  }) async {
+    checkAuth(listContext, userPassEncoded, baseUrl, userPrefs);
+    final navigator = Navigator.of(listContext);
 
     try {
       final res = await putHttpResp(
           uri: null,
-          url: 'https://$baseUrl/v1/categories/$id',
+          url: 'https://$baseUrl/v1/feeds/$feedId',
           userPassEncoded: userPassEncoded,
-          bodyMap: {"title": newCategoryTitle});
+          bodyMap: {
+            "title": newFeedTitle,
+            "category_id": catId,
+          });
 
       if (res.statusCode == 201) {
-        if (!mounted) return;
-        Navigator.of(context).pop();
+        navigator.pop();
+
+        state = [
+          for (final item in state)
+            if (item.id == feedId) item.copyWith(title: newFeedTitle) else item,
+        ];
 
         showSnackBar(
-          context: context,
-          text: 'Name changed to $newCategoryTitle',
+          context: listContext,
+          text: 'Name changed to $newFeedTitle',
         );
       } else {
         showErrorSnackBar(
-          context: context,
+          context: listContext,
           text: 'Name change unsuccessful',
         );
       }
@@ -219,14 +226,14 @@ class CategoryFeedRepository extends StateNotifier<List<CategoryList>> {
       log('Socket Error: $e');
 
       showSnackBar(
-        context: context,
+        context: listContext,
         text: 'Please check Internet Connectivity',
       );
     } on Error catch (e) {
       log('General Error: $e');
     } catch (e) {
       log('UPDATE-SUBS: $e');
-      showSnackBar(context: context, text: '$e');
+      showSnackBar(context: listContext, text: '$e');
     }
   }
 

@@ -7,13 +7,13 @@ import '../authentication/repository/auth_repo.dart';
 final userNotifierProvider =
 StateNotifierProvider<UserNotifier, User?>((ref) {
   final userPrefs = ref.watch(userPrefsProvider);
-  final baseUrl = userPrefs.getUrlData();
-  final userPassEncoded = userPrefs.getAuthData();
+  final baseUrl = userPrefs.getUrlData() ?? '';
+  final userPassEncoded = userPrefs.getAuthData() ?? '';
 
   return UserNotifier(
     userPrefs,
-    baseUrl!,
-    userPassEncoded!,
+    baseUrl,
+    userPassEncoded,
     ref,
   );
 });

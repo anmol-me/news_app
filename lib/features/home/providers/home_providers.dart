@@ -14,9 +14,10 @@ final homeOrderProvider = StateProvider<OrderBy>((ref) => OrderBy.publishedAt);
 
 final homeIsShowReadProvider = StateProvider<bool>((ref) => false);
 
-// final homeIsLoadingBookmarkProvider = StateProvider<bool>((ref) => false);
+final homeIsLoadingBookmarkProvider = StateProvider<bool>((ref) => false);
+final isStarredProvider = StateProvider<bool>((ref) => false);
 
-final homeIsLoadingPageProvider = StateProvider<bool>((ref) => false);
+final homePageLoadingProvider = StateProvider<bool>((ref) => false);
 
 // final homeIsSelectedProvider =
 //     StateProvider<List<bool>>((ref) => [true, false, false]);
@@ -26,7 +27,7 @@ final homeMaxPagesProvider = FutureProvider((ref) {
   return totalPages;
 });
 
-final homePageHandlerProvider = StateProvider((ref) => 0);
+final homeCurrentPageProvider = StateProvider((ref) => 1);
 
 final homeIsNextProvider = StateProvider(
   (ref) {
@@ -37,9 +38,9 @@ final homeIsNextProvider = StateProvider(
     // final currTotalPage = ((newsNotifier.length + offset) / 100).ceil().toInt();
     // log('MAX: $max, CURR: $curr');
 
-    final homePageHandler = ref.watch(homePageHandlerProvider);
+    final currentPage = ref.watch(homeCurrentPageProvider);
 
-    final currentPage = 1 + homePageHandler;
+    // final currentPage = 1 + homePageHandler;
 
     if (maxPages == currentPage) {
       return false;
@@ -49,17 +50,18 @@ final homeIsNextProvider = StateProvider(
   },
 );
 
-void refreshProviders(WidgetRef ref) {
-  log('1');
+void refreshWidgetProviders(WidgetRef ref) {
   ref.refresh(homeOffsetProvider.notifier).update((state) => 0);
-  log('2');
   ref.refresh(homeSortDirectionProvider).value;
-  log('3');
   ref.refresh(isStarredProvider.notifier).update((state) => false);
-  log('4');
   ref.refresh(homeIsShowReadProvider.notifier).update((state) => false);
-  log('5');
-  log('6');
+}
+
+void refreshProviders(Ref ref) {
+  ref.refresh(homeOffsetProvider.notifier).update((state) => 0);
+  ref.refresh(homeSortDirectionProvider).value;
+  ref.refresh(isStarredProvider.notifier).update((state) => false);
+  ref.refresh(homeIsShowReadProvider.notifier).update((state) => false);
 }
 
 // final sortProvider = StateProvider<bool>((ref) => false);

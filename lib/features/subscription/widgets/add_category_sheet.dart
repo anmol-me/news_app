@@ -7,7 +7,7 @@ import 'package:news_app/features/subscription/repository/category_list_repo.dar
 
 import '../../../common/common_widgets.dart';
 import '../../../common/constants.dart';
-import '../screens/select_subscription_screen.dart';
+import '../screens/select_subscription_screen/select_subscription_screen.dart';
 
 final isCreateCatLoadingProvider = StateProvider<bool>((ref) => false);
 

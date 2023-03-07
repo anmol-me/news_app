@@ -6,6 +6,16 @@ class CategoryList {
     required this.id,
     required this.title,
   });
+
+  CategoryList copyWith({
+    int? id,
+    String? title,
+  }) {
+    return CategoryList(
+      id: id ?? this.id,
+      title: title ?? this.title,
+    );
+  }
 }
 
 

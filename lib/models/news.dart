@@ -1,12 +1,10 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:news_app/common/enums.dart';
 
-part 'news.g.dart';
-
-@JsonSerializable()
 class News {
   final int entryId;
   final int feedId;
+  final int catId;
   final String categoryTitle;
   final String titleText;
   final String author;
@@ -22,6 +20,7 @@ class News {
   News({
     required this.entryId,
     required this.feedId,
+    required this.catId,
     required this.categoryTitle,
     required this.titleText,
     required this.author,
@@ -35,13 +34,47 @@ class News {
     this.isExpanded = false,
   });
 
-  factory News.fromJson(Map<String, dynamic> json) => _$NewsFromJson(json);
+  // factory News.fromJson(Map<String, dynamic> json) => _$NewsFromJson(json);
 
-  Map<String, dynamic> toJson() => _$NewsToJson(this);
+  News.fromJson(Map<String, dynamic> json)
+      : entryId = json['entryId'],
+        feedId = json['feedId'],
+        catId = json['catId'],
+        categoryTitle = json['categoryTitle'],
+        titleText = json['titleText'],
+        author = json['author'],
+        readTime = json['readTime'],
+        isFav = json['isFav'],
+        link = json['link'],
+        content = json['content'],
+        imageUrl = json['imageUrl'],
+        status = json['status'],
+        publishedTime = json['publishedTime'],
+        isExpanded = json['isExpanded'];
+
+  // Map<String, dynamic> toJson() => _$NewsToJson(this);
+
+  Map<String, dynamic> toJson() => {
+    'entryId': entryId,
+    'feedId': feedId,
+    'catId': catId,
+    'categoryTitle': categoryTitle,
+    'titleText': titleText,
+    'author': author,
+    'readTime': readTime,
+    'isFav': isFav,
+    'link': link,
+    'content': content,
+    'imageUrl': imageUrl,
+    'status': status,
+    'publishedTime': publishedTime,
+    'isExpanded': isExpanded,
+  };
 
   News copyWith({
     int? entryId,
     int? feedId,
+    int? catId,
     String? categoryTitle,
     String? titleText,
     String? author,
@@ -58,6 +91,7 @@ class News {
     return News(
       entryId: entryId ?? this.entryId,
       feedId: feedId ?? this.feedId,
+      catId: catId ?? this.catId,
       categoryTitle: categoryTitle ?? this.categoryTitle,
       titleText: titleText ?? this.titleText,
       author: author ?? this.author,

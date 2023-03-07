@@ -3,17 +3,20 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../../common/common_widgets.dart';
-import '../../category/repository/category_feed_repository.dart';
+import '../../../common/sizer.dart';
+import '../../../components/app_back_button.dart';
+import '../../../components/app_text_form_field.dart';
+import '../repository/category_list_repo.dart';
 
 final isTitleUpdatingProvider = StateProvider((ref) => false);
 
-class EditSubscription extends HookConsumerWidget {
-  static const routeNamed = '/edit-subs';
+class EditSubscriptionScreen extends HookConsumerWidget {
+  static const routeNamed = '/edit-subs-screen';
 
   final String oldTitle;
   final int listItemId;
 
-  const EditSubscription({
+  const EditSubscriptionScreen({
     super.key,
     required this.oldTitle,
     required this.listItemId,
@@ -21,10 +24,8 @@ class EditSubscription extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final formKey = GlobalKey<FormState>();
+    final formKey = useMemoized(GlobalKey<FormState>.new, const []);
     final newTitleController = useTextEditingController();
-
-    final catFeedRepo = ref.watch(catFeedRepoProvider.notifier);
 
     final isTitleUpdating = ref.watch(isTitleUpdatingProvider);
     final isTitleUpdatingController =
@@ -33,6 +34,9 @@ class EditSubscription extends HookConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('Edit $oldTitle'),
+        leading: AppBackButton(
+          controller: isTitleUpdating,
+        ),
       ),
       body: isTitleUpdating
           ? const LinearLoader()
@@ -43,33 +47,38 @@ class EditSubscription extends HookConsumerWidget {
                 child: Column(
                   // crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    TextFormField(
+                    AppTextFormField(
                       controller: newTitleController,
-                      decoration: const InputDecoration(
-                        labelText: 'New Title',
-                      ),
-                    ),
-                    const SizedBox(height: 10),
-                    ElevatedButton(
-                      onPressed: () {
-                        isTitleUpdatingController.update((state) => true);
-                        catFeedRepo
-                            .updateCatFeed(
-                              context,
-                              listItemId,
-                              newTitleController.text,
-                            )
-                            .then(
-                              (_) => isTitleUpdatingController
-                                  .update((state) => false),
-                            );
-                      },
-                      child: const Text('Update'),
+                      labelText: 'New Title',
                     ),
                   ],
                 ),
               ),
             ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      floatingActionButton: Sizer(
+        widthMobile: 0.95,
+        child: ElevatedButton(
+          onPressed: isTitleUpdating
+              ? null
+              : () {
+                  isTitleUpdatingController.update((state) => true);
+
+                  ref
+                      .read(categoryListNotifierProvider.notifier)
+                      .updateCategoryName(
+                        context,
+                        listItemId,
+                        newTitleController.text,
+                      )
+                      .then(
+                        (_) =>
+                            isTitleUpdatingController.update((state) => false),
+                      );
+                },
+          child: const Text('Update'),
+        ),
+      ),
     );
   }
 }

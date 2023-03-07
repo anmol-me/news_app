@@ -4,6 +4,7 @@ import 'dart:developer' show log;
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:http/http.dart' as http;
 import 'package:html/parser.dart' as html_parser;
@@ -68,6 +69,7 @@ Future<http.Response> postHttpResp({
   userPassEncoded,
 }) async {
   if (url != null && bodyMap != null) {
+    log('1');
     return await http.post(
       url,
       body: jsonEncode(bodyMap),
@@ -77,6 +79,7 @@ Future<http.Response> postHttpResp({
       },
     );
   } else if (url != null) {
+    log('2');
     return await http.post(
       Uri.parse('https://$url'),
       headers: {
@@ -85,6 +88,7 @@ Future<http.Response> postHttpResp({
       },
     );
   } else if (uri != null) {
+    log('3');
     return await http.post(
       uri,
       headers: {
@@ -93,7 +97,7 @@ Future<http.Response> postHttpResp({
       },
     );
   }
-
+  log('4: Default');
   return await http.post(
     url!,
     body: jsonEncode(bodyMap),
@@ -114,7 +118,10 @@ void checkAuth(
       userPassEncoded.isEmpty ||
       baseUrl == null ||
       baseUrl.isEmpty) {
-    Navigator.of(context).pushNamed(AuthScreen.routeNamed);
+    context.pushNamed(AuthScreen.routeNamed);
+
+    /// Todo: Nav
+    // Navigator.of(context).pushNamed(AuthScreen.routeNamed);
 
     userPrefs.clearPrefs();
 

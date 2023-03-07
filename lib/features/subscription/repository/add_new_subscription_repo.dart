@@ -5,9 +5,9 @@ import 'dart:developer' show log;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
+import 'package:http/http.dart';
 import 'package:news_app/features/authentication/repository/auth_repo.dart';
 import 'package:news_app/features/home/screens/home_feed_screen.dart';
-
 
 import '../../../common/backend_methods.dart';
 import '../../../common/common_widgets.dart';
@@ -17,7 +17,8 @@ Map<int, String> errorMessages = {
   400: "Please check your Url",
   401: "You don't have authorization",
   403: "Forbidden request",
-  500: "Unable to reach your website",
+  404: "Could not find feed",
+  500: "Server error. Could not complete your request",
 };
 
 // const error400 = "Please check your Url";
@@ -27,9 +28,12 @@ Map<int, String> errorMessages = {
 
 final feedIdProvider = StateProvider((ref) => []);
 
-final addNewSubscriptionProvider =
-    StateNotifierProvider<AddNewSubscriptionNotifier, List<AddNewSubscription>>(
+final addNewSubscriptionProvider = StateNotifierProvider.autoDispose<
+    AddNewSubscriptionNotifier, List<AddNewSubscription>>(
   (ref) {
+    ref.onDispose(() {
+      print('Discover disposed');
+    });
     final userPrefs = ref.watch(userPrefsProvider);
     final userPassEncoded = userPrefs.getAuthData();
     final url = userPrefs.getUrlData();
@@ -72,31 +76,49 @@ class AddNewSubscriptionNotifier
         bodyMap: {"url": checkUrl},
       );
 
-      log('${res.statusCode}');
-      catchServerError(res: res, context: context);
+      log('Discover-> POST -> Code: ${res.statusCode}');
+      catchServerErrorDiscovery(res: res, context: context);
+      // ServerErrorDiscoveryException(context, res).throwException();
+      log('Will it be executed?');
+      if (res.statusCode == 200) {
+        List<dynamic> decodedData = jsonDecode(res.body);
 
-      List<dynamic> decodedData = jsonDecode(res.body);
+        final List<AddNewSubscription> fetchedCategoryList = [];
 
-      final List<AddNewSubscription> fetchedCategoryList = [];
+        for (var i = 0; i < decodedData.length; i++) {
+          // log('Cat: ${decodedData[i]}');
+          var info = decodedData[i];
 
-      for (var i = 0; i < decodedData.length; i++) {
-        // log('Cat: ${decodedData[i]}');
-        var info = decodedData[i];
+          final fetchedCategory = AddNewSubscription(
+            title: info['title'],
+            url: info['url'],
+          );
 
-        final fetchedCategory = AddNewSubscription(
-          title: info['title'],
-          url: info['url'],
-        );
+          fetchedCategoryList.add(fetchedCategory);
+        }
+        state = fetchedCategoryList;
+      } // 200
 
-        fetchedCategoryList.add(fetchedCategory);
-      }
-      state = fetchedCategoryList;
+      // catchServerErrorDiscovery(res: res, context: context);
+
+      // else if (res.statusCode == 404) {
+      //   log('Error is 404');
+      //   // showSnackBar(context: context, text: errorMessages[res.statusCode]!);
+      // } else if (res.statusCode == 500) {
+      //   log('Error is 500');
+      //   showSnackBar(context: context, text: errorMessages[res.statusCode]!);
+      //   return;
+      // }
     } on TimeoutException catch (e) {
       log('CAT-DISC: $e');
       showSnackBar(
           context: context,
           text: 'Connection Timeout. Could not connect to the server');
+    } on ServerErrorDiscoveryException catch (e) {
+      log('Server Catch: ${e}');
+      showSnackBar(context: context, text: '${e}');
     } catch (e) {
+      log('General Catch');
       log('CAT-DISC: $e');
       showSnackBar(context: context, text: 'An Error Occurred');
     }
@@ -270,9 +292,60 @@ class AddNewSubscriptionNotifier
 //
 }
 
-void catchServerError({required res, required context}) {
+void catchServerError({
+  required Response res,
+  required BuildContext context,
+}) {
   if (res.statusCode >= 400 && res.statusCode <= 599) {
     showSnackBar(context: context, text: errorMessages[res.statusCode]!);
     return;
   }
+}
+
+void catchServerErrorDiscovery({
+  required Response res,
+  required BuildContext context,
+}) {
+  if (res.statusCode == 404) {
+    log('Hey 404');
+    showSnackBar(context: context, text: errorMessages[res.statusCode]!);
+    return;
+  } else if (res.statusCode == 500) {
+    log('Hey 500');
+    // return;
+    throw ServerErrorDiscoveryException(res);
+  } else if (res.statusCode >= 400 && res.statusCode <= 599) {
+    log('Hey 400 to 600');
+    showSnackBar(context: context, text: errorMessages[res.statusCode]!);
+    return;
+  }
+}
+
+class ServerErrorDiscoveryException implements Exception {
+  // final BuildContext context;
+  final Response res;
+
+  ServerErrorDiscoveryException(
+    // this.context,
+    this.res,
+  );
+
+  @override
+  String toString() => errorMessages[res.statusCode]!;
+
+// void throwException() {
+//   if (res.statusCode == 404) {
+//     log('Hey 404');
+//     showSnackBar(context: context, text: errorMessages[res.statusCode]!);
+//     throw ServerErrorDiscoveryException(context, res);
+//   } else if (res.statusCode == 500) {
+//     log('Hey 500');
+//     showSnackBar(context: context, text: errorMessages[res.statusCode]!);
+//     throw ServerErrorDiscoveryException(context, res);
+//   } else if (res.statusCode >= 400 && res.statusCode <= 599) {
+//     log('Hey 400 to 600');
+//     showSnackBar(context: context, text: errorMessages[res.statusCode]!);
+//     throw ServerErrorDiscoveryException(context, res);
+//   }
+// }
 }

@@ -14,7 +14,7 @@ import '../../../common/enums.dart';
 import '../../../common/frontend_methods.dart';
 import '../../../common/error_screen.dart';
 import '../../../models/model.dart';
-import '../screens/select_subscription_screen.dart';
+import '../screens/select_subscription_screen/select_subscription_screen.dart';
 
 final isDeletingCatProvider = StateProvider((ref) => false);
 
@@ -23,13 +23,13 @@ final categoryListNotifierProvider =
   (ref) {
     final userPrefs = ref.watch(userPrefsProvider);
     String? userPassEncoded = userPrefs.getAuthData();
-    String? url = userPrefs.getUrlData();
+    String? baseUrl = userPrefs.getUrlData();
 
     return CategoryListNotifier(
       ref,
       userPrefs,
       userPassEncoded!,
-      url!,
+      baseUrl!,
     );
   },
 );
@@ -38,13 +38,13 @@ class CategoryListNotifier extends StateNotifier<List<CategoryList>> {
   final StateNotifierProviderRef ref;
   final UserPreferences userPrefs;
   final String userPassEncoded;
-  final String url;
+  final String baseUrl;
 
   CategoryListNotifier(
     this.ref,
     this.userPrefs,
     this.userPassEncoded,
-    this.url,
+    this.baseUrl,
   ) : super([]);
 
   /// Fetch Categories
@@ -53,14 +53,9 @@ class CategoryListNotifier extends StateNotifier<List<CategoryList>> {
   ) async {
     log('Fetch Categories Ran');
 
-    /// TODO: Add Everywhere
-    if (userPassEncoded.isEmpty || url.isEmpty) {
-      navigateError(context, ErrorString.somethingWrongAuth.value);
-    }
-
     try {
       // https://read.rusi.me/v1/categories
-      Uri uri = Uri.https(url, 'v1/categories', {});
+      Uri uri = Uri.https(baseUrl, 'v1/categories', {});
 
       http.Response res = await getHttpResp(uri, userPassEncoded);
 
@@ -103,7 +98,7 @@ class CategoryListNotifier extends StateNotifier<List<CategoryList>> {
       final res = await postHttpResp(
         uri: null,
         userPassEncoded: userPassEncoded,
-        url: Uri.parse('https://$url/v1/categories'),
+        url: Uri.parse('https://$baseUrl/v1/categories'),
         bodyMap: {"title": categoryTitle},
       );
 
@@ -150,7 +145,7 @@ class CategoryListNotifier extends StateNotifier<List<CategoryList>> {
 
   /// Delete
   Future<void> deleteCategory(
-    BuildContext currentContext,
+    BuildContext listContext,
     int catId,
     String catTitle,
   ) async {
@@ -162,10 +157,8 @@ class CategoryListNotifier extends StateNotifier<List<CategoryList>> {
         if (item.id != catId) item,
     ];
 
-    Navigator.of(currentContext).pop();
-
     // 'https://read.rusi.me/v1/categories/$id
-    Uri uri = Uri.https(url, 'v1/categoriesaa/$catId');
+    Uri uri = Uri.https(baseUrl, 'v1/categoriesaa/$catId');
 
     try {
       final res = await http.delete(
@@ -178,14 +171,14 @@ class CategoryListNotifier extends StateNotifier<List<CategoryList>> {
 
       if (res.statusCode == 204) {
         showSnackBar(
-          context: currentContext,
+          context: listContext,
           text: 'Successfully deleted $catTitle',
         );
       } else {
         state = [...state]..insert(itemIndex, catItem);
 
         showErrorSnackBar(
-          context: currentContext,
+          context: listContext,
           text: ErrorString.catNotDelete.value,
         );
       }
@@ -194,21 +187,72 @@ class CategoryListNotifier extends StateNotifier<List<CategoryList>> {
       // state = [...state].insert(itemIndex, catItem);
 
       showErrorSnackBar(
-          context: currentContext,
+          context: listContext,
           text:
               '${ErrorString.catNotDelete.value} ${ErrorString.timeout.value}');
     } on SocketException catch (_) {
       state = [...state]..insert(itemIndex, catItem);
 
       showErrorSnackBar(
-        context: currentContext,
+        context: listContext,
         text:
             '${ErrorString.catNotDelete.value} ${ErrorString.checkInternet.value}',
       );
     } catch (e) {
       state = [...state]..insert(itemIndex, catItem);
 
-      showErrorSnackBar(context: currentContext, text: '$e');
+      showErrorSnackBar(context: listContext, text: '$e');
+    }
+  }
+
+  Future<void> updateCategoryName(
+    BuildContext context,
+    int id,
+    String newCategoryTitle,
+  ) async {
+    checkAuth(context, userPassEncoded, baseUrl, userPrefs);
+    final navigator = Navigator.of(context);
+
+    try {
+      final res = await putHttpResp(
+          uri: null,
+          url: 'https://$baseUrl/v1/categories/$id',
+          userPassEncoded: userPassEncoded,
+          bodyMap: {"title": newCategoryTitle});
+
+      if (res.statusCode == 201) {
+        navigator.pop();
+
+        state = [
+          for (final item in state)
+            if (item.id == id) item.copyWith(title: newCategoryTitle) else item,
+        ];
+
+        showSnackBar(
+          context: context,
+          text: 'Name changed to $newCategoryTitle',
+        );
+      } else {
+        showErrorSnackBar(
+          context: context,
+          text: 'Name change unsuccessful',
+        );
+      }
+      log('UPDATE-SUBS-C: ${res.statusCode}');
+    } on TimeoutException catch (e) {
+      log('Timeout Error: $e');
+    } on SocketException catch (e) {
+      log('Socket Error: $e');
+
+      showSnackBar(
+        context: context,
+        text: 'Please check Internet Connectivity',
+      );
+    } on Error catch (e) {
+      log('General Error: $e');
+    } catch (e) {
+      log('UPDATE-SUBS: $e');
+      showSnackBar(context: context, text: '$e');
     }
   }
 

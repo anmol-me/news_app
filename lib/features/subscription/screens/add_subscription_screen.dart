@@ -29,8 +29,10 @@ class AddSubscription extends HookConsumerWidget {
     final formKey = useMemoized(() => GlobalKey<FormState>());
     // final _formKey = useMemoized(GlobalKey<FormState>.new, const []);
 
+    // final urlController =
+    //     useTextEditingController(text: 'https://news.google.com');
     final urlController =
-        useTextEditingController(text: 'https://news.google.com');
+        useTextEditingController(text: 'https://feeds.feedburner.com/TheHackersNew');
     final catNameController = useTextEditingController();
 
     // final catNewsNotifier = ref.watch(categoryNotifierProvider);
@@ -87,12 +89,15 @@ class AddSubscription extends HookConsumerWidget {
           );
     }
 
-    return WillPopScope(
-      onWillPop: () async {
-        discoverSubscription.clear();
-        return await Future.value(true);
-      },
-      child: Scaffold(
+    return
+      // WillPopScope(
+      // onWillPop: () async {
+      //   log('Discovered cleared');
+      //   discoverSubscription.clear();
+      //   return await Future.value(true);
+      // },
+      // child:
+      Scaffold(
         appBar: AppBar(
           title: const Text('Add Subscription'),
         ),
@@ -183,7 +188,7 @@ class AddSubscription extends HookConsumerWidget {
             ),
           ),
         ),
-      ),
+      // ),
     );
   }
 }
