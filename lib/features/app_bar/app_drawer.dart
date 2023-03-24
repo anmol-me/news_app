@@ -65,8 +65,6 @@ class AppDrawer extends HookConsumerWidget {
     final appBarRepo = ref.read(appBarRepoProvider);
     final isStarred = ref.watch(isStarredProvider);
 
-    final navigator = Navigator.of(context);
-
     return Drawer(
       child: SingleChildScrollView(
         child: Column(
@@ -118,7 +116,7 @@ class AppDrawer extends HookConsumerWidget {
                   title: const Text('Subscription'),
                   onTap: () {
                     if (ref.read(isHomeDrawerOpened)) {
-                      navigator.pop();
+                      Navigator.of(context).pop();
                     }
                     ref.refresh(catSortProvider).value;
                     refreshWidgetProviders(ref);

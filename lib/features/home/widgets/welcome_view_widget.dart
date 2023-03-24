@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../common/constants.dart';
 import '../../subscription/screens/select_subscription_screen/select_subscription_screen.dart';
@@ -33,8 +34,11 @@ class WelcomeViewWidget extends StatelessWidget {
                 backgroundColor: colorRed,
               ),
               onPressed: () {
-                Navigator.of(context)
-                    .pushNamed(SelectSubscriptionScreen.routeNamed);
+                context.pushNamed(SelectSubscriptionScreen.routeNamed);
+
+                // Todo: Nav
+                // Navigator.of(context)
+                //     .pushNamed(SelectSubscriptionScreen.routeNamed);
               },
               child: const Text(
                 'Add Subscription',

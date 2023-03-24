@@ -31,7 +31,9 @@ Future showErrorDialogue(
           onPressed: () {
             Navigator.of(ctx).pop();
             ref.read(userPrefsProvider).clearPrefs();
-            Navigator.of(context).pushNamed(AuthScreen.routeNamed);
+            context.pushNamed(AuthScreen.routeNamed);
+            // Todo: Nav
+            // Navigator.of(context).pushNamed(AuthScreen.routeNamed);
           },
           child: const Text('Exit'),
         ),

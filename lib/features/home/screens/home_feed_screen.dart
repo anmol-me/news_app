@@ -162,7 +162,7 @@ class _HomeFeedScreenState extends ConsumerState<HomeFeedScreen> {
             Expanded(
               child: RefreshIndicator(
                 onRefresh: () => refreshAll(
-                  Navigator.of(context),
+                  // Navigator.of(context),
                   ref,
                   context,
                   isLoadingHomePageController,

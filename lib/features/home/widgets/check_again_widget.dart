@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../common/constants.dart';
 import '../../../common/enums.dart';
@@ -35,7 +36,10 @@ class CheckAgainWidget extends ConsumerWidget {
               ref.refresh(homeIsShowReadProvider.notifier).update((state) => false);
 
               isLoadingPageController.update((state) => false);
-              Navigator.of(context).pushNamed(HomeFeedScreen.routeNamed);
+              context.pushNamed(HomeFeedScreen.routeNamed);
+
+              // Todo: Nav
+              // Navigator.of(context).pushNamed(HomeFeedScreen.routeNamed);
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: colorRed,

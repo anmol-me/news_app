@@ -4,6 +4,7 @@ import 'dart:developer' show log;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 import 'package:news_app/features/authentication/repository/auth_repo.dart';
@@ -175,7 +176,9 @@ class AddNewSubscriptionNotifier
         showSnackBar(context: context, text: 'Subscription successfully Added');
 
         if (!mounted) return;
-        Navigator.of(context).pushNamed(HomeFeedScreen.routeNamed);
+        context.pushNamed(HomeFeedScreen.routeNamed);
+        // Todo: Nav
+        // Navigator.of(context).pushNamed(HomeFeedScreen.routeNamed);
       } else {
         Map<String, dynamic> decodedData = jsonDecode(res.body);
 

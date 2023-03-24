@@ -1,7 +1,9 @@
 import 'dart:developer';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:jiffy/jiffy.dart';
 
@@ -10,23 +12,38 @@ import '../features/home/repository/home_feed_repo.dart';
 import '../models/news.dart';
 
 Future<void> refreshAll(
-  NavigatorState navigator,
+  // NavigatorState navigator,
   WidgetRef ref,
   BuildContext context,
   StateController<bool> isLoadingPageController,
 ) async {
-  log(ModalRoute.of(context)!.settings.name.toString());
+  final currentLocation = GoRouterState.of(context).name;
+  // Todo: GoRouter cleanup
+  // log(ModalRoute.of(context)!.settings.name.toString());
+  log(currentLocation.toString());
   isLoadingPageController.update((state) => true);
 
   refreshWidgetProviders(ref);
 
-  if (ModalRoute.of(context)!.settings.name == '/') {
+  // if (ModalRoute.of(context)!.settings.name == '/') {
+  if (currentLocation == '/home' || currentLocation == '/home-web-screen') {
+    log('refreshed');
     ref.refresh(homeFeedProvider.notifier).fetchEntries(context).then(
           (_) => isLoadingPageController.update((state) => false),
         );
   } else {
     isLoadingPageController.update((state) => false);
-    navigator.pushNamed('/');
+    log('not home page');
+
+    if (kIsWeb) {
+      log('is web');
+      context.pushNamed('/home-web-screen');
+    } else {
+      context.pushNamed('/home');
+    }
+
+    // Todo: Navigator
+    // navigator.pushNamed('/');
   }
 }
 

@@ -31,7 +31,7 @@ import '../repository/home_methods.dart';
 final isHomeDrawerOpened = StateProvider((ref) => false);
 
 class HomeWebScreen extends ConsumerStatefulWidget {
-  static const routeNamed = '/home-feed-screen';
+  static const routeNamed = '/home-web-screen';
 
   const HomeWebScreen({super.key});
 
@@ -152,7 +152,7 @@ class _HomeWebScreenState extends ConsumerState<HomeWebScreen> {
                   Expanded(
                     child: RefreshIndicator(
                       onRefresh: () => refreshAll(
-                        Navigator.of(context),
+                        // Navigator.of(context),
                         ref,
                         context,
                         isLoadingHomePageController,
