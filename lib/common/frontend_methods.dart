@@ -6,7 +6,7 @@ import 'error_screen.dart';
 import '../features/authentication/repository/auth_repo.dart';
 import '../features/authentication/screens/auth_screen.dart';
 
-void navigateError(
+Future<Object?> navigateError(
   BuildContext context,
   String message,
 ) {

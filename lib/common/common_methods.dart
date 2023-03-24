@@ -7,6 +7,7 @@ import 'package:jiffy/jiffy.dart';
 
 import '../features/home/providers/home_providers.dart';
 import '../features/home/repository/home_feed_repo.dart';
+import '../models/news.dart';
 
 Future<void> refreshAll(
   NavigatorState navigator,
@@ -29,8 +30,7 @@ Future<void> refreshAll(
   }
 }
 
-
-String getDate(newsItem) {
+String getDate(News newsItem) {
   final dateFormatted = DateFormat('dd MMM yyyy').format(
     newsItem.publishedTime,
   );
@@ -47,17 +47,15 @@ String getDate(newsItem) {
     DateTime.now().subtract(const Duration(days: 2)),
   );
 
-  final todayTime = Jiffy(
-    newsItem.publishedTime,
-  ).fromNow().toString();
+  final todayTime = Jiffy.parse('${newsItem.publishedTime}').fromNow();
 
   var dateUsed = dateFormatted == now
       ? todayTime
       : dateFormatted == yesterday
-      ? 'Yesterday'
-      : dateFormatted == twoDaysAgo
-      ? '2 days ago'
-      : dateFormatted;
+          ? 'Yesterday'
+          : dateFormatted == twoDaysAgo
+              ? '2 days ago'
+              : dateFormatted;
 
   return dateUsed;
 }
