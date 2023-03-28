@@ -116,7 +116,7 @@ class ManageCategoryScreen extends HookConsumerWidget {
                                   IconButton(
                                     icon: Icon(
                                       Icons.delete,
-                                      color: Theme.of(listContext).errorColor,
+                                      color: Theme.of(listContext).colorScheme.error,
                                     ),
                                     onPressed: () {
                                       isManageProcessingController.update(

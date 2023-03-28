@@ -111,7 +111,7 @@ class CategoryListNotifier extends StateNotifier<List<CategoryList>> {
           SnackBar(
             behavior: SnackBarBehavior.floating,
             duration: const Duration(seconds: 10),
-            backgroundColor: themeCxt.errorColor,
+            backgroundColor: themeCxt.colorScheme.error,
             content: Text(ErrorString.catAlreadyExists.value),
           ),
         );
