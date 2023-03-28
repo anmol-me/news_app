@@ -1,5 +1,5 @@
 import 'dart:developer';
-import 'dart:io' show Platform;
+import 'package:flutter/foundation.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -63,8 +63,8 @@ class SelectSubscriptionScreen extends HookConsumerWidget {
           );
     }
 
-    final isIos = Platform.isAndroid;
-    final isAndroid = Platform.isIOS;
+    final isIos = defaultTargetPlatform == TargetPlatform.android;
+    final isAndroid = defaultTargetPlatform == TargetPlatform.iOS;
 
     return Scaffold(
       appBar: AppBar(
@@ -160,7 +160,7 @@ SubscriptionTile buildSubscriptionTile(
     SubscriptionTile(
       id: subscriptionItem.id,
       children: [
-        if (!Platform.isIOS)
+        if (defaultTargetPlatform != TargetPlatform.iOS)
           IconButton(
             onPressed: () => showModelSheet(
               listContext: listContext,
@@ -179,10 +179,10 @@ class ClearSubscriptionView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
+    return const Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
-        children: const [
+        children: [
           Text(
             'Add subscription to get started',
             textAlign: TextAlign.center,
