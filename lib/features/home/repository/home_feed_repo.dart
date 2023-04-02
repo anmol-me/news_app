@@ -344,7 +344,6 @@ class HomeFeedNotifier extends StateNotifier<List<News>> {
 //     rethrow;
 //   }
 // }
-
 }
 
 // final getCountProvider =

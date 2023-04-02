@@ -179,10 +179,10 @@ class ClearSubscriptionView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Center(
+    return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
-        children: [
+        children: const [
           Text(
             'Add subscription to get started',
             textAlign: TextAlign.center,

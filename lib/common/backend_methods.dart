@@ -69,6 +69,8 @@ Future<http.Response> postHttpResp({
   userPassEncoded,
 }) async {
   if (url != null && bodyMap != null) {
+
+    // Todo: Cleanup
     log('1');
     return await http.post(
       url,
@@ -134,15 +136,12 @@ void checkAuth(
 
 String getImageUrl(info) {
   // if (info['content']!.contains('img alt')) {
-  if (html_parser
-      .parse(info['content'])
-      .getElementsByTagName('img')
-      .isNotEmpty) {
-    return html_parser
-            .parse(info['content'])
-            .getElementsByTagName('img')[0]
-            .attributes['src'] ??
-        '';
+
+  final imageUrl =
+      html_parser.parse(info['content']).getElementsByTagName('img');
+
+  if (imageUrl.isNotEmpty) {
+    return imageUrl[0].attributes['src'] ?? '';
   } else {
     return '';
   }
