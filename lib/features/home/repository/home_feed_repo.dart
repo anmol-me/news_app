@@ -231,12 +231,12 @@ class HomeFeedNotifier extends StateNotifier<List<News>> {
         uri: null,
         bodyMap: {
           "entry_ids": [newsId],
-          "status": 'unread',
+          "status": stat.value,
         },
         userPassEncoded: userPassEncoded,
       );
 
-      log('${res.statusCode}');
+      log('Toggle Read -> ${res.statusCode} -> ${stat.value}');
     } on TimeoutException catch (e) {
       log('Timeout Error: $e');
       return showErrorDialogue(context, ref, ErrorString.requestTimeout.value);
