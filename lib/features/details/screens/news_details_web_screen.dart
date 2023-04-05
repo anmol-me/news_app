@@ -58,10 +58,7 @@ class NewsDetailsWebScreen extends ConsumerWidget {
                 ),
               ),
               ReadButton(entryId: newsItem.entryId),
-              IconButton(
-                onPressed: () => Share.share(newsItem.link),
-                icon: Icon(Icons.share, color: colorRed),
-              ),
+              const SizedBox(width: 10),
             ],
           ),
         ],
