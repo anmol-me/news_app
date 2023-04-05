@@ -11,6 +11,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../common/common_widgets.dart';
 import '../common/constants.dart';
+import '../common/enums.dart';
 import '../models/news.dart';
 import '../features/home/repository/home_feed_repo.dart';
 import '../features/home/screens/home_feed_screen.dart';
@@ -112,6 +113,12 @@ Widget buildExpansionWidget(
                   // } else {
                   //
                   // }
+
+                  newsNotifierController.toggleRead(
+                    newsItem.entryId,
+                    Status.read,
+                    context,
+                  );
 
                   context.pushNamed(
                     NewsDetailsScreen.routeNamed,
