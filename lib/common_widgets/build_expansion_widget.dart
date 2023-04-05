@@ -122,15 +122,7 @@ Widget buildExpansionWidget(
 
                   context.pushNamed(
                     NewsDetailsScreen.routeNamed,
-                    queryParams: {
-                      'id': newsItem.entryId.toString(),
-                      'image': newsItem.imageUrl,
-                      'content': newsItem.content,
-                      'categoryTitle': newsItem.categoryTitle,
-                      'title': newsItem.titleText,
-                      'link': newsItem.link,
-                      'publishedAt': newsItem.publishedTime.toString(),
-                    },
+                    extra: newsItem,
                   );
 
                   /// Todo: Nav

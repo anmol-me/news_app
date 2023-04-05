@@ -9,6 +9,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 import '../../../common/constants.dart';
+import '../../../models/news.dart';
 import '../../home/repository/home_feed_repo.dart';
 import '../components/card_header_row.dart';
 import '../components/header_image.dart';
@@ -16,25 +17,13 @@ import '../components/methods.dart';
 import '../components/providers.dart';
 
 class NewsDetailsWebScreen extends ConsumerWidget {
-  static const routeNamed = '/details';
+  static const routeNamed = '/web-details';
 
-  final String title;
-  final String categoryTitle;
-  final String link;
-  final String content;
-  final int entryId;
-  final String? imageUrl;
-  final DateTime publishedAt;
+  final News newsItem;
 
   const NewsDetailsWebScreen({
     super.key,
-    required this.title,
-    required this.categoryTitle,
-    required this.link,
-    required this.content,
-    required this.entryId,
-    required this.imageUrl,
-    required this.publishedAt,
+    required this.newsItem,
   });
 
   @override
@@ -47,12 +36,12 @@ class NewsDetailsWebScreen extends ConsumerWidget {
 
     final newsDetails = ref.watch(newsDetailsProvider);
 
-    var newsItem = newsNotifier.firstWhere((e) => e.entryId == entryId);
+    var isFav = newsNotifier.firstWhere((e) => e.entryId == newsItem.entryId).isFav;
 
-    final contentFormatted = getContent(content);
+    final contentFormatted = getContent(newsItem.content);
 
-    final feedDate = DateFormat.yMMMMd().format(publishedAt);
-    final feedTime = DateFormat.jm().format(publishedAt);
+    final feedDate = DateFormat.yMMMMd().format(newsItem.publishedTime);
+    final feedTime = DateFormat.jm().format(newsItem.publishedTime);
 
     return Scaffold(
       appBar: AppBar(
@@ -60,7 +49,7 @@ class NewsDetailsWebScreen extends ConsumerWidget {
           Row(
             children: [
               TextButton(
-                onPressed: () => newsDetails.openLink(link, context),
+                onPressed: () => newsDetails.openLink(newsItem.link, context),
                 child: Row(
                   children: [
                     Icon(Icons.link, color: colorRed),
@@ -68,9 +57,9 @@ class NewsDetailsWebScreen extends ConsumerWidget {
                   ],
                 ),
               ),
-              ReadButton(entryId: entryId),
+              ReadButton(entryId: newsItem.entryId),
               IconButton(
-                onPressed: () => Share.share(link),
+                onPressed: () => Share.share(newsItem.link),
                 icon: Icon(Icons.share, color: colorRed),
               ),
             ],
@@ -105,24 +94,24 @@ class NewsDetailsWebScreen extends ConsumerWidget {
                   Padding(
                     padding: const EdgeInsets.only(bottom: 4.0),
                     child: CardHeaderRow(
-                      categoryTitle: categoryTitle,
+                      categoryTitle: newsItem.categoryTitle,
                       feedDate: feedDate,
                       feedTime: feedTime,
                     ),
                   ),
                   Text(
-                    title,
+                    newsItem.titleText,
                     style: const TextStyle(
                       color: Colors.black,
                       fontSize: 26,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
-                  imageUrl == null || imageUrl == ''
+                  newsItem.imageUrl == ''
                       ? const SizedBox(height: 10)
                       : Padding(
                           padding: const EdgeInsets.all(8.0),
-                          child: HeaderImage(imageUrl: imageUrl),
+                          child: HeaderImage(imageUrl: newsItem.imageUrl),
                         ),
                   Text(
                     contentFormatted,
@@ -143,10 +132,11 @@ class NewsDetailsWebScreen extends ConsumerWidget {
           ? FloatingActionButton(
               backgroundColor: colorRed,
               onPressed: () {
-                newsNotifierController.toggleFavStatus(entryId, context);
+                newsNotifierController.toggleFavStatus(
+                    newsItem.entryId, context);
               },
               child: Icon(
-                  newsItem.isFav ? Icons.bookmark_added : Icons.bookmark_add),
+                  isFav ? Icons.bookmark_added : Icons.bookmark_add),
             )
           : null,
     );

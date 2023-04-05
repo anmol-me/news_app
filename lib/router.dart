@@ -21,6 +21,7 @@ import 'features/home/screens/home_feed_screen.dart';
 import 'features/home/screens/home_web_screen.dart';
 import 'features/search/screens/search_screen.dart';
 import 'features/settings/screens/settings_screen.dart';
+import 'models/news.dart';
 
 final GlobalKey<NavigatorState> rootNavigatorKey = GlobalKey<NavigatorState>();
 
@@ -98,25 +99,9 @@ final goRouterProvider = Provider(
           name: NewsDetailsScreen.routeNamed,
           builder: (context, state) {
             if (kIsWeb) {
-              return NewsDetailsWebScreen(
-                title: state.queryParams['title']!,
-                categoryTitle: state.queryParams['categoryTitle']!,
-                link: state.queryParams['link']!,
-                content: state.queryParams['content']!,
-                entryId: int.parse(state.queryParams['id']!),
-                imageUrl: state.queryParams['image']!,
-                publishedAt: DateTime.parse(state.queryParams['publishedAt']!),
-              );
+              return NewsDetailsWebScreen(newsItem: state.extra as News);
             } else {
-              return NewsDetailsScreen(
-                title: state.queryParams['title']!,
-                categoryTitle: state.queryParams['categoryTitle']!,
-                link: state.queryParams['link']!,
-                content: state.queryParams['content']!,
-                entryId: int.parse(state.queryParams['id']!),
-                imageUrl: state.queryParams['image']!,
-                publishedAt: DateTime.parse(state.queryParams['publishedAt']!),
-              );
+              return NewsDetailsScreen(newsItem: state.extra as News);
             }
           },
         ),
@@ -206,21 +191,21 @@ Route onGenerateRoute(RouteSettings routeSettings) {
       );
 
     /// News Details Screen
-    case NewsDetailsScreen.routeNamed:
-      // List<dynamic> args = routeSettings.arguments;
-      final arguments = routeSettings.arguments as Map<String, dynamic>;
-      return MaterialPageRoute(
-        settings: routeSettings,
-        builder: (context) => NewsDetailsScreen(
-          title: arguments['title'],
-          categoryTitle: arguments['categoryTitle'],
-          content: arguments['content'],
-          entryId: arguments['id'],
-          imageUrl: arguments['image'],
-          link: arguments['link'],
-          publishedAt: arguments['publishedAt'],
-        ),
-      );
+    // case NewsDetailsScreen.routeNamed:
+    //   // List<dynamic> args = routeSettings.arguments;
+    //   final arguments = routeSettings.arguments as Map<String, dynamic>;
+    //   return MaterialPageRoute(
+    //     settings: routeSettings,
+    //     builder: (context) => NewsDetailsScreen(
+    //       title: arguments['title'],
+    //       categoryTitle: arguments['categoryTitle'],
+    //       content: arguments['content'],
+    //       entryId: arguments['id'],
+    //       imageUrl: arguments['image'],
+    //       link: arguments['link'],
+    //       publishedAt: arguments['publishedAt'],
+    //     ),
+    //   );
 
     /// Subscription List Screen
     case SelectSubscriptionScreen.routeNamed:
