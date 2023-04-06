@@ -63,6 +63,8 @@ class SelectSubscriptionScreen extends HookConsumerWidget {
           );
     }
 
+    final scrollController = ScrollController();
+
     final isIos = defaultTargetPlatform == TargetPlatform.android;
     final isAndroid = defaultTargetPlatform == TargetPlatform.iOS;
 
@@ -110,11 +112,13 @@ class SelectSubscriptionScreen extends HookConsumerWidget {
                           child: LinearLoader(),
                         ),
                       Scrollbar(
+                        controller: scrollController,
                         child: Column(
                           children: [
                             const SizedBox(height: 5),
                             Expanded(
                               child: ListView.builder(
+                                controller: scrollController,
                                 itemCount: categoryListNotifier.length,
                                 itemBuilder: (listContext, index) {
                                   final subscriptionItem =

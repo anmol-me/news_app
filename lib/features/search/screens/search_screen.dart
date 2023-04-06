@@ -61,6 +61,8 @@ class SearchScreen extends HookConsumerWidget {
       }
     }
 
+    final scrollController = ScrollController();
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Search Feeds'),
@@ -96,7 +98,9 @@ class SearchScreen extends HookConsumerWidget {
                     ? const Center(child: Text('No results'))
                     : Expanded(
                         child: Scrollbar(
+                          controller: scrollController,
                           child: ListView.builder(
+                            controller: scrollController,
                             shrinkWrap: true,
                             itemCount: searchNotifier.length,
                             itemBuilder: (context, index) {

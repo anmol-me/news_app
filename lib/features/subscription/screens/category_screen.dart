@@ -175,6 +175,8 @@ class CategoryScreen extends HookConsumerWidget {
           );
     }
 
+    final scrollController = ScrollController();
+
     return Scaffold(
       appBar: isBackButton == true
           ? AppBar(
@@ -245,7 +247,9 @@ class CategoryScreen extends HookConsumerWidget {
                 onRefresh: refresh,
                 color: colorRed,
                 child: Scrollbar(
+                  controller: scrollController,
                   child: ListView.builder(
+                    controller: scrollController,
                     shrinkWrap: true,
                     itemCount: catNewsNotifier.length,
                     itemBuilder: (context, index) {
