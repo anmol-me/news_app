@@ -34,8 +34,6 @@ class NewsDetailsWebScreen extends ConsumerWidget {
     final newsNotifier = ref.watch(homeFeedProvider);
     final newsNotifierController = ref.watch(homeFeedProvider.notifier);
 
-    final newsDetails = ref.watch(newsDetailsProvider);
-
     var isFav = newsNotifier.firstWhere((e) => e.entryId == newsItem.entryId).isFav;
 
     final contentFormatted = getContent(newsItem.content);
@@ -48,15 +46,8 @@ class NewsDetailsWebScreen extends ConsumerWidget {
         actions: [
           Row(
             children: [
-              TextButton(
-                onPressed: () => newsDetails.openLink(newsItem.link, context),
-                child: Row(
-                  children: [
-                    Icon(Icons.link, color: colorRed),
-                    BarTextButton(text: 'Open link'),
-                  ],
-                ),
-              ),
+              OpenLinkButton(url: newsItem.link),
+              const SizedBox(width: 10),
               ReadButton(entryId: newsItem.entryId),
               const SizedBox(width: 10),
             ],

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
+import '../features/details/components/providers.dart';
 import '../features/home/repository/home_feed_repo.dart';
 import '../models/news.dart';
 import 'constants.dart';
@@ -152,6 +153,32 @@ class StarredButton extends ConsumerWidget {
             ? const BarTextButton(text: 'Unstar')
             : const BarTextButton(text: 'Star'),
       ],
+    );
+  }
+}
+
+class OpenLinkButton extends ConsumerWidget {
+  final String url;
+
+  const OpenLinkButton({
+    super.key,
+    required this.url,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final newsDetails = ref.watch(newsDetailsProvider);
+
+    return InkWell(
+      onTap: () => newsDetails.openLink(url, context),
+      child: Wrap(
+        crossAxisAlignment: WrapCrossAlignment.center,
+        children: [
+          Icon(Icons.link, color: colorRed),
+          const SizedBox(width: 6),
+          const BarTextButton(text: 'Open link'),
+        ],
+      ),
     );
   }
 }
