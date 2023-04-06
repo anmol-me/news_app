@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-Color? colorRed = Colors.redAccent[200] ?? Colors.redAccent;
-Color? colorAppbarBackground = Colors.grey[50] ?? Colors.grey;
-Color? colorAppbarForeground = Colors.grey[700] ?? Colors.grey;
-Color? colorSubtitle = Colors.grey[600] ?? Colors.grey;
+Color colorRed = Colors.redAccent.shade200;
+Color colorAppbarBackground = Colors.grey.shade50;
+Color colorAppbarForeground = Colors.grey.shade700;
+Color colorSubtitle = Colors.grey.shade600;
 Color colorLabel = Colors.black;
 
 
