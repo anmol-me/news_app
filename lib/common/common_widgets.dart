@@ -3,7 +3,6 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../features/details/components/providers.dart';
 import '../features/home/repository/home_feed_repo.dart';
-import '../models/news.dart';
 import 'constants.dart';
 import 'enums.dart';
 
@@ -68,9 +67,9 @@ ScaffoldFeatureController<SnackBar, SnackBarClosedReason> showErrorSnackBar({
 
 class ReadButton extends ConsumerWidget {
   const ReadButton({
-    Key? key,
+    super.key,
     required this.entryId,
-  }) : super(key: key);
+  });
 
   final int entryId;
 
@@ -81,49 +80,45 @@ class ReadButton extends ConsumerWidget {
 
     final newsItem = newsNotifier.firstWhere((e) => e.entryId == entryId);
 
-    return Wrap(
-      crossAxisAlignment: WrapCrossAlignment.center,
-      children: [
-        InkWell(
-          onTap: () {
-            Status stat;
+    return InkWell(
+      onTap: () {
+        Status stat;
 
-            newsItem.status == Status.read
-                ? stat = Status.unread
-                : stat = Status.read;
+        newsItem.status == Status.read
+            ? stat = Status.unread
+            : stat = Status.read;
 
-            newsNotifierController.toggleRead(
-              entryId,
-              stat,
-              context,
-            );
-          },
-          child: Row(
-            children: [
-              Icon(
-                size: 27,
-                color: colorRed,
-                newsItem.status == Status.unread
-                    ? Icons.circle
-                    : Icons.circle_outlined,
-              ),
-              const SizedBox(width: 10),
-              newsItem.status == Status.unread
-                  ? const BarTextButton(text: 'Unread')
-                  : const BarTextButton(text: 'Read'),
-            ],
+        newsNotifierController.toggleRead(
+          entryId,
+          stat,
+          context,
+        );
+      },
+      child: Wrap(
+        crossAxisAlignment: WrapCrossAlignment.center,
+        children: [
+          Icon(
+            size: 27,
+            color: colorRed,
+            newsItem.status == Status.unread
+                ? Icons.circle
+                : Icons.circle_outlined,
           ),
-        ),
-      ],
+          const SizedBox(width: 6),
+          newsItem.status == Status.unread
+              ? const BarTextButton(text: 'Unread')
+              : const BarTextButton(text: 'Read'),
+        ],
+      ),
     );
   }
 }
 
 class StarredButton extends ConsumerWidget {
   const StarredButton({
-    Key? key,
+    super.key,
     required this.entryId,
-  }) : super(key: key);
+  });
 
   final int entryId;
 
@@ -132,27 +127,27 @@ class StarredButton extends ConsumerWidget {
     final newsNotifier = ref.watch(homeFeedProvider);
     final newsItem = newsNotifier.firstWhere((e) => e.entryId == entryId);
 
-    return Wrap(
-      crossAxisAlignment: WrapCrossAlignment.center,
-      children: [
-        InkWell(
-          onTap: () {
-            ref.read(homeFeedProvider.notifier).toggleFavStatus(
-                  newsItem.entryId,
-                  context,
-                );
-          },
-          child: Icon(
+    return InkWell(
+      onTap: () {
+        ref.read(homeFeedProvider.notifier).toggleFavStatus(
+              newsItem.entryId,
+              context,
+            );
+      },
+      child: Wrap(
+        crossAxisAlignment: WrapCrossAlignment.center,
+        children: [
+          Icon(
             size: 27,
             color: colorAppbarForeground,
             newsItem.isFav ? Icons.bookmark_added : Icons.bookmark_add,
           ),
-        ),
-        const SizedBox(width: 10),
-        newsItem.isFav
-            ? const BarTextButton(text: 'Unstar')
-            : const BarTextButton(text: 'Star'),
-      ],
+          const SizedBox(width: 6),
+          newsItem.isFav
+              ? const BarTextButton(text: 'Unstar')
+              : const BarTextButton(text: 'Star'),
+        ],
+      ),
     );
   }
 }
@@ -186,18 +181,23 @@ class OpenLinkButton extends ConsumerWidget {
 class BarTextButton extends StatelessWidget {
   final String text;
   final double size;
+  final Color textColor;
 
   const BarTextButton({
-    Key? key,
+    super.key,
     required this.text,
     this.size = 17,
-  }) : super(key: key);
+    this.textColor = Colors.black87,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Text(
       text,
-      style: TextStyle(fontSize: size),
+      style: TextStyle(
+        fontSize: size,
+        color: textColor,
+      ),
     );
   }
 }
