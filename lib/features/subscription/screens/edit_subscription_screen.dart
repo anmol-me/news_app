@@ -58,25 +58,28 @@ class EditSubscriptionScreen extends HookConsumerWidget {
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: Sizer(
         widthMobile: 0.95,
-        child: ElevatedButton(
-          onPressed: isTitleUpdating
-              ? null
-              : () {
-                  isTitleUpdatingController.update((state) => true);
+        child: Padding(
+          padding: const EdgeInsets.only(bottom: 15.0),
+          child: ElevatedButton(
+            onPressed: isTitleUpdating
+                ? null
+                : () {
+                    isTitleUpdatingController.update((state) => true);
 
-                  ref
-                      .read(categoryListNotifierProvider.notifier)
-                      .updateCategoryName(
-                        context,
-                        listItemId,
-                        newTitleController.text,
-                      )
-                      .then(
-                        (_) =>
-                            isTitleUpdatingController.update((state) => false),
-                      );
-                },
-          child: const Text('Update'),
+                    ref
+                        .read(categoryListNotifierProvider.notifier)
+                        .updateCategoryName(
+                          context,
+                          listItemId,
+                          newTitleController.text,
+                        )
+                        .then(
+                          (_) =>
+                              isTitleUpdatingController.update((state) => false),
+                        );
+                  },
+            child: const Text('Update'),
+          ),
         ),
       ),
     );
