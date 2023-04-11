@@ -98,7 +98,7 @@ class ManageCategoryScreen extends HookConsumerWidget {
                                           'feedId': item.id.toString(),
                                           'catId': catListItemId.toString(),
                                         },
-                                        extra: {'listContext' : listContext},
+                                        extra: listContext,
                                       );
 
                                       /// Todo: Nav
