@@ -136,12 +136,8 @@ class AuthRepo {
       if (statusCode == 200) {
         // navigator.pushNamed(HomeFeedScreen.routeNamed);
         if (context.mounted) {
-          if (kIsWeb) {
-            context.goNamed(HomeWebScreen.routeNamed);
-          } else {
             context.goNamed(HomeFeedScreen.routeNamed);
           }
-        }
       } else if (statusCode == 401) {
         if (context.mounted) {
           showSnackBar(context: context, text: ErrorString.accessDenied.value);
