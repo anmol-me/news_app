@@ -28,7 +28,7 @@ import '../widgets/check_again_widget.dart';
 import '../widgets/welcome_view_widget.dart';
 import '../repository/home_methods.dart';
 
-final isHomeDrawerOpened = StateProvider((ref) => false);
+// final isHomeDrawerOpened = StateProvider((ref) => false);
 
 class HomeWebScreen extends ConsumerStatefulWidget {
   static const routeNamed = '/home-web-screen';
@@ -151,12 +151,14 @@ class _HomeWebScreenState extends ConsumerState<HomeWebScreen> {
                 else
                   Expanded(
                     child: RefreshIndicator(
-                      onRefresh: () => refreshAll(
-                        // Navigator.of(context),
-                        ref,
-                        context,
-                        isLoadingHomePageController,
-                      ),
+                      onRefresh: () =>
+                          ref.read(refreshProvider).refreshAllMain(context),
+                      // onRefresh: () => refreshAll(
+                      //   // Navigator.of(context),
+                      //   ref,
+                      //   context,
+                      //   isLoadingHomePageController,
+                      // ),
                       color: colorRed,
                       child: newsNotifier.isEmpty && isStarred
                           ? const CheckAgainWidget()

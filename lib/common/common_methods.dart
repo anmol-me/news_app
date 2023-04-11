@@ -9,41 +9,53 @@ import 'package:jiffy/jiffy.dart';
 
 import '../features/home/providers/home_providers.dart';
 import '../features/home/repository/home_feed_repo.dart';
+import '../features/home/screens/home_feed_screen.dart';
 import '../models/news.dart';
 
-Future<void> refreshAll(
-  // NavigatorState navigator,
-  WidgetRef ref,
-  BuildContext context,
-  StateController<bool> isLoadingPageController,
-) async {
-  final currentLocation = GoRouterState.of(context).name;
-  // Todo: GoRouter cleanup
-  // log(ModalRoute.of(context)!.settings.name.toString());
-  log(currentLocation.toString());
-  isLoadingPageController.update((state) => true);
+final isHomeDrawerOpened = StateProvider((ref) => false);
 
-  refreshWidgetProviders(ref);
+final refreshProvider = Provider((ref) {
+  return RefreshMethods(ref);
+});
 
-  // if (ModalRoute.of(context)!.settings.name == '/') {
-  if (currentLocation == '/home' || currentLocation == '/home-web-screen') {
-    log('refreshed');
-    ref.refresh(homeFeedProvider.notifier).fetchEntries(context).then(
-          (_) => isLoadingPageController.update((state) => false),
-        );
-  } else {
-    isLoadingPageController.update((state) => false);
-    log('not home page');
+class RefreshMethods {
+  final ProviderRef ref;
 
-    if (kIsWeb) {
-      log('is web');
-      context.pushNamed('/home-web-screen');
-    } else {
-      context.pushNamed('/home');
+  RefreshMethods(this.ref);
+
+  Future<void> refreshAllMain(
+    BuildContext context,
+  ) async {
+    final isLoadingHomePageController =
+        ref.read(homePageLoadingProvider.notifier);
+
+    final currentLocation = GoRouterState.of(context).name;
+
+    log("Refresh ---> $currentLocation");
+    final isDrawerOpened = ref.read(isHomeDrawerOpened);
+
+    if (isDrawerOpened) {
+      Navigator.of(context).pop();
+      ref.read(isHomeDrawerOpened.notifier).update((state) => false);
     }
 
-    // Todo: Navigator
-    // navigator.pushNamed('/');
+    isLoadingHomePageController.update((state) => true);
+
+    refreshHomeProviders(ref);
+
+    // if (ModalRoute.of(context)!.settings.name == '/') {
+    if (currentLocation == '/home-feed-screen' ||
+        currentLocation == '/home-web-screen') {
+      log('HOME PAGE REFRESHED');
+      ref.refresh(homeFeedProvider.notifier).fetchEntries(context).then(
+            (_) => isLoadingHomePageController.update((state) => false),
+          );
+    } else {
+      isLoadingHomePageController.update((state) => false);
+      log('NOT HOME PAGE');
+
+      context.pushNamed(HomeFeedScreen.routeNamed);
+    }
   }
 }
 

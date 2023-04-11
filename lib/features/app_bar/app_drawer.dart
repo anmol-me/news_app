@@ -5,6 +5,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:news_app/common/common_methods.dart';
 import 'package:news_app/common/enums.dart';
 import 'package:news_app/features/app_bar/app_bar_repo.dart';
 import 'package:news_app/features/app_bar/user.dart';
@@ -93,7 +94,7 @@ class AppDrawer extends HookConsumerWidget {
                   //   context,
                   //   isLoadingPageController,
                   // ),
-                  onTap: () => appBarRepo.refreshAllDrawer(context),
+                  onTap: () => ref.read(refreshProvider).refreshAllMain(context),
                 ),
                 ListTile(
                   leading: Icon(
@@ -119,7 +120,7 @@ class AppDrawer extends HookConsumerWidget {
                       Navigator.of(context).pop();
                     }
                     ref.refresh(catSortProvider).value;
-                    refreshWidgetProviders(ref);
+                    // refreshWidgetProviders(ref);
                     context.pushNamed(SelectSubscriptionScreen.routeNamed);
 
                     /// Todo: Nav

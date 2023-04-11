@@ -61,39 +61,4 @@ class AppBarRepository {
     /// Nav-> TODO:
     // Navigator.of(context).push(MaterialPageRoute(builder: (context) => HomeFeedScreen()));
   }
-
-  Future<void> refreshAllDrawer(
-    BuildContext context,
-  ) async {
-    // log("---> ${ModalRoute.of(context)!.settings.name}");
-    log("Refresh Drawer---> ${GoRouterState.of(context).path}");
-
-    Navigator.of(context).pop();
-    isLoadingPageController.update((state) => true);
-
-    refreshProviders(ref);
-
-    // if (ModalRoute.of(context)!.settings.name == 'homeScreen') {
-    //   ref.refresh(homeFeedProvider.notifier).fetchEntries(context).then(
-    //         (_) => isLoadingPageController.update((state) => false),
-    //       );
-    // } else {
-    //   isLoadingPageController.update((state) => false);
-    //   context.pushNamed(HomeFeedScreen.routeNamed);
-    //
-    //   /// Todo: Nav
-    //   // navigator.pushNamed('/');
-    // }
-
-    if (GoRouterState.of(context).location == '/home') {
-      ref.refresh(homeFeedProvider.notifier).fetchEntries(context).then(
-            (_) => isLoadingPageController.update((state) => false),
-          );
-    } else {
-      context.goNamed(HomeFeedScreen.routeNamed);
-      ref.refresh(homeFeedProvider.notifier).fetchEntries(context).then(
-            (_) => isLoadingPageController.update((state) => false),
-          );
-    }
-  }
 }

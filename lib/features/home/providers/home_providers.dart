@@ -50,14 +50,7 @@ final homeIsNextProvider = StateProvider(
   },
 );
 
-void refreshWidgetProviders(WidgetRef ref) {
-  ref.refresh(homeOffsetProvider.notifier).update((state) => 0);
-  ref.refresh(homeSortDirectionProvider).value;
-  ref.refresh(isStarredProvider.notifier).update((state) => false);
-  ref.refresh(homeIsShowReadProvider.notifier).update((state) => false);
-}
-
-void refreshProviders(Ref ref) {
+void refreshHomeProviders(ProviderRef ref) {
   ref.refresh(homeOffsetProvider.notifier).update((state) => 0);
   ref.refresh(homeSortDirectionProvider).value;
   ref.refresh(isStarredProvider.notifier).update((state) => false);
