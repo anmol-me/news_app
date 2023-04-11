@@ -62,26 +62,29 @@ class EditFeedScreen extends HookConsumerWidget {
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: Sizer(
         widthMobile: 0.95,
-        child: ElevatedButton(
-          onPressed: isFeedTitleUpdating
-              ? null
-              : () {
-                  isFeedTitleUpdatingController.update((state) => true);
+        child: Padding(
+          padding: const EdgeInsets.only(bottom: 15.0),
+          child: ElevatedButton(
+            onPressed: isFeedTitleUpdating
+                ? null
+                : () {
+                    isFeedTitleUpdatingController.update((state) => true);
 
-                  ref
-                      .read(manageCateNotifierProvider.notifier)
-                      .updateCatFeedName(
-                        listContext: listContext,
-                        feedId: feedId,
-                        catId: catId,
-                        newFeedTitle: newFeedTitleController.text,
-                      )
-                      .then(
-                        (_) => isFeedTitleUpdatingController
-                            .update((state) => false),
-                      );
-                },
-          child: const Text('Update'),
+                    ref
+                        .read(manageCateNotifierProvider.notifier)
+                        .updateCatFeedName(
+                          listContext: listContext,
+                          feedId: feedId,
+                          catId: catId,
+                          newFeedTitle: newFeedTitleController.text,
+                        )
+                        .then(
+                          (_) => isFeedTitleUpdatingController
+                              .update((state) => false),
+                        );
+                  },
+            child: const Text('Update'),
+          ),
         ),
       ),
     );
