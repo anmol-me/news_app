@@ -21,16 +21,19 @@ final menuProvider = StateProvider<DropItems>((ref) => DropItems.refresh);
 
 // final isNextCatProvider = StateProvider<bool>((ref) => false);
 
-class CategoryNotifier extends StateNotifier<List<News>> {
-  final StateNotifierProviderRef ref;
-  final UserPreferences userPrefs;
-  final String userPassEncoded;
+final categoryNotifierProvider =
+    NotifierProvider<CategoryNotifier, List<News>>(CategoryNotifier.new);
 
-  CategoryNotifier(
-    this.ref,
-    this.userPrefs,
-    this.userPassEncoded,
-  ) : super([]);
+class CategoryNotifier extends Notifier<List<News>> {
+  late String url;
+  late String userPassEncoded;
+
+  @override
+  List<News> build() {
+    url = ref.watch(userPrefsProvider).getUrlData() ?? '';
+    userPassEncoded = ref.watch(userPrefsProvider).getAuthData() ?? '';
+    return [];
+  }
 
   /// Fetch --------------------------------------------------------------------------------
   Future<void> fetchCategoryEntries(
@@ -38,7 +41,6 @@ class CategoryNotifier extends StateNotifier<List<News>> {
     Sort sort,
     // int catOffset,
   ) async {
-    final url = userPrefs.getUrlData();
     final catOffset = ref.read(catOffsetProvider);
     final isShowReadCat = ref.read(isShowReadCatProvider);
 
@@ -46,7 +48,7 @@ class CategoryNotifier extends StateNotifier<List<News>> {
     log('CHECK SORT: ${sort.value}');
     log('CHECK READ: $isShowReadCat');
 
-    Uri uri = Uri.https(url!, 'v1/categories/$id/entries', {
+    Uri uri = Uri.https(url, 'v1/categories/$id/entries', {
       'order': 'published_at',
       'direction': sort.value,
       if (catOffset > 0) 'offset': '$catOffset',
@@ -102,9 +104,7 @@ class CategoryNotifier extends StateNotifier<List<News>> {
 
   /// catTotalPage --------------------------------------------------------------------------------
   Future<int> catTotalPage(int id) async {
-    final url = userPrefs.getUrlData();
-
-    Uri uri = Uri.https(url!, 'v1/categories/$id/entries', {
+    Uri uri = Uri.https(url, 'v1/categories/$id/entries', {
       'order': 'published_at',
     });
 
@@ -121,6 +121,4 @@ class CategoryNotifier extends StateNotifier<List<News>> {
       return 1;
     }
   }
-
-//
 }
