@@ -51,31 +51,12 @@ final goRouterProvider = Provider(
           },
           builder: (context, state) => const AuthScreen(),
         ),
-        // GoRoute(
-        //   path: '/responsive',
-        //   name: ResponsiveApp.routeNamed,
-        //   builder: (context, state) => const ResponsiveApp(),
-        // ),
         GoRoute(
           path: '/home',
           name: HomeFeedScreen.routeNamed,
           builder: (context, state) {
             return kIsWeb ? const HomeWebScreen() : const HomeFeedScreen();
           },
-          // builder: (context, state) {
-          //   if (kIsWeb) {
-          //     return const HomeWebScreen();
-          //   } else {
-          //     return const HomeFeedScreen();
-          //   }
-          //
-          //   // return const HomeFeedScreen();
-          // },
-          // redirect: (BuildContext context, state) {
-          //   log('HOME-> isAuth: ${authRepo.isAuthenticated}');
-          //
-          //   return authRepo.isAuthenticated ? null : '/auth';
-          // },
         ),
         GoRoute(
           path: '/home-web-screen',
@@ -109,11 +90,6 @@ final goRouterProvider = Provider(
           path: '/select-subs',
           name: SelectSubscriptionScreen.routeNamed,
           builder: (context, state) => const SelectSubscriptionScreen(),
-          // redirect: (BuildContext context, state) {
-          //   log('Subs-> isAuth: ${authRepo.isAuthenticated}');
-          //
-          //   return authRepo.isAuthenticated ? null : '/auth';
-          // },
         ),
         GoRoute(
           path: '/category-screen',
@@ -166,128 +142,3 @@ final goRouterProvider = Provider(
     );
   },
 );
-
-Route onGenerateRoute(RouteSettings routeSettings) {
-  switch (routeSettings.name) {
-    /// Auth Screen
-    case AuthScreen.routeNamed:
-      return MaterialPageRoute(builder: (context) => const AuthScreen());
-
-    /// Home Feed Screen
-    case HomeFeedScreen.routeNamed:
-      return MaterialPageRoute(builder: (context) => const HomeFeedScreen());
-
-    /// Edit Feed Screen
-    case EditFeedScreen.routeNamed:
-      final arguments = routeSettings.arguments as Map<String, dynamic>;
-      return MaterialPageRoute(
-        settings: routeSettings,
-        builder: (context) => EditFeedScreen(
-          oldFeedTitle: arguments['feedTitle'],
-          feedId: arguments['feedId'],
-          catId: arguments['catId'],
-          listContext: arguments['listContext'],
-        ),
-      );
-
-    /// News Details Screen
-    // case NewsDetailsScreen.routeNamed:
-    //   // List<dynamic> args = routeSettings.arguments;
-    //   final arguments = routeSettings.arguments as Map<String, dynamic>;
-    //   return MaterialPageRoute(
-    //     settings: routeSettings,
-    //     builder: (context) => NewsDetailsScreen(
-    //       title: arguments['title'],
-    //       categoryTitle: arguments['categoryTitle'],
-    //       content: arguments['content'],
-    //       entryId: arguments['id'],
-    //       imageUrl: arguments['image'],
-    //       link: arguments['link'],
-    //       publishedAt: arguments['publishedAt'],
-    //     ),
-    //   );
-
-    /// Subscription List Screen
-    case SelectSubscriptionScreen.routeNamed:
-      return MaterialPageRoute(
-          builder: (context) => const SelectSubscriptionScreen());
-
-    /// Category Screen
-    case CategoryScreen.routeNamed:
-      // List<dynamic> args = routeSettings.arguments;
-      final arguments = routeSettings.arguments as Map<String, dynamic>;
-      return MaterialPageRoute(
-        settings: routeSettings,
-        builder: (context) => CategoryScreen(
-          catId: arguments['id'],
-          catTitle: arguments['catTitle'],
-          isBackButton: arguments['isBackButton'],
-        ),
-      );
-
-    /// Add Subscription Screen
-    case AddSubscription.routeNamed:
-      return MaterialPageRoute(builder: (context) => const AddSubscription());
-
-    /// Edit Category Screen
-    case EditSubscriptionScreen.routeNamed:
-      // List<dynamic> args = routeSettings.arguments;
-      final arguments = routeSettings.arguments as Map<String, dynamic>;
-      return MaterialPageRoute(
-        settings: routeSettings,
-        builder: (context) => EditSubscriptionScreen(
-          oldTitle: arguments['oldTitle'],
-          listItemId: arguments['listItemId'],
-        ),
-      );
-
-    // /// Manage Categories Screen
-    // case AllFeedsScreen.routeNamed:
-    //   // final arguments = routeSettings.arguments as Map<String, dynamic>;
-    //   return MaterialPageRoute(
-    //       builder: (context) => AllFeedsScreen(
-    //           // oldTitle: arguments['oldTitle'],
-    //           // listItemId: arguments['listItemId'],
-    //           ));
-
-    /// Show Category Feeds Screen
-    // case ManageCategoryScreen.routeNamed:
-    //   final arguments = routeSettings.arguments as Map<String, dynamic>;
-    //   return MaterialPageRoute(
-    //       builder: (context) => ManageCategoryScreen(
-    //             catListItem: arguments['listItem'],
-    //             // oldTitle: arguments['oldTitle'],
-    //           ));
-
-    /// Search Screen
-    case SearchScreen.routeNamed:
-      return MaterialPageRoute(builder: (context) => const SearchScreen());
-
-    /// Settings Screen
-    case SettingsScreen.routeNamed:
-      // final arguments = routeSettings.arguments as Map<String, dynamic>;
-      return MaterialPageRoute(
-        builder: (context) => const SettingsScreen(
-            // oldTitle: arguments['oldTitle'],
-            ),
-      );
-
-    /// Error Screen
-    case ErrorScreen.routeNamed:
-      final arguments = routeSettings.arguments as Map<String, dynamic>;
-      return MaterialPageRoute(
-        builder: (context) => ErrorScreen(
-          message: arguments['message'],
-        ),
-      );
-
-    /// Default
-    default:
-      return MaterialPageRoute(
-        settings: routeSettings,
-        builder: (_) => const Scaffold(
-          body: Center(child: Text('Screen does not exist!')),
-        ),
-      );
-  }
-}
