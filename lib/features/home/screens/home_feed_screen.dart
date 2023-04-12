@@ -120,8 +120,7 @@ class _HomeFeedScreenState extends ConsumerState<HomeFeedScreen> {
               color: colorRed,
             ),
           ),
-          buildPopupMenuButton(
-            ref: ref,
+          BuildPopupMenuButton(
             isShowRead: isShowRead,
             sort: sortAs,
             sortFunction: homeMethods.sortFunction,

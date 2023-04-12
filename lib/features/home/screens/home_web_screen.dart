@@ -114,8 +114,7 @@ class _HomeWebScreenState extends ConsumerState<HomeWebScreen> {
               color: colorRed,
             ),
           ),
-          buildPopupMenuButton(
-            ref: ref,
+          BuildPopupMenuButton(
             isShowRead: isShowRead,
             sort: sortAs,
             sortFunction: homeMethods.sortFunction,

@@ -194,8 +194,7 @@ class CategoryScreen extends HookConsumerWidget {
                   },
                   icon: const Icon(Icons.search),
                 ),
-                buildPopupMenuButton(
-                  ref: ref,
+                BuildPopupMenuButton(
                   isShowRead: isShowReadCat,
                   sort: catSort,
                   sortFunction: () => categoryNotifier.sortCatFunction(catId),
@@ -215,8 +214,7 @@ class CategoryScreen extends HookConsumerWidget {
                   },
                   icon: const Icon(Icons.search),
                 ),
-                buildPopupMenuButton(
-                  ref: ref,
+                BuildPopupMenuButton(
                   isShowRead: isShowReadCat,
                   sort: catSort,
                   sortFunction: () => categoryNotifier.sortCatFunction(catId),
