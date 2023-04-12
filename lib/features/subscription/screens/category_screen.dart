@@ -80,7 +80,7 @@ class CategoryScreen extends HookConsumerWidget {
 
         ref
             .read(categoryNotifierProvider.notifier)
-            .fetchCategoryEntries(catId, catSort)
+            .fetchCategoryEntries(catId)
             .then((_) => isCatLoadingController.update((state) => false));
 
         return null;
@@ -102,78 +102,80 @@ class CategoryScreen extends HookConsumerWidget {
     final canGoToNextPage = ref.watch(catIsNextProvider(catId));
     final canGoToPreviousPage = ref.watch(catOffsetProvider) != 0;
 
-    /// Refresh
-    Future<void> refresh() async {
-      isCatLoadingController.update((state) => true);
+    // /// Refresh
+    // Future<void> refresh() async {
+    //   isCatLoadingController.update((state) => true);
+    //
+    //   ref.refresh(catSortProvider).value;
+    //   ref.refresh(catOffsetProvider.notifier).update((state) => 0);
+    //   ref.refresh(isShowReadCatProvider.notifier).update((state) => false);
+    //   // ref.refresh(homeSortDirectionProvider);
+    //
+    //   ref
+    //       .refresh(categoryNotifierProvider.notifier)
+    //       .fetchCategoryEntries(catId, catSort)
+    //       .then(
+    //         (_) => isCatLoadingController.update((state) => false),
+    //       );
+    // }
 
-      ref.refresh(catSortProvider).value;
-      ref.refresh(catOffsetProvider.notifier).update((state) => 0);
-      ref.refresh(isShowReadCatProvider.notifier).update((state) => false);
-      // ref.refresh(homeSortDirectionProvider);
+    // /// Next
+    // void next() {
+    //   isCatLoadingController.update((state) => true);
+    //
+    //   catOffsetController.update((state) => state += 100);
+    //
+    //   catNewsNotifierController.fetchCategoryEntries(catId, catSort).then(
+    //     (_) {
+    //       isCatLoadingController.update((state) => false);
+    //     },
+    //   );
+    // }
 
-      ref
-          .refresh(categoryNotifierProvider.notifier)
-          .fetchCategoryEntries(catId, catSort)
-          .then(
-            (_) => isCatLoadingController.update((state) => false),
-          );
-    }
+    // /// Previous
+    // void previous() {
+    //   isCatLoadingController.update((state) => true);
+    //
+    //   catOffsetController.update((state) => state -= 100);
+    //
+    //   catNewsNotifierController.fetchCategoryEntries(catId, catSort).then(
+    //     (_) {
+    //       isCatLoadingController.update((state) => false);
+    //     },
+    //   );
+    // }
 
-    /// Next
-    void next() {
-      isCatLoadingController.update((state) => true);
+    // /// Sort
+    // void sortCatFunction() {
+    //   isCatLoadingController.update((state) => true);
+    //   ref.refresh(homeOffsetProvider.notifier).update((state) => 0);
+    //   ref.refresh(catOffsetProvider.notifier).update((state) => 0);
+    //
+    //   if (catSort == Sort.ascending) {
+    //     catSortController.update((state) => state = Sort.descending);
+    //   } else if (catSort == Sort.descending) {
+    //     catSortController.update((state) => state = Sort.ascending);
+    //   }
+    //   ref
+    //       .refresh(categoryNotifierProvider.notifier)
+    //       .fetchCategoryEntries(catId, catSort)
+    //       .then(
+    //         (_) => isCatLoadingController.update((state) => false),
+    //       );
+    // }
 
-      catOffsetController.update((state) => state += 100);
+    // /// Show Read
+    // void readCatFunction() {
+    //   isCatLoadingController.update((state) => true);
+    //
+    //   isShowReadCatController.update((state) => state = !state);
+    //
+    //   catNewsNotifierController.fetchCategoryEntries(catId, catSort).then(
+    //         (_) => isCatLoadingController.update((state) => false),
+    //       );
+    // }
 
-      catNewsNotifierController.fetchCategoryEntries(catId, catSort).then(
-        (_) {
-          isCatLoadingController.update((state) => false);
-        },
-      );
-    }
-
-    /// Previous
-    void previous() {
-      isCatLoadingController.update((state) => true);
-
-      catOffsetController.update((state) => state -= 100);
-
-      catNewsNotifierController.fetchCategoryEntries(catId, catSort).then(
-        (_) {
-          isCatLoadingController.update((state) => false);
-        },
-      );
-    }
-
-    /// Sort
-    void sortCatFunction() {
-      isCatLoadingController.update((state) => true);
-      ref.refresh(homeOffsetProvider.notifier).update((state) => 0);
-      ref.refresh(catOffsetProvider.notifier).update((state) => 0);
-
-      if (catSort == Sort.ascending) {
-        catSortController.update((state) => state = Sort.descending);
-      } else if (catSort == Sort.descending) {
-        catSortController.update((state) => state = Sort.ascending);
-      }
-      ref
-          .refresh(categoryNotifierProvider.notifier)
-          .fetchCategoryEntries(catId, catSort)
-          .then(
-            (_) => isCatLoadingController.update((state) => false),
-          );
-    }
-
-    /// Show Read
-    void readCatFunction() {
-      isCatLoadingController.update((state) => true);
-
-      isShowReadCatController.update((state) => state = !state);
-
-      catNewsNotifierController.fetchCategoryEntries(catId, catSort).then(
-            (_) => isCatLoadingController.update((state) => false),
-          );
-    }
+    final categoryNotifier = ref.watch(categoryNotifierProvider.notifier);
 
     final scrollController = ScrollController();
 
@@ -196,8 +198,8 @@ class CategoryScreen extends HookConsumerWidget {
                   ref: ref,
                   isShowRead: isShowReadCat,
                   sort: catSort,
-                  sortFunction: sortCatFunction,
-                  readFunction: readCatFunction,
+                  sortFunction: () => categoryNotifier.sortCatFunction(catId),
+                  readFunction: () => categoryNotifier.readCatFunction(catId),
                 ),
               ],
             )
@@ -217,8 +219,8 @@ class CategoryScreen extends HookConsumerWidget {
                   ref: ref,
                   isShowRead: isShowReadCat,
                   sort: catSort,
-                  sortFunction: sortCatFunction,
-                  readFunction: readCatFunction,
+                  sortFunction: () => categoryNotifier.sortCatFunction(catId),
+                  readFunction: () => categoryNotifier.readCatFunction(catId),
                 ),
               ],
             ),
@@ -229,9 +231,9 @@ class CategoryScreen extends HookConsumerWidget {
           buildTopBar(
             isCatLoading,
             canGoToPreviousPage,
-            previous,
+            () => categoryNotifier.previous(catId),
             canGoToNextPage,
-            next,
+            () => categoryNotifier.next(catId),
             ref,
           ),
 
@@ -244,7 +246,7 @@ class CategoryScreen extends HookConsumerWidget {
           else
             Expanded(
               child: RefreshIndicator(
-                onRefresh: refresh,
+                onRefresh: () => categoryNotifier.refresh(catId),
                 color: colorRed,
                 child: Scrollbar(
                   controller: scrollController,

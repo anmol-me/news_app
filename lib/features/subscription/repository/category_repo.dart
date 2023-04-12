@@ -27,32 +27,36 @@ final categoryNotifierProvider =
 class CategoryNotifier extends Notifier<List<News>> {
   late String url;
   late String userPassEncoded;
+  late Sort catSort;
+  late StateController<bool> isCatLoadingController;
 
   @override
   List<News> build() {
     url = ref.watch(userPrefsProvider).getUrlData() ?? '';
     userPassEncoded = ref.watch(userPrefsProvider).getAuthData() ?? '';
+    catSort = ref.watch(catSortProvider);
+    isCatLoadingController = ref.watch(isCatLoadingProvider.notifier);
     return [];
   }
 
   /// Fetch --------------------------------------------------------------------------------
   Future<void> fetchCategoryEntries(
     int id,
-    Sort sort,
+    // Sort sort,
     // int catOffset,
   ) async {
     final catOffset = ref.read(catOffsetProvider);
     final isShowReadCat = ref.read(isShowReadCatProvider);
 
     log('CAT-ID: $id');
-    log('CHECK SORT: ${sort.value}');
+    log('CHECK SORT: ${catSort.value}');
     log('CHECK READ: $isShowReadCat');
 
     Uri uri = Uri.https(url, 'v1/categories/$id/entries', {
       'order': 'published_at',
-      'direction': sort.value,
+      'direction': catSort.value,
       if (catOffset > 0) 'offset': '$catOffset',
-      if (isShowReadCat == true) 'status': 'unread',
+      if (isShowReadCat == true) 'status': 'read',
     });
 
     log('$uri');
@@ -120,5 +124,94 @@ class CategoryNotifier extends Notifier<List<News>> {
     } catch (e) {
       return 1;
     }
+  }
+
+  Future<void> refresh(int catId) async {
+    isCatLoadingController.update((state) => true);
+
+    ref.refresh(catSortProvider).value;
+    ref.refresh(catOffsetProvider.notifier).update((state) => 0);
+    ref.refresh(isShowReadCatProvider.notifier).update((state) => false);
+    // ref.refresh(homeSortDirectionProvider);
+
+    ref
+        .refresh(categoryNotifierProvider.notifier)
+        .fetchCategoryEntries(catId)
+        .then(
+          (_) => isCatLoadingController.update((state) => false),
+        );
+  }
+
+  /// Next
+  void next(int catId) {
+    isCatLoadingController.update((state) => true);
+
+    final catOffsetController = ref.read(catOffsetProvider.notifier);
+    catOffsetController.update((state) => state += 100);
+
+    ref
+        .read(categoryNotifierProvider.notifier)
+        .fetchCategoryEntries(catId)
+        .then(
+      (_) {
+        isCatLoadingController.update((state) => false);
+      },
+    );
+  }
+
+  /// Previous
+  void previous(int catId) {
+    isCatLoadingController.update((state) => true);
+
+    final catOffsetController = ref.read(catOffsetProvider.notifier);
+    catOffsetController.update((state) => state -= 100);
+
+    ref
+        .read(categoryNotifierProvider.notifier)
+        .fetchCategoryEntries(catId)
+        .then(
+      (_) {
+        isCatLoadingController.update((state) => false);
+      },
+    );
+  }
+
+  /// Sort
+  void sortCatFunction(int catId) {
+    isCatLoadingController.update((state) => true);
+    ref.refresh(catOffsetProvider.notifier).update((state) => 0);
+
+    final catSortController = ref.read(catSortProvider.notifier);
+
+    if (catSort == Sort.ascending) {
+      catSortController.update((state) => state = Sort.descending);
+    } else if (catSort == Sort.descending) {
+      catSortController.update((state) => state = Sort.ascending);
+    }
+
+    Future.delayed(const Duration(seconds: 0)).then((_) {
+      ref
+          .refresh(categoryNotifierProvider.notifier)
+          .fetchCategoryEntries(catId)
+          .then(
+            (_) => isCatLoadingController.update((state) => false),
+          );
+      return null;
+    });
+  }
+
+  /// Show Read
+  void readCatFunction(int catId) {
+    isCatLoadingController.update((state) => true);
+
+    final isShowReadCatController = ref.read(isShowReadCatProvider.notifier);
+    isShowReadCatController.update((state) => state = !state);
+
+    ref
+        .read(categoryNotifierProvider.notifier)
+        .fetchCategoryEntries(catId)
+        .then(
+          (_) => isCatLoadingController.update((state) => false),
+        );
   }
 }
