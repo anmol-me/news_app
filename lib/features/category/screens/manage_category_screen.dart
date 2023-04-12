@@ -6,8 +6,10 @@ import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:news_app/common/common_widgets.dart';
 
+import '../../../common/constants.dart';
 import '../../../components/app_back_button.dart';
 import '../../../models/model.dart';
+import '../../subscription/screens/add_subscription_screen.dart';
 import '../repository/manage_category_repository.dart';
 import 'edit_feed_screen.dart';
 
@@ -62,6 +64,29 @@ class ManageCategoryScreen extends HookConsumerWidget {
         leading: AppBackButton(
           controller: isManageProcessing,
         ),
+        actions: [
+          IconButton(
+            onPressed: () async {
+
+              final subListener = ref.listenManual(selectedCategoryProvider, (previous, next) {});
+              ref.read(selectedCategoryProvider.notifier).update(
+                    (state) => catListItemTitle,
+              );
+
+              isManageLoading || isManageProcessing
+                  ? null
+                  : await context.pushNamed(AddSubscription.routeNamed);
+
+              subListener.close();
+            },
+            icon: Icon(
+              Icons.add,
+              color: isManageLoading || isManageProcessing
+                  ? colorAppbarForeground
+                  : colorRed,
+            ),
+          ),
+        ],
       ),
       body: isManageLoading
           ? const LinearLoader()
@@ -116,7 +141,9 @@ class ManageCategoryScreen extends HookConsumerWidget {
                                   IconButton(
                                     icon: Icon(
                                       Icons.delete,
-                                      color: Theme.of(listContext).colorScheme.error,
+                                      color: Theme.of(listContext)
+                                          .colorScheme
+                                          .error,
                                     ),
                                     onPressed: () {
                                       isManageProcessingController.update(
