@@ -13,6 +13,7 @@ import 'package:news_app/features/home/screens/home_feed_screen.dart';
 import '../../../common/backend_methods.dart';
 import '../../../common/common_widgets.dart';
 import '../../../models/model.dart';
+import '../screens/add_subscription_screen.dart';
 
 Map<int, String> errorMessages = {
   400: "Please check your Url",
@@ -191,6 +192,33 @@ class AddNewSubscriptionNotifier
       log('CR-SUBS: $e');
       showSnackBar(context: context, text: '$e');
     }
+  }
+
+  void discoverFunction(
+    TextEditingController urlController,
+    BuildContext context,
+  ) {
+    final discoverSubscriptionController =
+        ref.read(addNewSubscriptionProvider.notifier);
+
+    final isDiscoverLoadingController =
+        ref.read(isDiscoverLoadingProvider.notifier);
+
+    if (urlController.text.isEmpty) {
+      showSnackBar(context: context, text: 'Please check Url.');
+      return;
+    }
+
+    isDiscoverLoadingController.update((state) => true);
+
+    discoverSubscriptionController
+        .discover(
+          urlController.text,
+          context,
+        )
+        .then(
+          (_) => isDiscoverLoadingController.update((state) => false),
+        );
   }
 
 // /// Create Category
