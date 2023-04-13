@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -8,19 +6,19 @@ import 'package:news_app/components/app_back_button.dart';
 import '../../../common/common_widgets.dart';
 import '../../../common/constants.dart';
 import '../../../models/model.dart';
-import '../category_providers.dart';
 import '../repository/category_list_repo.dart';
 import '../repository/add_new_subscription_repo.dart';
 import '../widgets/add_category_sheet.dart';
 
+/// Providers
 final selectedCategoryProvider = StateProvider.autoDispose((ref) => '');
 
 final isDiscoverLoadingProvider =
     StateProvider.autoDispose<bool>((ref) => false);
 
-// final isCategorySelectedProvider = StateProvider<bool>((ref) => false);
 final showAsteriskProvider = StateProvider.autoDispose<bool>((ref) => false);
 
+/// Class
 class AddSubscription extends HookConsumerWidget {
   static const routeNamed = '/add-category';
 
@@ -33,8 +31,11 @@ class AddSubscription extends HookConsumerWidget {
 
     // final urlController =
     //     useTextEditingController(text: 'https://news.google.com');
+    // final urlController = useTextEditingController(
+    //     text: 'https://feeds.feedburner.com/TheHackersNews');
+
     final urlController = useTextEditingController(
-        text: 'https://feeds.feedburner.com/TheHackersNew');
+        text: 'https://rss.art19.com/apology-line');
     final catNameController = useTextEditingController();
 
     // final catNewsNotifier = ref.watch(categoryNotifierProvider);
@@ -46,18 +47,11 @@ class AddSubscription extends HookConsumerWidget {
         ref.watch(addNewSubscriptionProvider.notifier);
 
     final isDiscoverLoading = ref.watch(isDiscoverLoadingProvider);
-    final isDiscoverLoadingController =
-        ref.watch(isDiscoverLoadingProvider.notifier);
-
-    // final isCategorySelected = ref.watch(isCategorySelectedProvider);
-    // final isCategorySelectedController =
-    //     ref.watch(isCategorySelectedProvider.notifier);
 
     final showAsterisk = ref.watch(showAsteriskProvider);
 
     final feedId = ref.watch(feedIdProvider);
-
-    // fetchCategoriesController.getCategories();
+    print('-------------> ${feedId} <------------------');
 
     // https://www.theverge.com/
     final selectedCategory = ref.watch(selectedCategoryProvider);
@@ -71,16 +65,7 @@ class AddSubscription extends HookConsumerWidget {
       orElse: () => CategoryList(title: '', id: 0),
     );
 
-    // log('LIST: $categoryTitles');
-
     return
-        // WillPopScope(
-        // onWillPop: () async {
-        //   log('Discovered cleared');
-        //   discoverSubscription.clear();
-        //   return await Future.value(true);
-        // },
-        // child:
         Scaffold(
       appBar: AppBar(
         title: const Text('Add Subscription'),
@@ -93,12 +78,11 @@ class AddSubscription extends HookConsumerWidget {
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Column(
-            // crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               TextFormField(
                 controller: urlController,
                 decoration: const InputDecoration(
-                  labelText: 'Name',
+                  labelText: 'RSS address',
                 ),
               ),
               Padding(
@@ -134,12 +118,6 @@ class AddSubscription extends HookConsumerWidget {
                             );
                       },
                     ),
-                    // IconButton(
-                    //   onPressed: () {
-                    //     showAddCategorySheet(context, ref, catNameController);
-                    //   },
-                    //   icon: const Icon(Icons.add),
-                    // ),
                     AddCatSheetButton(
                       catNameController: catNameController,
                     ),

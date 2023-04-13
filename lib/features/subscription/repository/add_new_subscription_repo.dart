@@ -9,6 +9,7 @@ import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 import 'package:news_app/features/authentication/repository/auth_repo.dart';
 import 'package:news_app/features/home/screens/home_feed_screen.dart';
+import 'package:news_app/features/subscription/screens/select_subscription_screen/select_subscription_screen.dart';
 
 import '../../../common/backend_methods.dart';
 import '../../../common/common_widgets.dart';
@@ -54,13 +55,13 @@ class AddNewSubscriptionNotifier
   final StateNotifierProviderRef ref;
   final UserPreferences userPrefs;
   final String userPassEncoded;
-  final String url;
+  final String baseUrl;
 
   AddNewSubscriptionNotifier(
     this.ref,
     this.userPrefs,
     this.userPassEncoded,
-    this.url,
+    this.baseUrl,
   ) : super([]);
 
   /// Discover
@@ -68,12 +69,12 @@ class AddNewSubscriptionNotifier
     String checkUrl,
     context,
   ) async {
-    if (userPassEncoded.isEmpty && url.isEmpty) return;
+    if (userPassEncoded.isEmpty && baseUrl.isEmpty) return;
 
     try {
       final res = await postHttpResp(
         uri: null,
-        url: Uri.parse('https://$url/v1/discover'),
+        url: Uri.parse('https://$baseUrl/v1/discover'),
         userPassEncoded: userPassEncoded,
         bodyMap: {"url": checkUrl},
       );
@@ -130,42 +131,26 @@ class AddNewSubscriptionNotifier
     BuildContext context,
     String selectedCategory,
     String subscriptionUrl,
-    int id,
+    int catId,
   ) async {
     log('$selectedCategory');
     log('$subscriptionUrl');
-    log('${id}');
-
-    // Uri url = Uri.parse('https://read.rusi.me/v1/feeds');
-
-    Uri uri = Uri.https(url, 'v1/feeds', {
-      "feed_url": subscriptionUrl,
-      "category_id": id,
-    });
+    log('${catId}');
 
     try {
-      // http.Response res = await http.post(
-      //   url,
-      //   headers: {
-      //     'Content-Type': 'application/json; charset=UTF-8',
-      //     'X-Auth-Token': '-5YfpcHn8F__jMhC0MFA-AaMrqLl5ehBaesPuvjCOzg=',
-      //   },
-      //   body: json.encode(
-      //     {
-      //       "feed_url": subscriptionUrl,
-      //       "category_id": id,
-      //     },
-      //   ),
-      // );
-
       final res = await postHttpResp(
-        url: null,
-        bodyMap: null,
-        uri: uri,
+        url: Uri.parse('https://$baseUrl/v1/feeds'),
+        bodyMap: {
+          "feed_url": subscriptionUrl,
+          "category_id": catId,
+        },
+        uri: null,
         userPassEncoded: userPassEncoded,
       );
 
-      catchServerError(res: res, context: context);
+      if (context.mounted) {
+        catchServerError(res: res, context: context);
+      }
 
       if (res.statusCode == 201) {
         Map<String, dynamic> decodedData = jsonDecode(res.body);
@@ -174,10 +159,14 @@ class AddNewSubscriptionNotifier
 
         ref.read(feedIdProvider.notifier).update((state) => feedId);
 
-        showSnackBar(context: context, text: 'Subscription successfully Added');
+        if (context.mounted) {
+          showSnackBar(
+              context: context, text: 'Subscription successfully Added');
+        }
 
-        if (!mounted) return;
-        context.pushNamed(HomeFeedScreen.routeNamed);
+        if (context.mounted) {
+          context.pushNamed(SelectSubscriptionScreen.routeNamed);
+        }
         // Todo: Nav
         // Navigator.of(context).pushNamed(HomeFeedScreen.routeNamed);
       } else {
@@ -186,7 +175,9 @@ class AddNewSubscriptionNotifier
         log('E: $decodedData');
         log('ES: ${res.statusCode}');
 
-        showSnackBar(context: context, text: '${decodedData.values}');
+        if (context.mounted) {
+          showErrorSnackBar(context: context, text: '${decodedData.values}');
+        }
       }
     } catch (e) {
       log('CR-SUBS: $e');
@@ -217,7 +208,9 @@ class AddNewSubscriptionNotifier
           context,
         )
         .then(
-          (_) => isDiscoverLoadingController.update((state) => false),
+          (_) => context.mounted
+              ? isDiscoverLoadingController.update((state) => false)
+              : null,
         );
   }
 
@@ -328,7 +321,7 @@ void catchServerError({
   required BuildContext context,
 }) {
   if (res.statusCode >= 400 && res.statusCode <= 599) {
-    showSnackBar(context: context, text: errorMessages[res.statusCode]!);
+    showErrorSnackBar(context: context, text: errorMessages[res.statusCode]!);
     return;
   }
 }
@@ -339,7 +332,7 @@ void catchServerErrorDiscovery({
 }) {
   if (res.statusCode == 404) {
     log('Hey 404');
-    showSnackBar(context: context, text: errorMessages[res.statusCode]!);
+    showErrorSnackBar(context: context, text: errorMessages[res.statusCode]!);
     return;
   } else if (res.statusCode == 500) {
     log('Hey 500');
@@ -347,7 +340,7 @@ void catchServerErrorDiscovery({
     throw ServerErrorDiscoveryException(res);
   } else if (res.statusCode >= 400 && res.statusCode <= 599) {
     log('Hey 400 to 600');
-    showSnackBar(context: context, text: errorMessages[res.statusCode]!);
+    showErrorSnackBar(context: context, text: errorMessages[res.statusCode]!);
     return;
   }
 }
