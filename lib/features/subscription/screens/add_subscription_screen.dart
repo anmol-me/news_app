@@ -18,6 +18,8 @@ final isDiscoverLoadingProvider =
 
 final showAsteriskProvider = StateProvider.autoDispose<bool>((ref) => false);
 
+final isDiscoverDisabledProvider = StateProvider.autoDispose((ref) => false);
+
 /// Class
 class AddSubscription extends HookConsumerWidget {
   static const routeNamed = '/add-category';
@@ -34,8 +36,8 @@ class AddSubscription extends HookConsumerWidget {
     // final urlController = useTextEditingController(
     //     text: 'https://feeds.feedburner.com/TheHackersNews');
 
-    final urlController = useTextEditingController(
-        text: 'https://rss.art19.com/apology-line');
+    final urlController =
+        useTextEditingController(text: 'https://rss.art19.com/apology-line');
     final catNameController = useTextEditingController();
 
     // final catNewsNotifier = ref.watch(categoryNotifierProvider);
@@ -53,6 +55,8 @@ class AddSubscription extends HookConsumerWidget {
     final feedId = ref.watch(feedIdProvider);
     print('-------------> ${feedId} <------------------');
 
+    final isDiscoverDisabled = ref.watch(isDiscoverDisabledProvider);
+
     // https://www.theverge.com/
     final selectedCategory = ref.watch(selectedCategoryProvider);
 
@@ -65,8 +69,7 @@ class AddSubscription extends HookConsumerWidget {
       orElse: () => CategoryList(title: '', id: 0),
     );
 
-    return
-        Scaffold(
+    return Scaffold(
       appBar: AppBar(
         title: const Text('Add Subscription'),
         leading: AppBackButton(
@@ -124,14 +127,22 @@ class AddSubscription extends HookConsumerWidget {
                   ],
                 ),
               ),
-              ElevatedButton(
-                onPressed: () => discoverSubscriptionController
-                    .discoverFunction(urlController, context),
-                style: ElevatedButton.styleFrom(backgroundColor: colorRed),
-                child: isDiscoverLoading
-                    ? const CircularLoading()
-                    : const Text('Discover'),
-              ),
+              isDiscoverDisabled
+                  ? ElevatedButton(
+                      onPressed: null,
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: colorDisabled),
+                      child: const Text('Discover'),
+                    )
+                  : ElevatedButton(
+                      onPressed: () => discoverSubscriptionController
+                          .discoverFunction(urlController, context),
+                      style:
+                          ElevatedButton.styleFrom(backgroundColor: colorRed),
+                      child: isDiscoverLoading
+                          ? const CircularLoading()
+                          : const Text('Discover'),
+                    ),
               const SizedBox(height: 10),
               Expanded(
                 child: discoverSubscription.isEmpty
@@ -191,6 +202,7 @@ class _DiscoveryItemState extends ConsumerState<DiscoveryItem> {
 
     /// Submit Feed
     void submitFeed() {
+      ref.read(isDiscoverDisabledProvider.notifier).update((state) => true);
       if (selectedCategory.isEmpty) {
         showSnackBar(context: context, text: 'Please select category.');
         showAsteriskController.update((state) => true);
@@ -203,14 +215,19 @@ class _DiscoveryItemState extends ConsumerState<DiscoveryItem> {
 
       discoverSubscriptionController
           .createFeed(
-            context,
-            activeCategory,
-            widget.subsItem.url,
-            widget.selectedCatInfo.id,
-          )
+        context,
+        activeCategory,
+        widget.subsItem.url,
+        widget.selectedCatInfo.id,
+      )
           .then(
-            (_) => setState(() => isLoading = false),
-          );
+        (_) {
+          setState(() => isLoading = false);
+          ref
+              .read(isDiscoverDisabledProvider.notifier)
+              .update((state) => false);
+        },
+      );
     }
 
     return ListTile(
