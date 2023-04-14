@@ -165,7 +165,7 @@ class AddNewSubscriptionNotifier
         }
 
         if (context.mounted) {
-          context.pushNamed(SelectSubscriptionScreen.routeNamed);
+          context.pop();
         }
         // Todo: Nav
         // Navigator.of(context).pushNamed(HomeFeedScreen.routeNamed);

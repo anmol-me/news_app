@@ -203,6 +203,7 @@ class _DiscoveryItemState extends ConsumerState<DiscoveryItem> {
     /// Submit Feed
     void submitFeed() {
       ref.read(isDiscoverDisabledProvider.notifier).update((state) => true);
+
       if (selectedCategory.isEmpty) {
         showSnackBar(context: context, text: 'Please select category.');
         showAsteriskController.update((state) => true);
