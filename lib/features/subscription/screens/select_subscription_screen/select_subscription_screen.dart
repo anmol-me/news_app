@@ -84,7 +84,7 @@ class SelectSubscriptionScreen extends HookConsumerWidget {
                 : null,
             icon: Icon(
               Icons.add,
-              color: isLoadingSubs ? colorAppbarForeground : colorRed,
+              color: isLoadingSubs ? colorDisabled : colorRed,
             ),
           ),
 

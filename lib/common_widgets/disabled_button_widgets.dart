@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:news_app/common/constants.dart';
 
 class DisabledMoreButton extends StatelessWidget {
   const DisabledMoreButton({
@@ -9,19 +10,19 @@ class DisabledMoreButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
-      children: const [
+      children: [
         Text(
           'More',
           style: TextStyle(
             fontSize: 17,
-            color: Colors.grey,
+            color: colorDisabled,
           ),
         ),
-        SizedBox(width: 5),
+        const SizedBox(width: 5),
         Icon(
           Icons.arrow_forward,
           size: 16,
-          color: Colors.grey,
+          color: colorDisabled,
         ),
       ],
     );
@@ -37,18 +38,18 @@ class DisabledPreviousButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
-      children: const [
+      children: [
         Icon(
           Icons.arrow_back,
           size: 16,
-          color: Colors.grey,
+          color: colorDisabled,
         ),
-        SizedBox(width: 5),
+        const SizedBox(width: 5),
         Text(
           'Previous',
           style: TextStyle(
             fontSize: 17,
-            color: Colors.grey,
+            color: colorDisabled,
           ),
         ),
       ],

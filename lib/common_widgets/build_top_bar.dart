@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:news_app/common/constants.dart';
 import 'package:news_app/common_widgets/disabled_button_widgets.dart';
 
 Widget buildTopBar(
@@ -32,7 +33,7 @@ Widget buildTopBar(
                           size: 16,
                           color: canGoToPreviousPage
                               ? Colors.redAccent
-                              : Colors.grey,
+                              : colorDisabled,
                         ),
                         const SizedBox(width: 5),
                         Text(
@@ -41,7 +42,7 @@ Widget buildTopBar(
                             fontSize: 17,
                             color: canGoToPreviousPage
                                 ? Colors.redAccent
-                                : Colors.grey,
+                                : colorDisabled,
                           ),
                         ),
                       ],
@@ -60,7 +61,7 @@ Widget buildTopBar(
                             fontSize: 17,
                             color: canGoToNextPage
                                 ? Colors.redAccent[200]
-                                : Colors.grey,
+                                : colorDisabled,
                           ),
                         ),
                         const SizedBox(width: 5),
@@ -69,7 +70,7 @@ Widget buildTopBar(
                           size: 16,
                           color: canGoToNextPage
                               ? Colors.redAccent[200]
-                              : Colors.grey,
+                              : colorDisabled,
                         ),
                       ],
                     ),

@@ -52,14 +52,14 @@ Widget topSectionRow(
       Text(
         ' / ',
         style: TextStyle(
-          color: Colors.grey[500],
+          color: colorSubtitle,
           // fontSize: 15,
         ),
       ),
       Text(
         dateTime,
         style: TextStyle(
-          color: Colors.grey[500],
+          color: colorSubtitle,
           // fontSize: 15,
         ),
       ),

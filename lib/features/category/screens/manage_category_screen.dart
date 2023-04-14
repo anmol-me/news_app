@@ -82,7 +82,7 @@ class ManageCategoryScreen extends HookConsumerWidget {
             icon: Icon(
               Icons.add,
               color: isManageLoading || isManageProcessing
-                  ? colorAppbarForeground
+                  ? colorDisabled
                   : colorRed,
             ),
           ),

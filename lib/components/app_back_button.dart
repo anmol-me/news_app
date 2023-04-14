@@ -19,7 +19,7 @@ class AppBackButton extends ConsumerWidget {
 
     return themeMode == ThemeMode.light
         ? BackButton(
-            color: controller ? Colors.grey[400] : colorAppbarForeground,
+            color: controller ? colorDisabled : colorAppbarForeground,
             onPressed: onPressedFunction,
           )
         : BackButton(

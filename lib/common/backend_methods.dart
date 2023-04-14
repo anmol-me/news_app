@@ -71,7 +71,7 @@ Future<http.Response> postHttpResp({
   if (url != null && bodyMap != null) {
 
     // Todo: Cleanup
-    log('1');
+    log('POST 1');
     return await http.post(
       url,
       body: jsonEncode(bodyMap),
@@ -81,7 +81,7 @@ Future<http.Response> postHttpResp({
       },
     );
   } else if (url != null) {
-    log('2');
+    log('POST 2');
     return await http.post(
       Uri.parse('https://$url'),
       headers: {
@@ -90,7 +90,7 @@ Future<http.Response> postHttpResp({
       },
     );
   } else if (uri != null) {
-    log('3');
+    log('POST 3');
     return await http.post(
       uri,
       headers: {
