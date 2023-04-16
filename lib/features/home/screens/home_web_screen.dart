@@ -4,6 +4,7 @@ export '../../../common_widgets/build_expansion_widget.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../common/common_methods.dart';
+import '../../../common/common_providers.dart';
 import '../../../common_widgets/build_popup_menu_button.dart';
 import '../../../common_widgets/build_top_bar.dart';
 import '../../../common_widgets/build_expansion_widget.dart';
@@ -27,8 +28,6 @@ import 'package:news_app/features/app_bar/app_drawer.dart';
 import '../widgets/check_again_widget.dart';
 import '../widgets/welcome_view_widget.dart';
 import '../repository/home_methods.dart';
-
-// final isHomeDrawerOpened = StateProvider((ref) => false);
 
 class HomeWebScreen extends ConsumerStatefulWidget {
   static const routeNamed = '/home-web-screen';
@@ -62,6 +61,14 @@ class _HomeWebScreenState extends ConsumerState<HomeWebScreen> {
 
   @override
   Widget build(BuildContext context) {
+    ref.listen(homeFeedProvider, (previous, next) {
+      if (ref.read(homeFeedProvider).isEmpty) {
+        ref.read(emptyStateDisableProvider.notifier).update((state) => true);
+      } else {
+        ref.read(emptyStateDisableProvider.notifier).update((state) => false);
+      }
+    });
+
     final scrollController = ScrollController();
     final currentWidth = MediaQuery.of(context).size.width;
 
@@ -91,20 +98,29 @@ class _HomeWebScreenState extends ConsumerState<HomeWebScreen> {
     final canGoToPreviousPage = ref.watch(homeOffsetProvider) != 0;
 
     final homeMethods = ref.watch(homeMethodsProvider(context));
+    final emptyStateDisable = ref.watch(emptyStateDisableProvider);
 
     return Scaffold(
       appBar: AppBar(
         title: Text(isStarred ? 'Starred' : 'Feeds'),
         actions: [
-          IconButton(
-            onPressed: () {
-              context.pushNamed(SearchScreen.routeNamed);
+          emptyStateDisable
+              ? IconButton(
+                  onPressed: null,
+                  icon: Icon(
+                    Icons.search,
+                    color: colorDisabled,
+                  ),
+                )
+              : IconButton(
+                  onPressed: () {
+                    context.pushNamed(SearchScreen.routeNamed);
 
-              /// Todo: Nav
-              // Navigator.of(context).pushNamed(SearchScreen.routeNamed);
-            },
-            icon: const Icon(Icons.search),
-          ),
+                    /// Todo: Nav
+                    // Navigator.of(context).pushNamed(SearchScreen.routeNamed);
+                  },
+                  icon: const Icon(Icons.search),
+                ),
 
           /// Todo: Temporary Clear Button
           IconButton(
@@ -114,12 +130,17 @@ class _HomeWebScreenState extends ConsumerState<HomeWebScreen> {
               color: colorRed,
             ),
           ),
-          BuildPopupMenuButton(
-            isShowRead: isShowRead,
-            sort: sortAs,
-            sortFunction: homeMethods.sortFunction,
-            readFunction: homeMethods.readFunction,
-          ),
+          emptyStateDisable
+              ? Padding(
+                  padding: const EdgeInsets.only(right: 8.0),
+                  child: Icon(Icons.filter_alt, color: colorDisabled),
+                )
+              : BuildPopupMenuButton(
+                  isShowRead: isShowRead,
+                  sort: sortAs,
+                  sortFunction: homeMethods.sortFunction,
+                  readFunction: homeMethods.readFunction,
+                ),
         ],
       ),
       drawer: currentWidth <= 650 ? const AppDrawer() : null,

@@ -10,6 +10,7 @@ import 'package:html/parser.dart' as html_parser;
 import 'package:intl/intl.dart';
 import 'package:news_app/features/authentication/repository/auth_repo.dart';
 
+import '../../../common/common_providers.dart';
 import '../../../common/enums.dart';
 import '../../../common/backend_methods.dart';
 import '../../../common/frontend_methods.dart';
@@ -119,6 +120,11 @@ class HomeFeedNotifier extends StateNotifier<List<News>> {
 
         fetchedNewsList.add(createdNews);
       }
+
+      if (fetchedNewsList.isEmpty) {
+        ref.read(emptyStateDisableProvider.notifier).update((state) => true);
+      }
+
       state = fetchedNewsList;
       // state = [];
 

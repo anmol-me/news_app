@@ -12,6 +12,7 @@ import 'package:news_app/features/app_bar/user.dart';
 import 'package:news_app/features/subscription/screens/select_subscription_screen/select_subscription_screen.dart';
 import 'package:news_app/features/home/screens/home_feed_screen.dart';
 
+import '../../common/common_providers.dart';
 import '../../common/common_widgets.dart';
 import '../../common/constants.dart';
 import '../authentication/repository/auth_repo.dart';
@@ -65,6 +66,7 @@ class AppDrawer extends HookConsumerWidget {
 
     final appBarRepo = ref.read(appBarRepoProvider);
     final isStarred = ref.watch(isStarredProvider);
+    final emptyStateDisable = ref.watch(emptyStateDisableProvider);
 
     return Drawer(
       child: SingleChildScrollView(
@@ -83,35 +85,64 @@ class AppDrawer extends HookConsumerWidget {
             Wrap(
               runSpacing: 1,
               children: [
-                ListTile(
-                  leading: const Icon(Icons.home_outlined),
-                  title: const Text('All Items'),
+                emptyStateDisable
+                    ? ListTile(
+                        leading: Icon(
+                          Icons.home_outlined,
+                          color: colorDisabled,
+                        ),
+                        title: Text(
+                          'All Items',
+                          style: TextStyle(
+                            color: colorDisabled,
+                          ),
+                        ),
+                        onTap: null,
+                      )
+                    : ListTile(
+                        leading: const Icon(Icons.home_outlined),
+                        title: const Text('All Items'),
 
-                  /// TODO: Old code cleanup
-                  // onTap: () => refreshAllDrawer(
-                  //   navigator,
-                  //   ref,
-                  //   context,
-                  //   isLoadingPageController,
-                  // ),
-                  onTap: () => ref.read(refreshProvider).refreshAllMain(context),
-                ),
-                ListTile(
-                  leading: Icon(
-                    isStarred ? Icons.star : Icons.star_border_outlined,
-                  ),
-                  title: const Text('Starred Items'),
+                        /// TODO: Old code cleanup
+                        // onTap: () => refreshAllDrawer(
+                        //   navigator,
+                        //   ref,
+                        //   context,
+                        //   isLoadingPageController,
+                        // ),
+                        onTap: () =>
+                            ref.read(refreshProvider).refreshAllMain(context),
+                      ),
+                emptyStateDisable
+                    ? ListTile(
+                        leading: Icon(
+                          Icons.star_border_outlined,
+                          color: colorDisabled,
+                        ),
+                        title: Text(
+                          'Starred Items',
+                          style: TextStyle(
+                            color: colorDisabled,
+                          ),
+                        ),
+                        onTap: null,
+                      )
+                    : ListTile(
+                        leading: Icon(
+                          isStarred ? Icons.star : Icons.star_border_outlined,
+                        ),
+                        title: const Text('Starred Items'),
 
-                  /// TODO: Old code cleanup
-                  // onTap: () {
-                  // starredFunction(
-                  //   isLoadingPageController,
-                  //   isStarredController,
-                  //   context,
-                  // );
-                  // },
-                  onTap: () => appBarRepo.starredFunction(context),
-                ),
+                        /// TODO: Old code cleanup
+                        // onTap: () {
+                        // starredFunction(
+                        //   isLoadingPageController,
+                        //   isStarredController,
+                        //   context,
+                        // );
+                        // },
+                        onTap: () => appBarRepo.starredFunction(context),
+                      ),
                 ListTile(
                   leading: const Icon(Icons.subscriptions_rounded),
                   title: const Text('Subscription'),
