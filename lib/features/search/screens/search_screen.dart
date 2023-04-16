@@ -7,7 +7,7 @@ import 'package:news_app/features/home/screens/home_feed_screen.dart';
 import 'package:news_app/features/search/repository/search_repo.dart';
 
 import '../../../common/common_methods.dart';
-import '../../home/repository/home_feed_repo.dart';
+import '../../home/providers/home_providers.dart';
 
 /// Providers
 final showResultsProvider = StateProvider.autoDispose((ref) => false);

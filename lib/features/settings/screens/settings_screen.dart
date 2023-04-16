@@ -3,7 +3,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:news_app/features/authentication/repository/auth_repo.dart';
 
 import '../../../components/app_back_button.dart';
-import '../../home/repository/home_feed_repo.dart';
+import '../../home/providers/home_providers.dart';
 
 final isSettingsLoadingProvider = StateProvider((ref) => false);
 

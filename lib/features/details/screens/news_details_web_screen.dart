@@ -10,7 +10,7 @@ import 'package:webview_flutter/webview_flutter.dart';
 
 import '../../../common/constants.dart';
 import '../../../models/news.dart';
-import '../../home/repository/home_feed_repo.dart';
+import '../../home/providers/home_providers.dart';
 import '../components/card_header_row.dart';
 import '../components/header_image.dart';
 import '../components/methods.dart';

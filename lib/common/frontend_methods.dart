@@ -18,7 +18,7 @@ Future<Object?> navigateError(
 
 Future showErrorDialogue(
   BuildContext context,
-  StateNotifierProviderRef ref,
+  Ref ref,
   e,
 ) {
   return showDialog(

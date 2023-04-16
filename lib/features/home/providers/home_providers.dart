@@ -4,7 +4,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:news_app/features/home/repository/home_feed_repo.dart';
 
 import '../../../common/enums.dart';
+import '../../../models/news.dart';
 import '../../starred/starred_screen.dart';
+
+final homeFeedProvider = NotifierProvider<HomeFeedNotifier, List<News>>(() {
+  return HomeFeedNotifier();
+});
 
 final homeOffsetProvider = StateProvider((ref) => 0);
 

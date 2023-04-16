@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../features/details/components/providers.dart';
-import '../features/home/repository/home_feed_repo.dart';
+import '../features/home/providers/home_providers.dart';
 import 'constants.dart';
 import 'enums.dart';
 

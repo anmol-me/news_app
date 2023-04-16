@@ -5,66 +5,37 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:http/http.dart' as http;
-import 'package:html/parser.dart' as html_parser;
-import 'package:intl/intl.dart';
 import 'package:news_app/features/authentication/repository/auth_repo.dart';
 
-import '../../../common/common_providers.dart';
 import '../../../common/enums.dart';
 import '../../../common/backend_methods.dart';
 import '../../../common/frontend_methods.dart';
 import '../../../models/news.dart';
-import '../../starred/starred_screen.dart';
 import '../providers/home_providers.dart';
 
-/// Providers -----------------------------------------------------------------------------
-
-final homeFeedProvider =
-    StateNotifierProvider<HomeFeedNotifier, List<News>>((ref) {
-  final userPrefs = ref.watch(userPrefsProvider);
-  final userPassEncoded = ref.watch(userPrefsProvider).getAuthData() ?? '';
-
-  final orderBy = ref.watch(homeOrderProvider);
-  final direction = ref.watch(homeSortDirectionProvider);
-  final offsetNumber = ref.watch(homeOffsetProvider);
-
-  final isStarred = ref.watch(isStarredProvider);
-  final isRead = ref.watch(homeIsShowReadProvider);
-
-  return HomeFeedNotifier(
-    ref,
-    userPrefs,
-    userPassEncoded,
-    direction,
-    offsetNumber,
-    isStarred,
-    isRead,
-    orderBy,
-  );
-});
-
 /// Method -------------------------------------------------------------------------------
-class HomeFeedNotifier extends StateNotifier<List<News>> {
-  final StateNotifierProviderRef ref;
-  final UserPreferences userPrefs;
-  final String userPassEncoded;
-  final Sort direction;
-  final int offsetNumber;
-  final bool isStarred;
-  final bool isRead;
-  final OrderBy orderBy;
+class HomeFeedNotifier extends Notifier<List<News>> {
+  late UserPreferences userPrefs;
+  late String userPassEncoded;
+  late Sort direction;
+  late int offsetNumber;
+  late bool isStarred;
+  late bool isRead;
+  late OrderBy orderBy;
 
-  HomeFeedNotifier(
-    this.ref,
-    this.userPrefs,
-    this.userPassEncoded,
-    this.direction,
-    this.offsetNumber,
-    this.isStarred,
-    this.isRead,
-    this.orderBy,
-  ) : super([]);
+  @override
+  List<News> build() {
+    userPrefs = ref.watch(userPrefsProvider);
+    userPassEncoded = ref.watch(userPrefsProvider).getAuthData() ?? '';
+
+    orderBy = ref.watch(homeOrderProvider);
+    direction = ref.watch(homeSortDirectionProvider);
+    offsetNumber = ref.watch(homeOffsetProvider);
+
+    isStarred = ref.watch(isStarredProvider);
+    isRead = ref.watch(homeIsShowReadProvider);
+    return [];
+  }
 
   /// Fetch all Feeds
   Future<void> fetchEntries(BuildContext context) async {
@@ -100,7 +71,7 @@ class HomeFeedNotifier extends StateNotifier<List<News>> {
         String titleTextDecoded = utf8.decode(info['title'].runes.toList());
 
         Status status =
-            info['status'] == 'unread' ? Status.unread : Status.read;
+        info['status'] == 'unread' ? Status.unread : Status.read;
 
         final createdNews = News(
           entryId: info['id'],
@@ -120,11 +91,6 @@ class HomeFeedNotifier extends StateNotifier<List<News>> {
 
         fetchedNewsList.add(createdNews);
       }
-
-      if (fetchedNewsList.isEmpty) {
-        ref.read(emptyStateDisableProvider.notifier).update((state) => true);
-      }
-
       state = fetchedNewsList;
       // state = [];
 
@@ -143,8 +109,8 @@ class HomeFeedNotifier extends StateNotifier<List<News>> {
   }
 
   Future<void> refreshAll(
-    BuildContext context,
-  ) async {
+      BuildContext context,
+      ) async {
     final url = userPrefs.getUrlData();
 
     try {
@@ -176,9 +142,9 @@ class HomeFeedNotifier extends StateNotifier<List<News>> {
   }
 
   void toggleFavStatus(
-    int newsId,
-    BuildContext context,
-  ) async {
+      int newsId,
+      BuildContext context,
+      ) async {
     final url = userPrefs.getUrlData();
 
     try {
@@ -219,10 +185,10 @@ class HomeFeedNotifier extends StateNotifier<List<News>> {
   }
 
   void toggleRead(
-    int newsId,
-    Status stat,
-    BuildContext context,
-  ) async {
+      int newsId,
+      Status stat,
+      BuildContext context,
+      ) async {
     try {
       final url = userPrefs.getUrlData();
 
@@ -262,9 +228,9 @@ class HomeFeedNotifier extends StateNotifier<List<News>> {
 
   // TODO: Called by Category
   Future<Map<String, dynamic>> viewEntryDetails(
-    int feedId,
-    int entryId,
-  ) async {
+      int feedId,
+      int entryId,
+      ) async {
     final res = await getHttpResp(
       Uri.parse('https://read.rusi.me/v1/feeds/$feedId/entries/$entryId'),
       userPassEncoded,
