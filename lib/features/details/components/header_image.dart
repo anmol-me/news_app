@@ -14,14 +14,14 @@ class HeaderImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+
     return ClipRRect(
       borderRadius: BorderRadius.circular(2),
       child: CachedNetworkImage(
         imageUrl: imageUrl!,
-        height: MediaQuery.of(context).size.height *
-            0.30,
-        width: MediaQuery.of(context).size.width *
-            0.90,
+        height: size.height * 0.30,
+        width: size.width * 0.90,
         fit: BoxFit.cover,
         placeholder: (context, url) => Center(
           child: CircularProgressIndicator(
@@ -29,13 +29,12 @@ class HeaderImage extends StatelessWidget {
             strokeWidth: 1,
           ),
         ),
-        errorWidget: (context, url, error) =>
-            Image.network(
-              ErrorString.image.value,
-              height: 90,
-              width: 120,
-              fit: BoxFit.cover,
-            ),
+        errorWidget: (context, url, error) => Image.asset(
+          'assets/notfound.png',
+          height: 90,
+          width: 120,
+          fit: BoxFit.cover,
+        ),
       ),
     );
   }
