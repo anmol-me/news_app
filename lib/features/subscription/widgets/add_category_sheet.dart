@@ -97,6 +97,7 @@ class AddCatSheetButton extends ConsumerWidget {
       )
           .then((_) {
         setState(() => isLoading = false);
+        catNameController.clear();
         // Navigator.of(context).pushNamed(SelectSubscriptionScreen.routeNamed);
       });
     }
