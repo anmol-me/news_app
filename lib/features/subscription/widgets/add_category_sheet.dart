@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:news_app/features/subscription/repository/add_new_subscription_repo.dart';
 import 'package:news_app/features/subscription/repository/category_list_repo.dart';
@@ -77,7 +78,8 @@ class AddCatSheetButton extends ConsumerWidget {
       // final addNewSubsController =
       //     ref.read(addNewSubscriptionProvider.notifier);
 
-      final categoryListController = ref.read(categoryListNotifierProvider.notifier);
+      final categoryListController =
+          ref.read(categoryListNotifierProvider.notifier);
 
       // final isCreateCatLoadingController =
       // ref.read(isCreateCatLoadingProvider.notifier);
@@ -88,7 +90,8 @@ class AddCatSheetButton extends ConsumerWidget {
 
       // addNewSubsController
 
-      categoryListController.createCategory(
+      categoryListController
+          .createCategory(
         catNameController.text,
         context,
       )
@@ -102,6 +105,8 @@ class AddCatSheetButton extends ConsumerWidget {
       icon: const Icon(Icons.add),
       onPressed: () {
         showModalBottomSheet(
+          isDismissible: false,
+          enableDrag: false,
           isScrollControlled: true,
           context: context,
           shape: const RoundedRectangleBorder(
@@ -112,7 +117,7 @@ class AddCatSheetButton extends ConsumerWidget {
           builder: (context) => StatefulBuilder(
             builder: (BuildContext context, StateSetter set) {
               return Padding(
-                padding: mediaQuery.viewInsets,
+                padding: EdgeInsets.only(bottom: mediaQuery.viewInsets.bottom),
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: SizedBox(
@@ -127,14 +132,34 @@ class AddCatSheetButton extends ConsumerWidget {
                           ),
                         ),
                         const SizedBox(height: 20),
-                        ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: colorRed,
-                          ),
-                          onPressed: () => createCategory(set),
-                          child: isLoading
-                              ? const CircularLoading()
-                              : const Text('Create Category'),
+                        Column(
+                          children: [
+                            ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: colorRed,
+                              ),
+                              onPressed: () => createCategory(set),
+                              child: isLoading
+                                  ? const CircularLoading()
+                                  : const Text('Create Category'),
+                            ),
+                            isLoading
+                                ? TextButton(
+                                    style: TextButton.styleFrom(
+                                      foregroundColor: colorDisabled,
+                                    ),
+                                    onPressed: null,
+                                    child: const Text('Close'),
+                                  )
+                                : TextButton(
+                                    style: TextButton.styleFrom(
+                                      foregroundColor: colorRed,
+                                    ),
+                                    onPressed: () =>
+                                        Navigator.of(context).pop(),
+                                    child: const Text('Close'),
+                                  ),
+                          ],
                         ),
                       ],
                     ),

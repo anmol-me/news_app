@@ -91,7 +91,6 @@ class CategoryListNotifier extends StateNotifier<List<CategoryList>> {
     BuildContext context,
   ) async {
     final scaffoldMessenger = ScaffoldMessenger.of(context);
-    final navigator = Navigator.of(context);
     final themeCxt = Theme.of(context);
 
     try {
@@ -107,6 +106,8 @@ class CategoryListNotifier extends StateNotifier<List<CategoryList>> {
       // Map decodedData = jsonDecode(res.body);
 
       if (res.statusCode == 400) {
+        if (mounted) Navigator.of(context).pop();
+
         scaffoldMessenger.showSnackBar(
           SnackBar(
             behavior: SnackBarBehavior.floating,
@@ -115,6 +116,7 @@ class CategoryListNotifier extends StateNotifier<List<CategoryList>> {
             content: Text(ErrorString.catAlreadyExists.value),
           ),
         );
+        return;
       }
 
       final decodedData = jsonDecode(res.body);
@@ -124,10 +126,13 @@ class CategoryListNotifier extends StateNotifier<List<CategoryList>> {
         title: decodedData['title'],
       );
 
-      showSnackBar(context: context, text: ErrorString.catCreated.value);
-      navigator.pop();
+      if (mounted) {
+        Navigator.of(context).pop();
+        showSnackBar(context: context, text: ErrorString.catCreated.value);
+      }
+
       state = [...state, categoryListItem];
-      log(state.toList().toString());
+      state.map((e) => log(e.title)).toList().toString();
     } on TimeoutException catch (e) {
       log('Timeout Error: $e');
     } on SocketException catch (e) {
