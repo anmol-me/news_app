@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 
-class ExpansionWidget extends ConsumerStatefulWidget {
+class ExpansionWidget extends HookWidget {
   final Widget topSection;
   final Widget titleSection;
   final Widget onExpanded;
@@ -14,28 +14,22 @@ class ExpansionWidget extends ConsumerStatefulWidget {
   });
 
   @override
-  ConsumerState createState() => _ExpansionWidgetState();
-}
-
-class _ExpansionWidgetState extends ConsumerState<ExpansionWidget> {
-  bool isExpanded = false;
-
-  @override
   Widget build(BuildContext context) {
+    final isExpanded = useState(false);
+
     return GestureDetector(
       onLongPress: () {
-        setState(() => isExpanded = !isExpanded);
+        isExpanded.value = !isExpanded.value;
       },
       child: Column(
         children: [
           Container(
-            child: widget.topSection,
+            child: topSection,
           ),
           Container(
-            child: widget.titleSection,
+            child: titleSection,
           ),
-          if (isExpanded)
-            widget.onExpanded,
+          if (isExpanded.value) onExpanded,
         ],
       ),
     );
