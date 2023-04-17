@@ -168,7 +168,80 @@ class AddSubscription extends HookConsumerWidget {
   }
 }
 
-class DiscoveryItem extends ConsumerStatefulWidget {
+// class DiscoveryItem extends ConsumerStatefulWidget {
+//   final AddNewSubscription subsItem;
+//   final CategoryList selectedCatInfo;
+//
+//   const DiscoveryItem({
+//     super.key,
+//     required this.subsItem,
+//     required this.selectedCatInfo,
+//   });
+//
+//   @override
+//   ConsumerState createState() => _DiscoveryItemState();
+// }
+//
+// class _DiscoveryItemState extends ConsumerState<DiscoveryItem> {
+//   bool isLoading = false;
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     // final isDiscoveryItemsLoading = ref.watch(isDiscoveryItemsLoadingProvider);
+//     // final isDiscoveryItemsLoadingController =
+//     //     ref.watch(isDiscoveryItemsLoadingProvider.notifier);
+//
+//     final selectedCategory = ref.watch(selectedCategoryProvider);
+//
+//     final discoverSubscriptionController =
+//     ref.watch(addNewSubscriptionProvider.notifier);
+//
+//     final activeCategory = ref.watch(selectedCategoryProvider);
+//
+//     final showAsteriskController = ref.watch(showAsteriskProvider.notifier);
+//
+//     /// Submit Feed
+//     void submitFeed() {
+//       ref.read(isDiscoverDisabledProvider.notifier).update((state) => true);
+//
+//       if (selectedCategory.isEmpty) {
+//         showSnackBar(context: context, text: 'Please select category.');
+//         showAsteriskController.update((state) => true);
+//         return;
+//       } else if (selectedCategory.isNotEmpty) {
+//         showAsteriskController.update((state) => false);
+//       }
+//
+//       setState(() => isLoading = true);
+//
+//       discoverSubscriptionController
+//           .createFeed(
+//         context,
+//         activeCategory,
+//         widget.subsItem.url,
+//         widget.selectedCatInfo.id,
+//       )
+//           .then(
+//             (_) {
+//           setState(() => isLoading = false);
+//           ref
+//               .read(isDiscoverDisabledProvider.notifier)
+//               .update((state) => false);
+//         },
+//       );
+//     }
+//
+//     return ListTile(
+//       title: Text(widget.subsItem.title),
+//       leading: isLoading
+//           ? CircularLoading(color: colorRed)
+//           : const Icon(Icons.circle),
+//       onTap: submitFeed,
+//     );
+//   }
+// }
+
+class DiscoveryItem extends HookConsumerWidget {
   final AddNewSubscription subsItem;
   final CategoryList selectedCatInfo;
 
@@ -179,14 +252,9 @@ class DiscoveryItem extends ConsumerStatefulWidget {
   });
 
   @override
-  ConsumerState createState() => _DiscoveryItemState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isLoading = useState(false);
 
-class _DiscoveryItemState extends ConsumerState<DiscoveryItem> {
-  bool isLoading = false;
-
-  @override
-  Widget build(BuildContext context) {
     // final isDiscoveryItemsLoading = ref.watch(isDiscoveryItemsLoadingProvider);
     // final isDiscoveryItemsLoadingController =
     //     ref.watch(isDiscoveryItemsLoadingProvider.notifier);
@@ -212,18 +280,18 @@ class _DiscoveryItemState extends ConsumerState<DiscoveryItem> {
         showAsteriskController.update((state) => false);
       }
 
-      setState(() => isLoading = true);
+      isLoading.value = true;
 
       discoverSubscriptionController
           .createFeed(
         context,
         activeCategory,
-        widget.subsItem.url,
-        widget.selectedCatInfo.id,
+        subsItem.url,
+        selectedCatInfo.id,
       )
           .then(
         (_) {
-          setState(() => isLoading = false);
+          isLoading.value = false;
           ref
               .read(isDiscoverDisabledProvider.notifier)
               .update((state) => false);
@@ -232,8 +300,8 @@ class _DiscoveryItemState extends ConsumerState<DiscoveryItem> {
     }
 
     return ListTile(
-      title: Text(widget.subsItem.title),
-      leading: isLoading
+      title: Text(subsItem.title),
+      leading: isLoading.value
           ? CircularLoading(color: colorRed)
           : const Icon(Icons.circle),
       onTap: submitFeed,
