@@ -158,7 +158,7 @@ class CategoryListNotifier extends StateNotifier<List<CategoryList>> {
     ];
 
     // 'https://read.rusi.me/v1/categories/$id
-    Uri uri = Uri.https(baseUrl, 'v1/categoriesaa/$catId');
+    Uri uri = Uri.https(baseUrl, 'v1/categories/$catId');
 
     try {
       final res = await http.delete(
