@@ -16,50 +16,32 @@ import '../../home/providers/home_providers.dart';
 import '../../starred/starred_screen.dart';
 
 final searchNotifierProvider =
-    StateNotifierProvider.autoDispose<SearchNotifier, List<News>>((ref) {
-  final userPrefs = ref.watch(userPrefsProvider);
-  final baseUrl = userPrefs.getUrlData();
-  final userPassEncoded = userPrefs.getAuthData();
-
-  final direction = ref.watch(homeSortDirectionProvider);
-  var offsetNumber = ref.watch(homeOffsetProvider);
-
-  final isStarred = ref.watch(isStarredProvider);
-  final isRead = ref.watch(homeIsShowReadProvider);
-
-  return SearchNotifier(
-    userPrefs,
-    baseUrl!,
-    userPassEncoded!,
-    direction,
-    offsetNumber,
-    isStarred,
-    isRead,
-    ref,
-  );
-});
+    AutoDisposeNotifierProvider<SearchNotifier, List<News>>(SearchNotifier.new);
 
 /// Search Notifier //////////////////////////////////////////////////////////
-class SearchNotifier extends StateNotifier<List<News>> {
-  final UserPreferences userPrefs;
-  final String baseUrl;
-  final String userPassEncoded;
-  final Sort direction;
-  final int offsetNumber;
-  final bool isStarred;
-  final bool isRead;
-  final StateNotifierProviderRef ref;
+class SearchNotifier extends AutoDisposeNotifier<List<News>> {
+  late UserPreferences userPrefs;
+  late String baseUrl;
+  late String userPassEncoded;
+  late Sort direction;
+  late int offsetNumber;
+  late bool isStarred;
+  late bool isRead;
 
-  SearchNotifier(
-    this.userPrefs,
-    this.baseUrl,
-    this.userPassEncoded,
-    this.direction,
-    this.offsetNumber,
-    this.isStarred,
-    this.isRead,
-    this.ref,
-  ) : super([]);
+  @override
+  List<News> build() {
+    userPrefs = ref.watch(userPrefsProvider);
+    baseUrl = userPrefs.getUrlData()!;
+    userPassEncoded = userPrefs.getAuthData()!;
+
+    direction = ref.watch(homeSortDirectionProvider);
+    offsetNumber = ref.watch(homeOffsetProvider);
+
+    isStarred = ref.watch(isStarredProvider);
+    isRead = ref.watch(homeIsShowReadProvider);
+
+    return [];
+  }
 
   Future<List<News>> fetchSearchResults(
     BuildContext context,
@@ -111,10 +93,11 @@ class SearchNotifier extends StateNotifier<List<News>> {
           fetchedNewsList.add(createdNews);
         }
 
-        state = fetchedNewsList;
-        return state;
+        return state = fetchedNewsList;
       } else {
-        showSnackBar(context: context, text: 'Status: ${res.statusCode}');
+        if (context.mounted) {
+          showSnackBar(context: context, text: 'Status: ${res.statusCode}');
+        }
         log('Not LOGIN: ${res.statusCode}');
         return [];
       }
