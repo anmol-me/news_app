@@ -135,7 +135,7 @@ class ManageCategoryRepository extends StateNotifier<List<CategoryList>> {
     ];
 
     // 'https://read.rusi.me/v1/categories/$id
-    Uri uri = Uri.https(baseUrl!, 'v1/categoriesaa/$itemId');
+    Uri uri = Uri.https(baseUrl!, 'v1/feeds/$itemId');
 
     try {
       final res = await http.delete(
