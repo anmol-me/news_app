@@ -3,7 +3,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:news_app/common/common_widgets.dart';
-import 'package:news_app/features/subscription/repository/category_repo.dart';
+import 'package:news_app/features/category/repository/category_repo.dart';
 import 'package:news_app/features/app_bar/app_drawer.dart';
 import 'package:news_app/features/subscription/category_providers.dart';
 

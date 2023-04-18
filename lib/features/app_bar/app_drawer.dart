@@ -20,7 +20,7 @@ import '../home/providers/home_providers.dart';
 import '../home/repository/home_feed_repo.dart';
 import '../settings/screens/settings_screen.dart';
 import '../starred/starred_screen.dart';
-import '../subscription/screens/category_screen.dart';
+import '../category/screens/category_screen.dart';
 import 'user_providers.dart';
 
 /// Provider

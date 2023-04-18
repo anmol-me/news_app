@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../common/constants.dart';
 import '../models/news.dart';
-import '../features/subscription/screens/category_screen.dart';
+import '../features/category/screens/category_screen.dart';
 import '../features/home/providers/home_providers.dart';
 
 Widget topSectionRow(

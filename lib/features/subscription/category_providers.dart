@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:news_app/features/subscription/repository/category_repo.dart';
-import 'package:news_app/features/subscription/screens/category_screen.dart';
+import 'package:news_app/features/category/repository/category_repo.dart';
+import 'package:news_app/features/category/screens/category_screen.dart';
 
 import '../../models/news.dart';
 import '../authentication/repository/auth_repo.dart';

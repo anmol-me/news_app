@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../home/providers/home_providers.dart';
 import '../../repository/category_list_repo.dart';
-import '../category_screen.dart';
+import '../../../category/screens/category_screen.dart';
 
 class SubscriptionTile extends ConsumerWidget {
   final int id;

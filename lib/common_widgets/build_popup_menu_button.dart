@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../common/constants.dart';
 import '../common/enums.dart';
 import '../features/home/providers/home_providers.dart';
-import '../features/subscription/repository/category_repo.dart';
+import '../features/category/repository/category_repo.dart';
 import '../main.dart';
 
 class BuildPopupMenuButton extends ConsumerWidget {
