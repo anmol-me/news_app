@@ -7,8 +7,8 @@ import 'package:news_app/features/home/screens/home_feed_screen.dart';
 
 import '../../common/enums.dart';
 import '../home/providers/home_providers.dart';
-import '../home/repository/home_feed_repo.dart';
 
+/// Provider
 final appBarRepoProvider = Provider(
   (ref) {
     final isLoadingPageController = ref.watch(homePageLoadingProvider.notifier);
@@ -17,6 +17,8 @@ final appBarRepoProvider = Provider(
   },
 );
 
+
+/// Class
 class AppBarRepository {
   final ProviderRef ref;
   final StateController<bool> isLoadingPageController;
