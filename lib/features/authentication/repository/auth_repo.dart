@@ -136,8 +136,8 @@ class AuthRepo {
       if (statusCode == 200) {
         // navigator.pushNamed(HomeFeedScreen.routeNamed);
         if (context.mounted) {
-            context.goNamed(HomeFeedScreen.routeNamed);
-          }
+          context.goNamed(HomeFeedScreen.routeNamed);
+        }
       } else if (statusCode == 401) {
         if (context.mounted) {
           showSnackBar(context: context, text: ErrorString.accessDenied.value);
@@ -191,28 +191,6 @@ class UserPreferences {
 
   void clearPrefs() => prefs?.clear();
 }
-
-class UserSettings extends StateNotifier<bool?> {
-  UserSettings() : super(prefs!.getBool(keyThemeMode));
-  static SharedPreferences? prefs;
-
-  static Future init() async => prefs = await SharedPreferences.getInstance();
-
-  static const keyThemeMode = 'themeMode';
-
-  Future setThemeMode(bool darkEnabled) async {
-    state = darkEnabled;
-    return await prefs!.setBool(keyThemeMode, darkEnabled);
-  }
-
-// bool? getThemeMode() {
-//   return  prefs!.getBool(keyThemeMode) ?? true;
-//   // return prefs!.getBool(keyThemeMode);
-// }
-}
-
-final userSettingsProvider =
-    StateNotifierProvider<UserSettings, bool?>((ref) => UserSettings());
 
 // /// Provider & Class ------------------------------------------------------------------------
 // final authMethodsProvider = Provider((ref) {
