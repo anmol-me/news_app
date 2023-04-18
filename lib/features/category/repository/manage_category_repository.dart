@@ -25,40 +25,27 @@ import '../../authentication/repository/auth_repo.dart';
 //   return ref.watch(catFeedRepoProvider.notifier).deleteFeed();
 // });
 
-/// State Provider
+/// Notifier Provider
 final manageCateNotifierProvider =
-    StateNotifierProvider<ManageCategoryRepository, List<CategoryList>>((ref) {
-  final userPrefs = ref.watch(userPrefsProvider);
-  final userPassEncoded = userPrefs.getAuthData();
-  final baseUrl = userPrefs.getUrlData();
+    NotifierProvider<ManageCategoryRepository, List<CategoryList>>(
+        ManageCategoryRepository.new);
 
-  // final catId = ref.watch(categoryIdProvider);
+/// Notifier
+class ManageCategoryRepository extends Notifier<List<CategoryList>> {
+  late UserPreferences userPrefs;
 
-  return ManageCategoryRepository(
-    ref,
-    userPrefs,
-    // catId,
-    userPassEncoded,
-    baseUrl,
-  );
-});
+  // late int categoryId;
+  late String? userPassEncoded;
+  late String? baseUrl;
 
-/// State Notifier
-class ManageCategoryRepository extends StateNotifier<List<CategoryList>> {
-  final StateNotifierProviderRef ref;
-  final UserPreferences userPrefs;
-
-  // final int categoryId;
-  final String? userPassEncoded;
-  final String? baseUrl;
-
-  ManageCategoryRepository(
-    this.ref,
-    this.userPrefs,
-    // this.categoryId,
-    this.userPassEncoded,
-    this.baseUrl,
-  ) : super([]);
+  @override
+  List<CategoryList> build() {
+    // catId = ref.watch(categoryIdProvider);
+    userPrefs = ref.watch(userPrefsProvider);
+    userPassEncoded = userPrefs.getAuthData();
+    baseUrl = userPrefs.getUrlData();
+    return [];
+  }
 
   Future<List<CategoryList>> fetchCategoryFeeds(
     BuildContext context,
@@ -89,10 +76,12 @@ class ManageCategoryRepository extends StateNotifier<List<CategoryList>> {
           list.add(data);
         }
       } else {
-        showErrorSnackBar(
-          context: context,
-          text: ErrorString.somethingWrongAdmin.value,
-        );
+        if (context.mounted) {
+          showErrorSnackBar(
+            context: context,
+            text: ErrorString.somethingWrongAdmin.value,
+          );
+        }
       }
 
       return state = list;
@@ -147,17 +136,21 @@ class ManageCategoryRepository extends StateNotifier<List<CategoryList>> {
       );
 
       if (res.statusCode == 204) {
-        showSnackBar(
-          context: context,
-          text: 'Successfully deleted $catTitle',
-        );
+        if (context.mounted) {
+          showSnackBar(
+            context: context,
+            text: 'Successfully deleted $catTitle',
+          );
+        }
       } else {
         state = [...state]..insert(itemIndex, catItem);
 
-        showErrorSnackBar(
-          context: context,
-          text: ErrorString.catNotDelete.value,
-        );
+        if (context.mounted) {
+          showErrorSnackBar(
+            context: context,
+            text: ErrorString.catNotDelete.value,
+          );
+        }
       }
     } on TimeoutException catch (_) {
       state = [...state]..insert(itemIndex, catItem);
@@ -209,15 +202,19 @@ class ManageCategoryRepository extends StateNotifier<List<CategoryList>> {
             if (item.id == feedId) item.copyWith(title: newFeedTitle) else item,
         ];
 
-        showSnackBar(
-          context: listContext,
-          text: 'Name changed to $newFeedTitle',
-        );
+        if (listContext.mounted) {
+          showSnackBar(
+            context: listContext,
+            text: 'Name changed to $newFeedTitle',
+          );
+        }
       } else {
-        showErrorSnackBar(
-          context: listContext,
-          text: 'Name change unsuccessful',
-        );
+        if (listContext.mounted) {
+          showErrorSnackBar(
+            context: listContext,
+            text: 'Name change unsuccessful',
+          );
+        }
       }
       log('UPDATE-SUBS-C: ${res.statusCode}');
     } on TimeoutException catch (e) {

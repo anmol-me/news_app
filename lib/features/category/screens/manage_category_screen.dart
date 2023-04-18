@@ -158,10 +158,8 @@ class ManageCategoryScreen extends HookConsumerWidget {
                                             item,
                                           )
                                           .then(
-                                        (_) {
-                                          return isManageProcessingController
-                                              .update((state) => false);
-                                        },
+                                        (_) => isManageProcessingController
+                                              .update((state) => false),
                                       );
                                     },
                                   ),
