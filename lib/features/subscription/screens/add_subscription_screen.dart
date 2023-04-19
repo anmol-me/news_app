@@ -30,6 +30,15 @@ class AddSubscription extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final formKey = useMemoized(() => GlobalKey<FormState>());
 
+    final showAsterisk = ref.watch(showAsteriskProvider);
+    final selectedCategory = ref.watch(selectedCategoryProvider);
+
+    ref.listen(selectedCategoryProvider, (_, String nextSelectedCategory) {
+      if (showAsterisk == true && nextSelectedCategory != '') {
+        ref.read(showAsteriskProvider.notifier).update((state) => false);
+      }
+    });
+
     /// Todo: New Subs Addresses
     // final urlController =
     //     useTextEditingController(text: 'https://news.google.com');
@@ -46,11 +55,7 @@ class AddSubscription extends HookConsumerWidget {
 
     final isDiscoverLoading = ref.watch(isDiscoverLoadingProvider);
 
-    final showAsterisk = ref.watch(showAsteriskProvider);
-
     final isFeedLoading = ref.watch(isFeedLoadingProvider);
-
-    final selectedCategory = ref.watch(selectedCategoryProvider);
 
     List<CategoryList> categoryList = ref.watch(categoryListNotifierProvider);
 
