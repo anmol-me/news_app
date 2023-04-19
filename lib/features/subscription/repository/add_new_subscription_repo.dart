@@ -31,38 +31,24 @@ Map<int, String> errorMessages = {
 
 final feedIdProvider = StateProvider((ref) => []);
 
-final addNewSubscriptionProvider = StateNotifierProvider.autoDispose<
+final addNewSubscriptionProvider = NotifierProvider.autoDispose<
     AddNewSubscriptionNotifier, List<AddNewSubscription>>(
-  (ref) {
-    ref.onDispose(() {
-      print('Discover disposed');
-    });
-    final userPrefs = ref.watch(userPrefsProvider);
-    final userPassEncoded = userPrefs.getAuthData();
-    final url = userPrefs.getUrlData();
-
-    return AddNewSubscriptionNotifier(
-      ref,
-      userPrefs,
-      userPassEncoded!,
-      url!,
-    );
-  },
+  AddNewSubscriptionNotifier.new,
 );
 
 class AddNewSubscriptionNotifier
-    extends StateNotifier<List<AddNewSubscription>> {
-  final StateNotifierProviderRef ref;
-  final UserPreferences userPrefs;
-  final String userPassEncoded;
-  final String baseUrl;
+    extends AutoDisposeNotifier<List<AddNewSubscription>> {
+  late UserPreferences userPrefs;
+  late String userPassEncoded;
+  late String baseUrl;
 
-  AddNewSubscriptionNotifier(
-    this.ref,
-    this.userPrefs,
-    this.userPassEncoded,
-    this.baseUrl,
-  ) : super([]);
+  @override
+  List<AddNewSubscription> build() {
+    userPrefs = ref.watch(userPrefsProvider);
+    userPassEncoded = userPrefs.getAuthData()!;
+    baseUrl = userPrefs.getUrlData()!;
+    return [];
+  }
 
   /// Discover
   Future<void> discover(

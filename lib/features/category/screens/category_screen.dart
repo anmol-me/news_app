@@ -5,7 +5,6 @@ import 'package:go_router/go_router.dart';
 import 'package:news_app/common/common_widgets.dart';
 import 'package:news_app/features/category/repository/category_repo.dart';
 import 'package:news_app/features/app_bar/app_drawer.dart';
-import 'package:news_app/features/subscription/category_providers.dart';
 
 import '../../../common/common_methods.dart';
 import '../../../common/constants.dart';
@@ -14,7 +13,6 @@ import '../../../common_widgets/build_popup_menu_button.dart';
 import '../../../common_widgets/build_top_bar.dart';
 import '../../../components/app_back_button.dart';
 import '../../home/providers/home_providers.dart';
-import '../../home/repository/home_feed_repo.dart';
 import '../../home/screens/home_feed_screen.dart';
 import '../../search/screens/search_screen.dart';
 

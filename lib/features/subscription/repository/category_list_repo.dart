@@ -19,33 +19,22 @@ import '../screens/select_subscription_screen/select_subscription_screen.dart';
 final isDeletingCatProvider = StateProvider((ref) => false);
 
 final categoryListNotifierProvider =
-    StateNotifierProvider<CategoryListNotifier, List<CategoryList>>(
-  (ref) {
-    final userPrefs = ref.watch(userPrefsProvider);
-    String? userPassEncoded = userPrefs.getAuthData();
-    String? baseUrl = userPrefs.getUrlData();
-
-    return CategoryListNotifier(
-      ref,
-      userPrefs,
-      userPassEncoded!,
-      baseUrl!,
-    );
-  },
+    NotifierProvider<CategoryListNotifier, List<CategoryList>>(
+  CategoryListNotifier.new,
 );
 
-class CategoryListNotifier extends StateNotifier<List<CategoryList>> {
-  final StateNotifierProviderRef ref;
-  final UserPreferences userPrefs;
-  final String userPassEncoded;
-  final String baseUrl;
+class CategoryListNotifier extends Notifier<List<CategoryList>> {
+  late UserPreferences userPrefs;
+  late String userPassEncoded;
+  late String baseUrl;
 
-  CategoryListNotifier(
-    this.ref,
-    this.userPrefs,
-    this.userPassEncoded,
-    this.baseUrl,
-  ) : super([]);
+  @override
+  List<CategoryList> build() {
+    userPrefs = ref.watch(userPrefsProvider);
+    userPassEncoded = userPrefs.getAuthData()!;
+    baseUrl = userPrefs.getUrlData()!;
+    return [];
+  }
 
   /// Fetch Categories
   Future<List<CategoryList>> fetchCategories(
@@ -106,7 +95,7 @@ class CategoryListNotifier extends StateNotifier<List<CategoryList>> {
       // Map decodedData = jsonDecode(res.body);
 
       if (res.statusCode == 400) {
-        if (mounted) Navigator.of(context).pop();
+        if (context.mounted) Navigator.of(context).pop();
 
         scaffoldMessenger.showSnackBar(
           SnackBar(
@@ -126,7 +115,7 @@ class CategoryListNotifier extends StateNotifier<List<CategoryList>> {
         title: decodedData['title'],
       );
 
-      if (mounted) {
+      if (context.mounted) {
         Navigator.of(context).pop();
         showSnackBar(context: context, text: ErrorString.catCreated.value);
       }
@@ -175,17 +164,21 @@ class CategoryListNotifier extends StateNotifier<List<CategoryList>> {
       );
 
       if (res.statusCode == 204) {
-        showSnackBar(
-          context: listContext,
-          text: 'Successfully deleted $catTitle',
-        );
+        if (listContext.mounted) {
+          showSnackBar(
+            context: listContext,
+            text: 'Successfully deleted $catTitle',
+          );
+        }
       } else {
         state = [...state]..insert(itemIndex, catItem);
 
-        showErrorSnackBar(
-          context: listContext,
-          text: ErrorString.catNotDelete.value,
-        );
+        if (listContext.mounted) {
+          showErrorSnackBar(
+            context: listContext,
+            text: ErrorString.catNotDelete.value,
+          );
+        }
       }
     } on TimeoutException catch (_) {
       state = [...state]..insert(itemIndex, catItem);
@@ -232,16 +225,19 @@ class CategoryListNotifier extends StateNotifier<List<CategoryList>> {
           for (final item in state)
             if (item.id == id) item.copyWith(title: newCategoryTitle) else item,
         ];
-
-        showSnackBar(
-          context: context,
-          text: 'Name changed to $newCategoryTitle',
-        );
+        if (context.mounted) {
+          showSnackBar(
+            context: context,
+            text: 'Name changed to $newCategoryTitle',
+          );
+        }
       } else {
-        showErrorSnackBar(
-          context: context,
-          text: 'Name change unsuccessful',
-        );
+        if (context.mounted) {
+          showErrorSnackBar(
+            context: context,
+            text: 'Name change unsuccessful',
+          );
+        }
       }
       log('UPDATE-SUBS-C: ${res.statusCode}');
     } on TimeoutException catch (e) {
@@ -265,7 +261,7 @@ class CategoryListNotifier extends StateNotifier<List<CategoryList>> {
 }
 
 void stopShowError(
-  StateNotifierProviderRef ref,
+  Ref ref,
   BuildContext context,
   String message,
 ) {
