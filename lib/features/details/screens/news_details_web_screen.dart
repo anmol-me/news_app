@@ -48,7 +48,7 @@ class NewsDetailsWebScreen extends ConsumerWidget {
             children: [
               OpenLinkButton(url: newsItem.link),
               const SizedBox(width: 10),
-              ReadButton(entryId: newsItem.entryId),
+              ReadButton(entryId: newsItem.entryId, screenName: 'home'),
               const SizedBox(width: 10),
             ],
           ),

@@ -10,6 +10,7 @@ import 'package:webview_flutter/webview_flutter.dart';
 import '../../../common/constants.dart';
 import '../../../models/news.dart';
 import '../../home/providers/home_providers.dart';
+import '../../search/repository/search_repo.dart';
 import '../components/card_header_row.dart';
 import '../components/header_image.dart';
 import '../components/methods.dart';
@@ -19,10 +20,12 @@ class NewsDetailsScreen extends ConsumerWidget {
   static const routeNamed = '/details';
 
   final News newsItem;
+  final String screenName;
 
   const NewsDetailsScreen({
     super.key,
     required this.newsItem,
+    required this.screenName,
   });
 
   @override
@@ -30,10 +33,20 @@ class NewsDetailsScreen extends ConsumerWidget {
     final isFabButton = ref.watch(isFabButtonProvider);
     final isFabButtonController = ref.watch(isFabButtonProvider.notifier);
 
-    final newsNotifier = ref.watch(homeFeedProvider);
-    final newsNotifierController = ref.watch(homeFeedProvider.notifier);
+    var newsNotifier = ref.watch(homeFeedProvider);
+    var newsNotifierController = ref.watch(homeFeedProvider.notifier);
 
-    var isFav = newsNotifier.firstWhere((e) => e.entryId == newsItem.entryId).isFav;
+    bool isFav = false;
+
+    if (screenName == 'search') {
+      isFav = ref
+          .watch(searchNotifierProvider)
+          .firstWhere((e) => e.entryId == newsItem.entryId)
+          .isFav;
+    } else {
+      isFav =
+          newsNotifier.firstWhere((e) => e.entryId == newsItem.entryId).isFav;
+    }
 
     final contentFormatted = getContent(newsItem.content);
 
@@ -51,7 +64,10 @@ class NewsDetailsScreen extends ConsumerWidget {
           actions: [
             Row(
               children: [
-                ReadButton(entryId: newsItem.entryId),
+                ReadButton(
+                  entryId: newsItem.entryId,
+                  screenName: screenName,
+                ),
                 IconButton(
                   onPressed: () => Share.share(newsItem.link),
                   icon: Icon(Icons.share, color: colorRed),
@@ -162,10 +178,16 @@ class NewsDetailsScreen extends ConsumerWidget {
             ? FloatingActionButton(
                 backgroundColor: colorRed,
                 onPressed: () {
-                  newsNotifierController.toggleFavStatus(newsItem.entryId, context);
+                  if (screenName == 'search') {
+                    ref
+                        .read(searchNotifierProvider.notifier)
+                        .toggleFavStatus(newsItem.entryId, context);
+                  } else {
+                    newsNotifierController.toggleFavStatus(
+                        newsItem.entryId, context);
+                  }
                 },
-                child: Icon(
-                    isFav ? Icons.bookmark_added : Icons.bookmark_add),
+                child: Icon(isFav ? Icons.bookmark_added : Icons.bookmark_add),
               )
             : null,
       ),

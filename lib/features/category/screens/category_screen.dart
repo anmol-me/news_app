@@ -255,6 +255,7 @@ class CategoryScreen extends HookConsumerWidget {
                       final dateTime = getDate(newsItem);
 
                       return buildExpansionWidget(
+                        'category',
                         newsItem,
                         dateTime,
                         context,

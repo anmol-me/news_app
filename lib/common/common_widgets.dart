@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:news_app/models/news.dart';
 
 import '../features/details/components/providers.dart';
 import '../features/home/providers/home_providers.dart';
+import '../features/search/repository/search_repo.dart';
 import 'constants.dart';
 import 'enums.dart';
 
@@ -40,6 +42,23 @@ class CircularLoading extends StatelessWidget {
   }
 }
 
+class CircularLoadingImage extends StatelessWidget {
+  final Color? color;
+
+  const CircularLoadingImage({
+    super.key,
+    this.color = Colors.redAccent,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return CircularProgressIndicator(
+      color: colorRed,
+      strokeWidth: 1,
+    );
+  }
+}
+
 ScaffoldFeatureController<SnackBar, SnackBarClosedReason> showSnackBar({
   required BuildContext context,
   required String text,
@@ -66,19 +85,30 @@ ScaffoldFeatureController<SnackBar, SnackBarClosedReason> showErrorSnackBar({
 }
 
 class ReadButton extends ConsumerWidget {
+  final int entryId;
+  final String screenName;
+
   const ReadButton({
     super.key,
     required this.entryId,
+    required this.screenName,
   });
-
-  final int entryId;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final newsNotifier = ref.watch(homeFeedProvider);
     final newsNotifierController = ref.watch(homeFeedProvider.notifier);
+    final searchNotifierController = ref.watch(searchNotifierProvider.notifier);
 
-    final newsItem = newsNotifier.firstWhere((e) => e.entryId == entryId);
+    News newsItem;
+
+    if (screenName == 'search') {
+      newsItem = ref
+          .watch(searchNotifierProvider)
+          .firstWhere((e) => e.entryId == entryId);
+    } else {
+      newsItem =
+          ref.watch(homeFeedProvider).firstWhere((e) => e.entryId == entryId);
+    }
 
     return InkWell(
       onTap: () {
@@ -88,11 +118,19 @@ class ReadButton extends ConsumerWidget {
             ? stat = Status.unread
             : stat = Status.read;
 
-        newsNotifierController.toggleRead(
-          entryId,
-          stat,
-          context,
-        );
+        if (screenName == 'search') {
+          searchNotifierController.toggleRead(
+            entryId,
+            stat,
+            context,
+          );
+        } else {
+          newsNotifierController.toggleRead(
+            entryId,
+            stat,
+            context,
+          );
+        }
       },
       child: Wrap(
         crossAxisAlignment: WrapCrossAlignment.center,
@@ -118,21 +156,41 @@ class StarredButton extends ConsumerWidget {
   const StarredButton({
     super.key,
     required this.entryId,
+    required this.screenName,
   });
 
   final int entryId;
+  final String screenName;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final newsNotifier = ref.watch(homeFeedProvider);
-    final newsItem = newsNotifier.firstWhere((e) => e.entryId == entryId);
+    final newsNotifierController = ref.watch(homeFeedProvider.notifier);
+    final searchNotifierController = ref.watch(searchNotifierProvider.notifier);
+
+    News newsItem;
+
+    if (screenName == 'search') {
+      newsItem = ref
+          .watch(searchNotifierProvider)
+          .firstWhere((e) => e.entryId == entryId);
+    } else {
+      newsItem =
+          ref.watch(homeFeedProvider).firstWhere((e) => e.entryId == entryId);
+    }
 
     return InkWell(
       onTap: () {
-        ref.read(homeFeedProvider.notifier).toggleFavStatus(
-              newsItem.entryId,
-              context,
-            );
+        if (screenName == 'search') {
+          searchNotifierController.toggleFavStatus(
+            newsItem.entryId,
+            context,
+          );
+        } else {
+          newsNotifierController.toggleFavStatus(
+            newsItem.entryId,
+            context,
+          );
+        }
       },
       child: Wrap(
         crossAxisAlignment: WrapCrossAlignment.center,

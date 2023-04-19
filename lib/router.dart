@@ -82,7 +82,10 @@ final goRouterProvider = Provider(
             if (kIsWeb) {
               return NewsDetailsWebScreen(newsItem: state.extra as News);
             } else {
-              return NewsDetailsScreen(newsItem: state.extra as News);
+              return NewsDetailsScreen(
+                newsItem: state.extra as News,
+                screenName: state.queryParams['screenName']!,
+              );
             }
           },
         ),

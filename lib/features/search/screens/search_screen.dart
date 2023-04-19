@@ -108,13 +108,13 @@ class SearchScreen extends HookConsumerWidget {
                               final dateTime = getDate(newsItem);
 
                               return buildExpansionWidget(
+                                'search',
                                 newsItem,
                                 dateTime,
                                 context,
                                 newsNotifierController,
                                 ref,
                               );
-
                             },
                           ),
                         ),

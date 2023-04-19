@@ -1,24 +1,20 @@
-import 'dart:developer';
-
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:news_app/common/frontend_methods.dart';
 import 'package:news_app/common_widgets/top_section_row.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../common/common_widgets.dart';
 import '../common/constants.dart';
 import '../common/enums.dart';
+import '../features/search/repository/search_repo.dart';
 import '../models/news.dart';
 import '../features/home/repository/home_feed_repo.dart';
-import '../features/home/screens/home_feed_screen.dart';
 import 'expansion_widget.dart';
 import 'package:news_app/features/details/screens/news_details_screen.dart';
 
 Widget buildExpansionWidget(
+  String screenName,
   News newsItem,
   String dateTime,
   BuildContext context,
@@ -52,25 +48,14 @@ Widget buildExpansionWidget(
                 height: 90,
                 width: 120,
                 fit: BoxFit.cover,
-                placeholder: (context, url) {
-                  return Center(
-                    child: CircularProgressIndicator(
-                      color: colorRed,
-                      strokeWidth: 1,
-                    ),
-                  );
-                },
+                placeholder: (context, url) => const Center(
+                  child: CircularLoadingImage(),
+                ),
                 errorWidget: (
                   context,
                   url,
                   error,
                 ) =>
-                    //     Image.network(
-                    //   ErrorString.image.value,
-                    //   height: 90,
-                    //   width: 120,
-                    //   fit: BoxFit.cover,
-                    // ),
                     Image.asset(
                   'assets/notfound.png',
                   height: 90,
@@ -83,61 +68,25 @@ Widget buildExpansionWidget(
             Expanded(
               child: GestureDetector(
                 onTap: () async {
-                  log('ENTRY: ${newsItem.entryId}');
-
-                  // if (kIsWeb) {
-
-                  // final uri = Uri.parse(newsItem.link);
-                  //
-                  // if (await canLaunchUrl(uri)) {
-                  //   await launchUrl(uri);
-                  // } else {
-                  //   if (context.mounted) {
-                  //     showDialog(
-                  //       context: context,
-                  //       builder: (ctx) => AlertDialog(
-                  //         title: const Text('An Error Occurred!'),
-                  //         content: const Text('Could not load the page.'),
-                  //         actions: [
-                  //           TextButton(
-                  //             onPressed: () {
-                  //               Navigator.of(ctx).pop();
-                  //             },
-                  //             child: const Text('Okay'),
-                  //           ),
-                  //         ],
-                  //       ),
-                  //     );
-                  //   }
-                  // }
-                  // } else {
-                  //
-                  // }
-
-                  newsNotifierController.toggleRead(
-                    newsItem.entryId,
-                    Status.read,
-                    context,
-                  );
+                  if (screenName == 'search') {
+                    ref.read(searchNotifierProvider.notifier).toggleRead(
+                          newsItem.entryId,
+                          Status.read,
+                          context,
+                        );
+                  } else {
+                    newsNotifierController.toggleRead(
+                      newsItem.entryId,
+                      Status.read,
+                      context,
+                    );
+                  }
 
                   context.pushNamed(
                     NewsDetailsScreen.routeNamed,
                     extra: newsItem,
+                    queryParams: {'screenName': screenName},
                   );
-
-                  /// Todo: Nav
-                  // Navigator.of(context).pushNamed(
-                  //   NewsDetailsScreen.routeNamed,
-                  //   arguments: {
-                  //     'id': newsItem.entryId,
-                  //     'image': newsItem.imageUrl,
-                  //     'content': newsItem.content,
-                  //     'categoryTitle': newsItem.categoryTitle,
-                  //     'title': newsItem.titleText,
-                  //     'link': newsItem.link,
-                  //     'publishedAt': newsItem.publishedTime,
-                  //   },
-                  // );
                 },
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -172,9 +121,15 @@ Widget buildExpansionWidget(
         padding: const EdgeInsets.only(top: 10.0),
         child: Row(
           children: [
-            StarredButton(entryId: newsItem.entryId),
+            StarredButton(
+              entryId: newsItem.entryId,
+              screenName: screenName,
+            ),
             const SizedBox(width: 30),
-            ReadButton(entryId: newsItem.entryId),
+            ReadButton(
+              entryId: newsItem.entryId,
+              screenName: screenName,
+            ),
           ],
         ),
       ),

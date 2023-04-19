@@ -119,4 +119,89 @@ class SearchNotifier extends AutoDisposeNotifier<List<News>> {
       return [];
     }
   }
+
+  void toggleFavStatus(
+      int newsId,
+      BuildContext context,
+      ) async {
+    final url = userPrefs.getUrlData();
+
+    try {
+      state = [
+        for (final news in state)
+          if (news.entryId == newsId)
+            news.copyWith(isFav: !news.isFav)
+          else
+            news,
+      ];
+
+      // Online
+      Uri uri = Uri.https(url!, 'v1/entries/$newsId/bookmark');
+
+      final res = await putHttpResp(
+        url: null,
+        uri: uri,
+        bodyMap: null,
+        userPassEncoded: userPassEncoded,
+      );
+
+      log('${res.statusCode}');
+    } on TimeoutException catch (e) {
+      log('Timeout Error: $e');
+      return showErrorDialogue(context, ref, ErrorString.requestTimeout.value);
+    } on SocketException catch (e) {
+      log('Socket Error: $e');
+      return showErrorDialogue(context, ref, ErrorString.socket.value);
+    } on Error catch (e) {
+      log('General Error HFR: $e');
+      return showErrorDialogue(
+          context, ref, ErrorString.somethingWrongAdmin.value);
+    } catch (e) {
+      log('All other Errors: $e');
+      return showErrorDialogue(
+          context, ref, ErrorString.somethingWrongAdmin.value);
+    }
+  }
+
+  void toggleRead(
+      int newsId,
+      Status stat,
+      BuildContext context,
+      ) async {
+    try {
+      final url = userPrefs.getUrlData();
+
+      state = [
+        for (final news in state)
+          if (news.entryId == newsId) news.copyWith(status: stat) else news,
+      ];
+
+      // Online
+      final res = await putHttpResp(
+        url: 'https://$url/v1/entries',
+        uri: null,
+        bodyMap: {
+          "entry_ids": [newsId],
+          "status": stat.value,
+        },
+        userPassEncoded: userPassEncoded,
+      );
+
+      log('Toggle Read -> ${res.statusCode} -> ${stat.value}');
+    } on TimeoutException catch (e) {
+      log('Timeout Error: $e');
+      return showErrorDialogue(context, ref, ErrorString.requestTimeout.value);
+    } on SocketException catch (e) {
+      log('Socket Error: $e');
+      return showErrorDialogue(context, ref, ErrorString.socket.value);
+    } on Error catch (e) {
+      log('General Error HFR: $e');
+      return showErrorDialogue(
+          context, ref, ErrorString.somethingWrongAdmin.value);
+    } catch (e) {
+      log('All other Errors: $e');
+      return showErrorDialogue(
+          context, ref, ErrorString.somethingWrongAdmin.value);
+    }
+  }
 }

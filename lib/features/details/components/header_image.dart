@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
+import '../../../common/common_widgets.dart';
 import '../../../common/constants.dart';
 import '../../../common/enums.dart';
 
@@ -23,11 +24,8 @@ class HeaderImage extends StatelessWidget {
         height: size.height * 0.30,
         width: size.width * 0.90,
         fit: BoxFit.cover,
-        placeholder: (context, url) => Center(
-          child: CircularProgressIndicator(
-            color: colorRed,
-            strokeWidth: 1,
-          ),
+        placeholder: (context, url) => const Center(
+          child: CircularLoadingImage(),
         ),
         errorWidget: (context, url, error) => Image.asset(
           'assets/notfound.png',
