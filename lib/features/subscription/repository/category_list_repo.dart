@@ -62,7 +62,7 @@ class CategoryListNotifier extends Notifier<List<CategoryList>> {
       }
       return state = fetchedCategoryList;
     } on TimeoutException catch (_) {
-      stopShowError(ref, context, ErrorString.timeout.value);
+      stopShowError(ref, context, ErrorString.requestTimeout.value);
       return [];
     } on SocketException catch (_) {
       stopShowError(ref, context, ErrorString.checkInternet.value);
@@ -117,7 +117,7 @@ class CategoryListNotifier extends Notifier<List<CategoryList>> {
 
       if (context.mounted) {
         Navigator.of(context).pop();
-        showSnackBar(context: context, text: ErrorString.catCreated.value);
+        showSnackBar(context: context, text: Message.catCreated.value);
       }
 
       state = [...state, categoryListItem];
@@ -187,7 +187,7 @@ class CategoryListNotifier extends Notifier<List<CategoryList>> {
       showErrorSnackBar(
           context: listContext,
           text:
-              '${ErrorString.catNotDelete.value} ${ErrorString.timeout.value}');
+              '${ErrorString.catNotDelete.value} ${ErrorString.requestTimeout.value}');
     } on SocketException catch (_) {
       state = [...state]..insert(itemIndex, catItem);
 

@@ -7,7 +7,7 @@ import '../../../common/common_widgets.dart';
 import '../../../common/constants.dart';
 import '../../../models/model.dart';
 import '../repository/category_list_repo.dart';
-import '../repository/add_new_subscription_repo.dart';
+import '../repository/add_subscription_repository.dart';
 import '../widgets/add_category_sheet.dart';
 
 /// Providers
@@ -18,7 +18,7 @@ final isDiscoverLoadingProvider =
 
 final showAsteriskProvider = StateProvider.autoDispose<bool>((ref) => false);
 
-final isDiscoverDisabledProvider = StateProvider.autoDispose((ref) => false);
+final isFeedLoadingProvider = StateProvider.autoDispose((ref) => false);
 
 /// Class
 class AddSubscription extends HookConsumerWidget {
@@ -29,8 +29,8 @@ class AddSubscription extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final formKey = useMemoized(() => GlobalKey<FormState>());
-    // final _formKey = useMemoized(GlobalKey<FormState>.new, const []);
 
+    /// Todo: New Subs Addresses
     // final urlController =
     //     useTextEditingController(text: 'https://news.google.com');
     // final urlController = useTextEditingController(
@@ -40,24 +40,16 @@ class AddSubscription extends HookConsumerWidget {
         useTextEditingController(text: 'https://rss.art19.com/apology-line');
     final catNameController = useTextEditingController();
 
-    // final catNewsNotifier = ref.watch(categoryNotifierProvider);
-    // final catNewsNotifierController =
-    //     ref.read(categoryNotifierProvider.notifier);
-
-    final discoverSubscription = ref.watch(addNewSubscriptionProvider);
+    final discoverSubscription = ref.watch(addSubscriptionProvider);
     final discoverSubscriptionController =
-        ref.watch(addNewSubscriptionProvider.notifier);
+        ref.watch(addSubscriptionProvider.notifier);
 
     final isDiscoverLoading = ref.watch(isDiscoverLoadingProvider);
 
     final showAsterisk = ref.watch(showAsteriskProvider);
 
-    final feedId = ref.watch(feedIdProvider);
-    print('-------------> ${feedId} <------------------');
+    final isFeedLoading = ref.watch(isFeedLoadingProvider);
 
-    final isDiscoverDisabled = ref.watch(isDiscoverDisabledProvider);
-
-    // https://www.theverge.com/
     final selectedCategory = ref.watch(selectedCategoryProvider);
 
     List<CategoryList> categoryList = ref.watch(categoryListNotifierProvider);
@@ -73,7 +65,7 @@ class AddSubscription extends HookConsumerWidget {
       appBar: AppBar(
         title: const Text('Add Subscription'),
         leading: AppBackButton(
-          controller: isDiscoverLoading,
+          controller: isDiscoverLoading || isFeedLoading,
         ),
       ),
       body: Form(
@@ -127,22 +119,14 @@ class AddSubscription extends HookConsumerWidget {
                   ],
                 ),
               ),
-              isDiscoverDisabled
-                  ? ElevatedButton(
-                      onPressed: null,
-                      style: ElevatedButton.styleFrom(
-                          backgroundColor: colorDisabled),
-                      child: const Text('Discover'),
-                    )
-                  : ElevatedButton(
-                      onPressed: () => discoverSubscriptionController
-                          .discoverFunction(urlController, context),
-                      style:
-                          ElevatedButton.styleFrom(backgroundColor: colorRed),
-                      child: isDiscoverLoading
-                          ? const CircularLoading()
-                          : const Text('Discover'),
-                    ),
+              ElevatedButton(
+                onPressed: () => discoverSubscriptionController
+                    .discoverFunction(urlController, context),
+                style: ElevatedButton.styleFrom(backgroundColor: colorRed),
+                child: isDiscoverLoading
+                    ? const CircularLoading()
+                    : const Text('Discover'),
+              ),
               const SizedBox(height: 10),
               Expanded(
                 child: discoverSubscription.isEmpty
@@ -168,79 +152,6 @@ class AddSubscription extends HookConsumerWidget {
   }
 }
 
-// class DiscoveryItem extends ConsumerStatefulWidget {
-//   final AddNewSubscription subsItem;
-//   final CategoryList selectedCatInfo;
-//
-//   const DiscoveryItem({
-//     super.key,
-//     required this.subsItem,
-//     required this.selectedCatInfo,
-//   });
-//
-//   @override
-//   ConsumerState createState() => _DiscoveryItemState();
-// }
-//
-// class _DiscoveryItemState extends ConsumerState<DiscoveryItem> {
-//   bool isLoading = false;
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     // final isDiscoveryItemsLoading = ref.watch(isDiscoveryItemsLoadingProvider);
-//     // final isDiscoveryItemsLoadingController =
-//     //     ref.watch(isDiscoveryItemsLoadingProvider.notifier);
-//
-//     final selectedCategory = ref.watch(selectedCategoryProvider);
-//
-//     final discoverSubscriptionController =
-//     ref.watch(addNewSubscriptionProvider.notifier);
-//
-//     final activeCategory = ref.watch(selectedCategoryProvider);
-//
-//     final showAsteriskController = ref.watch(showAsteriskProvider.notifier);
-//
-//     /// Submit Feed
-//     void submitFeed() {
-//       ref.read(isDiscoverDisabledProvider.notifier).update((state) => true);
-//
-//       if (selectedCategory.isEmpty) {
-//         showSnackBar(context: context, text: 'Please select category.');
-//         showAsteriskController.update((state) => true);
-//         return;
-//       } else if (selectedCategory.isNotEmpty) {
-//         showAsteriskController.update((state) => false);
-//       }
-//
-//       setState(() => isLoading = true);
-//
-//       discoverSubscriptionController
-//           .createFeed(
-//         context,
-//         activeCategory,
-//         widget.subsItem.url,
-//         widget.selectedCatInfo.id,
-//       )
-//           .then(
-//             (_) {
-//           setState(() => isLoading = false);
-//           ref
-//               .read(isDiscoverDisabledProvider.notifier)
-//               .update((state) => false);
-//         },
-//       );
-//     }
-//
-//     return ListTile(
-//       title: Text(widget.subsItem.title),
-//       leading: isLoading
-//           ? CircularLoading(color: colorRed)
-//           : const Icon(Icons.circle),
-//       onTap: submitFeed,
-//     );
-//   }
-// }
-
 class DiscoveryItem extends HookConsumerWidget {
   final AddNewSubscription subsItem;
   final CategoryList selectedCatInfo;
@@ -255,56 +166,19 @@ class DiscoveryItem extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final isLoading = useState(false);
 
-    // final isDiscoveryItemsLoading = ref.watch(isDiscoveryItemsLoadingProvider);
-    // final isDiscoveryItemsLoadingController =
-    //     ref.watch(isDiscoveryItemsLoadingProvider.notifier);
-
-    final selectedCategory = ref.watch(selectedCategoryProvider);
-
-    final discoverSubscriptionController =
-        ref.watch(addNewSubscriptionProvider.notifier);
-
-    final activeCategory = ref.watch(selectedCategoryProvider);
-
-    final showAsteriskController = ref.watch(showAsteriskProvider.notifier);
-
-    /// Submit Feed
-    void submitFeed() {
-      ref.read(isDiscoverDisabledProvider.notifier).update((state) => true);
-
-      if (selectedCategory.isEmpty) {
-        showSnackBar(context: context, text: 'Please select category.');
-        showAsteriskController.update((state) => true);
-        return;
-      } else if (selectedCategory.isNotEmpty) {
-        showAsteriskController.update((state) => false);
-      }
-
-      isLoading.value = true;
-
-      discoverSubscriptionController
-          .createFeed(
-        context,
-        activeCategory,
-        subsItem.url,
-        selectedCatInfo.id,
-      )
-          .then(
-        (_) {
-          isLoading.value = false;
-          ref
-              .read(isDiscoverDisabledProvider.notifier)
-              .update((state) => false);
-        },
-      );
-    }
+    final discoveryNotifier = ref.watch(addSubscriptionProvider.notifier);
 
     return ListTile(
       title: Text(subsItem.title),
       leading: isLoading.value
           ? CircularLoading(color: colorRed)
           : const Icon(Icons.circle),
-      onTap: submitFeed,
+      onTap: () => discoveryNotifier.submitFeed(
+        context,
+        isLoading,
+        subsItem,
+        selectedCatInfo,
+      ),
     );
   }
 }

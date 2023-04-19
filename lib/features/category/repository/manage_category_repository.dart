@@ -159,7 +159,7 @@ class ManageCategoryRepository extends Notifier<List<CategoryList>> {
       showErrorSnackBar(
           context: context,
           text:
-              '${ErrorString.catNotDelete.value} ${ErrorString.timeout.value}');
+              '${ErrorString.catNotDelete.value} ${ErrorString.requestTimeout.value}');
     } on SocketException catch (_) {
       state = [...state]..insert(itemIndex, catItem);
 

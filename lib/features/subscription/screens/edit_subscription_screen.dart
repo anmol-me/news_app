@@ -8,8 +8,10 @@ import '../../../components/app_back_button.dart';
 import '../../../components/app_text_form_field.dart';
 import '../repository/category_list_repo.dart';
 
+/// Providers
 final isTitleUpdatingProvider = StateProvider((ref) => false);
 
+/// Widget
 class EditSubscriptionScreen extends HookConsumerWidget {
   static const routeNamed = '/edit-subs-screen';
 

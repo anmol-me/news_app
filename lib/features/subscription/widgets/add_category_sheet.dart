@@ -3,7 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:news_app/features/subscription/repository/add_new_subscription_repo.dart';
+import 'package:news_app/features/subscription/repository/add_subscription_repository.dart';
 import 'package:news_app/features/subscription/repository/category_list_repo.dart';
 
 import '../../../common/common_widgets.dart';
@@ -66,8 +66,6 @@ class AddCatSheetButton extends ConsumerWidget {
     bool isLoading = false;
 
     final mediaQuery = MediaQuery.of(context);
-
-    final addNewSubsController = ref.watch(addNewSubscriptionProvider.notifier);
 
     // final isCreateCatLoading = ref.watch(isCreateCatLoadingProvider);
     // final isCreateCatLoadingController =

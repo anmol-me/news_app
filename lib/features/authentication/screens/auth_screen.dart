@@ -131,7 +131,7 @@ class AuthScreen extends HookConsumerWidget {
                                 if (urlController.text.isNotEmpty) {
                                   return null;
                                 } else {
-                                  return ErrorString.url.value;
+                                  return ErrorString.validUrl.value;
                                 }
                               },
                             ),

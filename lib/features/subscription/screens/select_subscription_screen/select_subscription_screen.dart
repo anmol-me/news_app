@@ -1,6 +1,4 @@
-import 'dart:developer';
 import 'package:flutter/foundation.dart';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
@@ -11,15 +9,15 @@ import 'package:news_app/features/subscription/screens/add_subscription_screen.d
 
 import 'package:news_app/common/model_sheet.dart';
 import '../../../../common/constants.dart';
-import '../../../../main.dart';
 import '../../repository/category_list_repo.dart';
 import 'package:news_app/models/model.dart';
 import 'build_methods.dart';
 import 'subscription_tile.dart';
 
+/// Providers
 final isLoadingSubsProvider = StateProvider((ref) => false);
 
-///
+/// Widget
 class SelectSubscriptionScreen extends HookConsumerWidget {
   static const routeNamed = '/select-subs';
 

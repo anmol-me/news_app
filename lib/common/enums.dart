@@ -14,22 +14,18 @@ enum Sort {
 enum ErrorString {
   username('Username field cannot be empty'),
   password('Password field cannot be empty'),
-  url('Please provide a valid url'),
+  validUrl('Please provide a valid url'),
   internalError('Internal error. Please try again.'),
   accessDenied('Access denied. Please check username or password.'),
   somethingWrongAdmin('Something went wrong. Please contact Administrator'),
   somethingWrongAuth('Something went wrong! Please login again'),
-  requestTimeout('Request Timeout.'),
+  requestTimeout('Connection Timeout. Could not connect to the server'),
   socket('Could not connect to the server.'),
-  image('https://www.iconsdb.com/icons/preview/gray/x-mark-5-xxl.png'),
   checkInternet('Please check Internet Connectivity'),
-  timeout('Connection Timeout. Please retry.'),
   catAlreadyExists('This category already exists.'),
-  catCreated('Category successfully created.'),
   catNotDelete('Could not delete category.'),
   listEmpty('List is empty.'),
-  // catCreated('Category successfully created.'),
-  // catCreated('Category successfully created.'),
+  generalError('An Error Occurred. Please retry.'),
   // catCreated('Category successfully created.')
   ;
 
@@ -39,8 +35,11 @@ enum ErrorString {
 }
 
 enum Message {
-  categoryEmpty('No Categories available.'),
-  o('unread');
+  categoryEmpty('No categories available.'),
+  catCreated('Category successfully created.'),
+  feedAdded('Subscription feed successfully added'),
+  // o('unread'),
+  ;
 
   final String value;
 
