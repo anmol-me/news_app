@@ -10,7 +10,7 @@ import 'package:news_app/features/authentication/screens/auth_screen.dart';
 import 'package:news_app/features/subscription/screens/add_subscription_screen.dart';
 import 'package:news_app/features/category/screens/category_screen.dart';
 import 'package:news_app/features/subscription/screens/edit_subscription_screen.dart';
-import 'package:news_app/features/subscription/screens/select_subscription_screen/select_subscription_screen.dart';
+import 'package:news_app/features/subscription/screens/select_subscription_screen.dart';
 import 'package:news_app/features/details/screens/news_details_screen.dart';
 
 import 'features/authentication/repository/auth_repo.dart';

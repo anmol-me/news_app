@@ -3,13 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:go_router/go_router.dart';
-import 'package:news_app/features/subscription/screens/select_subscription_screen/select_subscription_screen.dart';
+import 'package:news_app/features/subscription/widgets/subscription_tile.dart';
 
-import '../../../../common/model_sheet.dart';
-import '../../../../models/model.dart';
-import '../../repository/category_list_repo.dart';
-import '../edit_subscription_screen.dart';
+import '../../../common/model_sheet.dart';
+import '../../../models/model.dart';
+import '../repository/subscription_repository.dart';
+import '../screens/edit_subscription_screen.dart';
 
+// Only for iOS and macOS
 Slidable buildSlidable(
   CategoryList listItem,
   WidgetRef ref,
@@ -17,6 +18,8 @@ Slidable buildSlidable(
 ) {
   return Slidable(
     direction: Axis.horizontal,
+
+    /// End Pane
     endActionPane: ActionPane(
       extentRatio: 0.6,
       motion: const StretchMotion(),
@@ -59,10 +62,6 @@ Slidable buildSlidable(
         SlidableAction(
           spacing: 6,
           onPressed: (context) {
-            // ref
-            //     .read(scaffoldKeyProvider.notifier)
-            //     .update((state) => currentContext);
-
             context.pushNamed(
               EditSubscriptionScreen.routeNamed,
               queryParams: {
@@ -70,15 +69,6 @@ Slidable buildSlidable(
                 'listItemId': listItem.id.toString(),
               },
             );
-
-            /// Todo: Nav
-            // Navigator.of(context).pushNamed(
-            //   EditSubscriptionScreen.routeNamed,
-            //   arguments: {
-            //     'oldTitle': listItem.title,
-            //     'listItemId': listItem.id,
-            //   },
-            // );
           },
           backgroundColor: Colors.blue,
           foregroundColor: Colors.white,
@@ -87,6 +77,8 @@ Slidable buildSlidable(
         ),
       ],
     ),
+
+    /// Start Pane
     startActionPane: ActionPane(
       motion: const ScrollMotion(),
       children: [
@@ -101,6 +93,8 @@ Slidable buildSlidable(
         ),
       ],
     ),
+
+    /// Slidable Child
     child: buildSubscriptionTile(
       listItem,
       ref,
@@ -108,3 +102,26 @@ Slidable buildSlidable(
     ),
   );
 }
+
+// All platforms except iOS and macOS
+// For iOS and macOS, buildSlidable's Slidable widget wraps buildSubscriptionTile
+SubscriptionTile buildSubscriptionTile(
+  CategoryList subscriptionItem,
+  WidgetRef ref,
+  BuildContext listContext,
+) =>
+    SubscriptionTile(
+      id: subscriptionItem.id,
+      children: [
+        IconButton(
+          onPressed: () => showModelSheet(
+            listContext: listContext,
+            listItem: subscriptionItem,
+            ref: ref,
+          ),
+          icon: const Icon(
+            Icons.more_vert,
+          ),
+        ),
+      ],
+    );

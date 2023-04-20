@@ -21,7 +21,7 @@ enum ErrorString {
   somethingWrongAuth('Something went wrong! Please login again'),
   requestTimeout('Connection Timeout. Could not connect to the server'),
   socket('Could not connect to the server.'),
-  checkInternet('Please check Internet Connectivity'),
+  checkInternet('Please check internet connectivity'),
   catAlreadyExists('This category already exists.'),
   catNotDelete('Could not delete category.'),
   listEmpty('List is empty.'),

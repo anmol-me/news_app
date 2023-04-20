@@ -14,11 +14,11 @@ import '../../../models/model.dart';
 import '../screens/add_subscription_screen.dart';
 
 final addSubscriptionProvider = NotifierProvider.autoDispose<
-    AddSubscriptionNotifier, List<AddNewSubscription>>(
-  AddSubscriptionNotifier.new,
+    DiscoveryNotifier, List<AddNewSubscription>>(
+  DiscoveryNotifier.new,
 );
 
-class AddSubscriptionNotifier
+class DiscoveryNotifier
     extends AutoDisposeNotifier<List<AddNewSubscription>> {
   late UserPreferences userPrefs;
   late String userPassEncoded;

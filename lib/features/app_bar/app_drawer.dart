@@ -6,7 +6,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:news_app/common/common_methods.dart';
 import 'package:news_app/features/app_bar/app_bar_repo.dart';
 import 'package:news_app/features/app_bar/user_repository.dart';
-import 'package:news_app/features/subscription/screens/select_subscription_screen/select_subscription_screen.dart';
+import 'package:news_app/features/subscription/screens/select_subscription_screen.dart';
 
 import '../../common/common_providers.dart';
 import '../../common/constants.dart';

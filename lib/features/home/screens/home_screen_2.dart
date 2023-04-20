@@ -12,7 +12,7 @@
 // import 'package:news_app/features/details/screens/news_details_screen.dart';
 // import 'package:news_app/widgets/app_drawer.dart';
 // import '../../subscription/repository/home_feed_repo.dart';
-// import '../../subscription/repository/category_list_repo.dart';
+// import '../../subscription/repository/subscription_repository.dart';
 // import 'package:fade_shimmer/fade_shimmer.dart';
 //
 // import '../../subscription/repository/category_repo.dart';

@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../home/providers/home_providers.dart';
-import '../../repository/category_list_repo.dart';
-import '../../../category/screens/category_screen.dart';
+import '../../home/providers/home_providers.dart';
+import '../repository/subscription_repository.dart';
+import '../../category/screens/category_screen.dart';
 
 class SubscriptionTile extends ConsumerWidget {
   final int id;
@@ -37,19 +37,8 @@ class SubscriptionTile extends ConsumerWidget {
             'isBackButton': 'false',
           },
         );
-
-        /// Todo: Nav
-        // Navigator.of(context).pushNamed(
-        //   CategoryScreen.routeNamed,
-        //   arguments: {
-        //     'id': subscriptionItem.id,
-        //     'catTitle': subscriptionItem.title,
-        //     'isBackButton': false,
-        //   },
-        // );
       },
       child: ListTile(
-        // leading: Text('${subscriptionItem.id}'),
         title: Text(subscriptionItem.title),
         trailing: SizedBox(
           width: 100,

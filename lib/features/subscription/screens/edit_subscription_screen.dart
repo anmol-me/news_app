@@ -6,7 +6,7 @@ import '../../../common/common_widgets.dart';
 import '../../../common/sizer.dart';
 import '../../../components/app_back_button.dart';
 import '../../../components/app_text_form_field.dart';
-import '../repository/category_list_repo.dart';
+import '../repository/subscription_repository.dart';
 
 /// Providers
 final isTitleUpdatingProvider = StateProvider((ref) => false);

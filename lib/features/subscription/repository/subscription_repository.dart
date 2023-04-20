@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:developer' show log;
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -11,19 +10,17 @@ import 'package:news_app/features/authentication/repository/auth_repo.dart';
 
 import '../../../common/common_widgets.dart';
 import '../../../common/enums.dart';
-import '../../../common/frontend_methods.dart';
-import '../../../common/error_screen.dart';
+import '../../../common/error.dart';
 import '../../../models/model.dart';
-import '../screens/select_subscription_screen/select_subscription_screen.dart';
 
 final isDeletingCatProvider = StateProvider((ref) => false);
 
 final categoryListNotifierProvider =
-    NotifierProvider<CategoryListNotifier, List<CategoryList>>(
-  CategoryListNotifier.new,
+    NotifierProvider<SubscriptionNotifier, List<CategoryList>>(
+  SubscriptionNotifier.new,
 );
 
-class CategoryListNotifier extends Notifier<List<CategoryList>> {
+class SubscriptionNotifier extends Notifier<List<CategoryList>> {
   late UserPreferences userPrefs;
   late String userPassEncoded;
   late String baseUrl;
@@ -36,17 +33,29 @@ class CategoryListNotifier extends Notifier<List<CategoryList>> {
     return [];
   }
 
-  /// Fetch Categories
   Future<List<CategoryList>> fetchCategories(
     BuildContext context,
   ) async {
-    log('Fetch Categories Ran');
-
     try {
-      // https://read.rusi.me/v1/categories
-      Uri uri = Uri.https(baseUrl, 'v1/categories', {});
+      Uri uri = Uri.https(baseUrl, 'v1/categories');
 
-      http.Response res = await getHttpResp(uri, userPassEncoded);
+      final res = await getHttpResp(uri, userPassEncoded);
+
+      if (res.contentLength == 0) {
+        if (context.mounted) {
+          Navigator.of(context).pop();
+
+          showErrorSnackBar(
+            context: context,
+            text: ErrorString.socket.value,
+          );
+        }
+        return [];
+      }
+
+      if (res.statusCode >= 400 && res.statusCode <= 599) {
+        throw ServerErrorException(res);
+      }
 
       List<dynamic> decodedData = jsonDecode(res.body);
 
@@ -61,27 +70,34 @@ class CategoryListNotifier extends Notifier<List<CategoryList>> {
         fetchedCategoryList.add(categoryList);
       }
       return state = fetchedCategoryList;
-    } on TimeoutException catch (_) {
-      stopShowError(ref, context, ErrorString.requestTimeout.value);
-      return [];
     } on SocketException catch (_) {
-      stopShowError(ref, context, ErrorString.checkInternet.value);
+      showErrorSnackBar(
+        context: context,
+        text: ErrorString.checkInternet.value,
+      );
+      return [];
+    } on TimeoutException catch (_) {
+      showErrorSnackBar(
+        context: context,
+        text: ErrorString.requestTimeout.value,
+      );
+      return [];
+    } on ServerErrorException catch (e) {
+      showErrorSnackBar(context: context, text: '$e');
       return [];
     } catch (e) {
-      log('CAT-LIST-FETCH: $e');
-      stopShowError(ref, context, '$e');
+      showErrorSnackBar(
+        context: context,
+        text: ErrorString.generalError.value,
+      );
       return [];
     }
   }
 
-  /// Create Category
   Future<void> createCategory(
     String categoryTitle,
     BuildContext context,
   ) async {
-    final scaffoldMessenger = ScaffoldMessenger.of(context);
-    final themeCxt = Theme.of(context);
-
     try {
       final res = await postHttpResp(
         uri: null,
@@ -90,22 +106,24 @@ class CategoryListNotifier extends Notifier<List<CategoryList>> {
         bodyMap: {"title": categoryTitle},
       );
 
-      log('${res.statusCode}');
-
-      // Map decodedData = jsonDecode(res.body);
-
       if (res.statusCode == 400) {
-        if (context.mounted) Navigator.of(context).pop();
-
-        scaffoldMessenger.showSnackBar(
-          SnackBar(
-            behavior: SnackBarBehavior.floating,
-            duration: const Duration(seconds: 10),
-            backgroundColor: themeCxt.colorScheme.error,
-            content: Text(ErrorString.catAlreadyExists.value),
-          ),
-        );
+        if (context.mounted) {
+          // Pops bottom sheet for creating category
+          Navigator.of(context).pop();
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              behavior: SnackBarBehavior.floating,
+              duration: const Duration(seconds: 10),
+              backgroundColor: Theme.of(context).colorScheme.error,
+              content: Text(ErrorString.catAlreadyExists.value),
+            ),
+          );
+        }
         return;
+      }
+
+      if (res.statusCode >= 401 && res.statusCode <= 599) {
+        throw ServerErrorException(res);
       }
 
       final decodedData = jsonDecode(res.body);
@@ -121,23 +139,19 @@ class CategoryListNotifier extends Notifier<List<CategoryList>> {
       }
 
       state = [...state, categoryListItem];
-      state.map((e) => log(e.title)).toList().toString();
-    } on TimeoutException catch (e) {
-      log('Timeout Error: $e');
-    } on SocketException catch (e) {
-      log('Socket Error: $e');
-
-      showSnackBar(
-        context: context,
-        text: 'Please check Internet Connectivity',
-      );
+    } on SocketException catch (_) {
+      showErrorSnackBar(
+          context: context, text: ErrorString.checkInternet.value);
+    } on TimeoutException catch (_) {
+      showErrorSnackBar(
+          context: context, text: ErrorString.requestTimeout.value);
+    } on ServerErrorException catch (e) {
+      showErrorSnackBar(context: context, text: '$e');
     } catch (e) {
-      log('UPDATE-SUBS: $e');
-      showSnackBar(context: context, text: '$e');
+      showErrorSnackBar(context: context, text: ErrorString.generalError.value);
     }
   }
 
-  /// Delete
   Future<void> deleteCategory(
     BuildContext listContext,
     int catId,
@@ -151,7 +165,6 @@ class CategoryListNotifier extends Notifier<List<CategoryList>> {
         if (item.id != catId) item,
     ];
 
-    // 'https://read.rusi.me/v1/categories/$id
     Uri uri = Uri.https(baseUrl, 'v1/categories/$catId');
 
     try {
@@ -170,19 +183,16 @@ class CategoryListNotifier extends Notifier<List<CategoryList>> {
             text: 'Successfully deleted $catTitle',
           );
         }
-      } else {
-        state = [...state]..insert(itemIndex, catItem);
-
-        if (listContext.mounted) {
-          showErrorSnackBar(
-            context: listContext,
-            text: ErrorString.catNotDelete.value,
-          );
-        }
       }
+      if (res.statusCode >= 400 && res.statusCode <= 599) {
+        throw ServerErrorException(res);
+      }
+    } on ServerErrorException catch (e) {
+      state = [...state]..insert(itemIndex, catItem);
+
+      showErrorSnackBar(context: listContext, text: '$e');
     } on TimeoutException catch (_) {
       state = [...state]..insert(itemIndex, catItem);
-      // state = [...state].insert(itemIndex, catItem);
 
       showErrorSnackBar(
           context: listContext,
@@ -208,9 +218,6 @@ class CategoryListNotifier extends Notifier<List<CategoryList>> {
     int id,
     String newCategoryTitle,
   ) async {
-    checkAuth(context, userPassEncoded, baseUrl, userPrefs);
-    final navigator = Navigator.of(context);
-
     try {
       final res = await putHttpResp(
           uri: null,
@@ -219,13 +226,13 @@ class CategoryListNotifier extends Notifier<List<CategoryList>> {
           bodyMap: {"title": newCategoryTitle});
 
       if (res.statusCode == 201) {
-        navigator.pop();
-
         state = [
           for (final item in state)
             if (item.id == id) item.copyWith(title: newCategoryTitle) else item,
         ];
+
         if (context.mounted) {
+          Navigator.of(context).pop();
           showSnackBar(
             context: context,
             text: 'Name changed to $newCategoryTitle',
@@ -239,32 +246,19 @@ class CategoryListNotifier extends Notifier<List<CategoryList>> {
           );
         }
       }
-      log('UPDATE-SUBS-C: ${res.statusCode}');
-    } on TimeoutException catch (e) {
-      log('Timeout Error: $e');
-    } on SocketException catch (e) {
-      log('Socket Error: $e');
-
-      showSnackBar(
-        context: context,
-        text: 'Please check Internet Connectivity',
-      );
-    } on Error catch (e) {
-      log('General Error: $e');
+      if (res.statusCode >= 400 && res.statusCode <= 599) {
+        throw ServerErrorException(res);
+      }
+    } on SocketException catch (_) {
+      showErrorSnackBar(
+          context: context, text: ErrorString.checkInternet.value);
+    } on TimeoutException catch (_) {
+      showErrorSnackBar(
+          context: context, text: ErrorString.requestTimeout.value);
+    } on ServerErrorException catch (e) {
+      showErrorSnackBar(context: context, text: '$e');
     } catch (e) {
-      log('UPDATE-SUBS: $e');
-      showSnackBar(context: context, text: '$e');
+      showErrorSnackBar(context: context, text: ErrorString.generalError.value);
     }
   }
-
-//
-}
-
-void stopShowError(
-  Ref ref,
-  BuildContext context,
-  String message,
-) {
-  ref.read(isLoadingSubsProvider.notifier).update((state) => false);
-  navigateError(context, message);
 }

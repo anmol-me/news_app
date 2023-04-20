@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:news_app/features/subscription/repository/category_list_repo.dart';
+import 'package:news_app/features/subscription/repository/subscription_repository.dart';
 
 import '../features/category/screens/manage_category_screen.dart';
 import '../features/subscription/screens/edit_subscription_screen.dart';

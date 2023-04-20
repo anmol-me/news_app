@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../common/constants.dart';
-import '../../subscription/screens/select_subscription_screen/select_subscription_screen.dart';
+import '../../subscription/screens/select_subscription_screen.dart';
 
 class WelcomeViewWidget extends StatelessWidget {
   const WelcomeViewWidget({super.key});

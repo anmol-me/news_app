@@ -9,7 +9,7 @@
 // import 'package:news_app/features/details/screens/news_details_screen.dart';
 // import 'package:news_app/features/home/widgets/app_drawer.dart';
 // import '../../category/repository/home_feed_repo.dart';
-// import '../../category/repository/category_list_repo.dart';
+// import '../../category/repository/subscription_repository.dart';
 //
 // final sortDirectionProvider = StateProvider<String>((ref) => 'asc');
 //

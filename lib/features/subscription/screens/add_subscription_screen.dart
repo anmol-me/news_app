@@ -6,8 +6,8 @@ import 'package:news_app/components/app_back_button.dart';
 import '../../../common/common_widgets.dart';
 import '../../../common/constants.dart';
 import '../../../models/model.dart';
-import '../repository/category_list_repo.dart';
-import '../repository/add_subscription_repository.dart';
+import '../repository/subscription_repository.dart';
+import '../repository/discovery_repository.dart';
 import '../widgets/add_category_sheet.dart';
 
 /// Providers

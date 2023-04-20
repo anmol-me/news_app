@@ -1,5 +1,7 @@
 import 'package:http/http.dart';
 
+import 'enums.dart';
+
 Map<int, String> errorMessages = {
   400: "Please check your url",
   401: "You don't have authorization",
@@ -14,5 +16,6 @@ class ServerErrorException implements Exception {
   ServerErrorException(this.res);
 
   @override
-  String toString() => errorMessages[res.statusCode]!;
+  String toString() =>
+      errorMessages[res.statusCode] ?? ErrorString.somethingWrongAdmin.value;
 }

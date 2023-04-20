@@ -8,11 +8,12 @@ import 'package:news_app/components/app_back_button.dart';
 import 'package:news_app/features/subscription/screens/add_subscription_screen.dart';
 
 import 'package:news_app/common/model_sheet.dart';
-import '../../../../common/constants.dart';
-import '../../repository/category_list_repo.dart';
+import '../../../common/constants.dart';
+import '../repository/subscription_repository.dart';
 import 'package:news_app/models/model.dart';
-import 'build_methods.dart';
-import 'subscription_tile.dart';
+import '../widgets/clear_subscription_widget.dart';
+import '../widgets/tile_build_methods.dart';
+import '../widgets/subscription_tile.dart';
 
 /// Providers
 final isLoadingSubsProvider = StateProvider((ref) => false);
@@ -63,8 +64,9 @@ class SelectSubscriptionScreen extends HookConsumerWidget {
 
     final scrollController = ScrollController();
 
-    final isIos = defaultTargetPlatform == TargetPlatform.android;
-    final isAndroid = defaultTargetPlatform == TargetPlatform.iOS;
+    final isIos = defaultTargetPlatform == TargetPlatform.iOS;
+    final isMacOs = defaultTargetPlatform == TargetPlatform.macOS;
+    final isAndroid = defaultTargetPlatform == TargetPlatform.android;
 
     return Scaffold(
       appBar: AppBar(
@@ -74,9 +76,6 @@ class SelectSubscriptionScreen extends HookConsumerWidget {
         title: const Text('Select Subscription'),
         actions: [
           IconButton(
-            // onPressed: () => !isLoadingSubs
-            //     ? Navigator.of(context).pushNamed(AddSubscription.routeNamed)
-            //     : null,
             onPressed: () => !isLoadingSubs
                 ? context.pushNamed(AddSubscription.routeNamed)
                 : null,
@@ -85,21 +84,12 @@ class SelectSubscriptionScreen extends HookConsumerWidget {
               color: isLoadingSubs ? colorDisabled : colorRed,
             ),
           ),
-
-          /// Clear
-          IconButton(
-            onPressed: () => ref.refresh(categoryListNotifierProvider).clear(),
-            icon: Icon(
-              Icons.clear,
-              color: colorRed,
-            ),
-          ),
         ],
       ),
       body: isLoadingSubs
           ? const LinearLoader()
           : categoryListNotifier.isEmpty
-              ? const ClearSubscriptionView()
+              ? const ClearSubscriptionWidget()
               : RefreshIndicator(
                   onRefresh: refresh,
                   color: colorRed,
@@ -117,6 +107,7 @@ class SelectSubscriptionScreen extends HookConsumerWidget {
                             Expanded(
                               child: ListView.builder(
                                 controller: scrollController,
+                                physics: const AlwaysScrollableScrollPhysics(),
                                 itemCount: categoryListNotifier.length,
                                 itemBuilder: (listContext, index) {
                                   final subscriptionItem =
@@ -128,7 +119,7 @@ class SelectSubscriptionScreen extends HookConsumerWidget {
                                       ref,
                                       listContext,
                                     );
-                                  } else if (isIos) {
+                                  } else if (isIos || isMacOs) {
                                     return buildSlidable(
                                       subscriptionItem,
                                       ref,
@@ -154,75 +145,3 @@ class SelectSubscriptionScreen extends HookConsumerWidget {
   }
 }
 
-SubscriptionTile buildSubscriptionTile(
-  CategoryList subscriptionItem,
-  WidgetRef ref,
-  BuildContext listContext,
-) =>
-    SubscriptionTile(
-      id: subscriptionItem.id,
-      children: [
-        if (defaultTargetPlatform != TargetPlatform.iOS)
-          IconButton(
-            onPressed: () => showModelSheet(
-              listContext: listContext,
-              listItem: subscriptionItem,
-              ref: ref,
-            ),
-            icon: const Icon(
-              Icons.more_vert,
-            ),
-          ),
-      ],
-    );
-
-class ClearSubscriptionView extends StatelessWidget {
-  const ClearSubscriptionView({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: const [
-          Text(
-            'Add subscription to get started',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 20,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-/*
-                                    IconButton(
-                                      onPressed: () {},
-                                      icon: Icon(
-                                        Icons.delete,
-                                        color: Theme.of(context).errorColor,
-                                      ),
-                                    ),
-
-
-
-
-                                                                        IconButton(
-                                      onPressed: () {
-                                        Navigator.of(context).pushNamed(
-                                          EditSubscription.routeNamed,
-                                          arguments: {
-                                            'oldTitle': subscriptionItem.title,
-                                            'listItemId': subscriptionItem.id,
-                                          },
-                                        );
-                                      },
-                                      icon: const Icon(
-                                        Icons.edit,
-                                        color: Colors.blue,
-                                      ),
-                                    ),
- */
