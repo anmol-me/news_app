@@ -49,15 +49,15 @@ class AddSubscription extends HookConsumerWidget {
         useTextEditingController(text: 'https://rss.art19.com/apology-line');
     final catNameController = useTextEditingController();
 
-    final discoverSubscription = ref.watch(addSubscriptionProvider);
+    final discoverSubscription = ref.watch(discoveryProvider);
     final discoverSubscriptionController =
-        ref.watch(addSubscriptionProvider.notifier);
+        ref.watch(discoveryProvider.notifier);
 
     final isDiscoverLoading = ref.watch(isDiscoverLoadingProvider);
 
     final isFeedLoading = ref.watch(isFeedLoadingProvider);
 
-    List<CategoryList> categoryList = ref.watch(categoryListNotifierProvider);
+    List<CategoryList> categoryList = ref.watch(subscriptionNotifierProvider);
 
     List<String> categoryTitles = categoryList.map((e) => e.title).toList();
 
@@ -158,7 +158,7 @@ class AddSubscription extends HookConsumerWidget {
 }
 
 class DiscoveryItem extends HookConsumerWidget {
-  final AddNewSubscription subsItem;
+  final DiscoverSubscription subsItem;
   final CategoryList selectedCatInfo;
 
   const DiscoveryItem({
@@ -171,7 +171,7 @@ class DiscoveryItem extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final isLoading = useState(false);
 
-    final discoveryNotifier = ref.watch(addSubscriptionProvider.notifier);
+    final discoveryNotifier = ref.watch(discoveryProvider.notifier);
 
     return ListTile(
       title: Text(subsItem.title),

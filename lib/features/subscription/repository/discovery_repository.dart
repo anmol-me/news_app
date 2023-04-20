@@ -13,19 +13,19 @@ import '../../../common/error.dart';
 import '../../../models/model.dart';
 import '../screens/add_subscription_screen.dart';
 
-final addSubscriptionProvider = NotifierProvider.autoDispose<
-    DiscoveryNotifier, List<AddNewSubscription>>(
+final discoveryProvider = NotifierProvider.autoDispose<
+    DiscoveryNotifier, List<DiscoverSubscription>>(
   DiscoveryNotifier.new,
 );
 
 class DiscoveryNotifier
-    extends AutoDisposeNotifier<List<AddNewSubscription>> {
+    extends AutoDisposeNotifier<List<DiscoverSubscription>> {
   late UserPreferences userPrefs;
   late String userPassEncoded;
   late String baseUrl;
 
   @override
-  List<AddNewSubscription> build() {
+  List<DiscoverSubscription> build() {
     userPrefs = ref.watch(userPrefsProvider);
     userPassEncoded = userPrefs.getAuthData()!;
     baseUrl = userPrefs.getUrlData()!;
@@ -51,12 +51,12 @@ class DiscoveryNotifier
       if (res.statusCode == 200) {
         List<dynamic> decodedData = jsonDecode(res.body);
 
-        final List<AddNewSubscription> fetchedCategoryList = [];
+        final List<DiscoverSubscription> fetchedCategoryList = [];
 
         for (var i = 0; i < decodedData.length; i++) {
           var info = decodedData[i];
 
-          final fetchedCategory = AddNewSubscription(
+          final fetchedCategory = DiscoverSubscription(
             title: info['title'],
             url: info['url'],
           );
@@ -80,7 +80,7 @@ class DiscoveryNotifier
     BuildContext context,
   ) {
     final discoverSubscriptionController =
-        ref.read(addSubscriptionProvider.notifier);
+        ref.read(discoveryProvider.notifier);
 
     final isDiscoverLoadingController =
         ref.read(isDiscoverLoadingProvider.notifier);
@@ -149,7 +149,7 @@ class DiscoveryNotifier
   void submitFeed(
     BuildContext context,
     ValueNotifier<bool> isLoading,
-    AddNewSubscription subsItem,
+    DiscoverSubscription subsItem,
     CategoryList selectedCatInfo,
   ) {
     final selectedCategory = ref.read(selectedCategoryProvider);
@@ -170,7 +170,7 @@ class DiscoveryNotifier
     isLoading.value = true;
 
     ref
-        .read(addSubscriptionProvider.notifier)
+        .read(discoveryProvider.notifier)
         .createFeed(
           context,
           selectedCategory,

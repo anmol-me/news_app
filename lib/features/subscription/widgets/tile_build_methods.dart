@@ -42,7 +42,7 @@ Slidable buildSlidable(
             ref.read(isDeletingCatProvider.notifier).update((state) => true);
 
             ref
-                .read(categoryListNotifierProvider.notifier)
+                .read(subscriptionNotifierProvider.notifier)
                 .deleteCategory(
                   listContext,
                   listItem.id,

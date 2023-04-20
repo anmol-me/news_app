@@ -15,7 +15,7 @@ import '../../../models/model.dart';
 
 final isDeletingCatProvider = StateProvider((ref) => false);
 
-final categoryListNotifierProvider =
+final subscriptionNotifierProvider =
     NotifierProvider<SubscriptionNotifier, List<CategoryList>>(
   SubscriptionNotifier.new,
 );

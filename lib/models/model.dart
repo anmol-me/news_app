@@ -19,22 +19,12 @@ class CategoryList {
 }
 
 
-class AddNewSubscription {
+class DiscoverSubscription {
   final String title;
   final String url;
 
-  AddNewSubscription({
+  DiscoverSubscription({
     required this.title,
     required this.url,
   });
-
-// DiscoverSubscription copyWith(
-//   String? title,
-//   String? url,
-// ) {
-//   return DiscoverSubscription(
-//     title: title ?? this.title,
-//     url: url ?? this.url,
-//   );
-// }
 }

@@ -39,7 +39,7 @@ class SelectSubscriptionScreen extends HookConsumerWidget {
         );
 
         ref
-            .read(categoryListNotifierProvider.notifier)
+            .read(subscriptionNotifierProvider.notifier)
             .fetchCategories(context)
             .then(
               (_) => isLoadingSubsController.update((state) => false),
@@ -49,13 +49,13 @@ class SelectSubscriptionScreen extends HookConsumerWidget {
       [],
     );
 
-    final categoryListNotifier = ref.watch(categoryListNotifierProvider);
+    final categoryListNotifier = ref.watch(subscriptionNotifierProvider);
 
     Future<void> refresh() async {
       isLoadingSubsController.update((state) => true);
 
       ref
-          .read(categoryListNotifierProvider.notifier)
+          .read(subscriptionNotifierProvider.notifier)
           .fetchCategories(context)
           .then(
             (_) => isLoadingSubsController.update((state) => false),

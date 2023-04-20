@@ -84,7 +84,7 @@ Future showModelSheet({
                       .update((state) => true);
 
                   ref
-                      .read(categoryListNotifierProvider.notifier)
+                      .read(subscriptionNotifierProvider.notifier)
                       .deleteCategory(
                         listContext,
                         listItem.id,

@@ -69,7 +69,7 @@ class EditSubscriptionScreen extends HookConsumerWidget {
                     isTitleUpdatingController.update((state) => true);
 
                     ref
-                        .read(categoryListNotifierProvider.notifier)
+                        .read(subscriptionNotifierProvider.notifier)
                         .updateCategoryName(
                           context,
                           listItemId,

@@ -77,7 +77,7 @@ class AddCatSheetButton extends ConsumerWidget {
       //     ref.read(addNewSubscriptionProvider.notifier);
 
       final categoryListController =
-          ref.read(categoryListNotifierProvider.notifier);
+          ref.read(subscriptionNotifierProvider.notifier);
 
       // final isCreateCatLoadingController =
       // ref.read(isCreateCatLoadingProvider.notifier);

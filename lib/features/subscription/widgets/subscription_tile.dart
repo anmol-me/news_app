@@ -18,7 +18,7 @@ class SubscriptionTile extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final categoryListNotifier = ref.watch(categoryListNotifierProvider);
+    final categoryListNotifier = ref.watch(subscriptionNotifierProvider);
 
     final subscriptionItem = categoryListNotifier.firstWhere((e) => e.id == id);
 
