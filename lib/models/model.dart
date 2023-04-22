@@ -16,8 +16,14 @@ class CategoryList {
       title: title ?? this.title,
     );
   }
-}
 
+  factory CategoryList.fromJson(Map<String, dynamic> data) {
+    return CategoryList(
+      id: data['id'] as int,
+      title: data['title'] as String,
+    );
+  }
+}
 
 class DiscoverSubscription {
   final String title;

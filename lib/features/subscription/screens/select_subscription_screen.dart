@@ -26,6 +26,8 @@ class SelectSubscriptionScreen extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final scrollController = useScrollController();
+
     final isLoadingSubs = ref.watch(isLoadingSubsProvider);
     final isLoadingSubsController = ref.watch(isLoadingSubsProvider.notifier);
 
@@ -61,8 +63,6 @@ class SelectSubscriptionScreen extends HookConsumerWidget {
             (_) => isLoadingSubsController.update((state) => false),
           );
     }
-
-    final scrollController = ScrollController();
 
     final isIos = defaultTargetPlatform == TargetPlatform.iOS;
     final isMacOs = defaultTargetPlatform == TargetPlatform.macOS;
