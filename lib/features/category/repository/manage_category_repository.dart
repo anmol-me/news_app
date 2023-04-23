@@ -1,46 +1,32 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-
 import 'package:http/http.dart' as http;
 
 import '../../../common/backend_methods.dart';
 import '../../../common/common_widgets.dart';
 import '../../../common/enums.dart';
+import '../../../common/error.dart';
 import '../../../models/model.dart';
 import '../../authentication/repository/auth_repo.dart';
-
-// /// Future Provider
-// final catFeedRepoFuture =
-//     FutureProvider.family<List<CategoryList>, BuildContext>((ref, context) {
-//   //
-//   return ref.watch(catFeedRepoProvider.notifier).fetchCategoryFeeds(context);
-// });
-
-// final deleteCatFeedFuture = FutureProvider((ref) {
-//   return ref.watch(catFeedRepoProvider.notifier).deleteFeed();
-// });
 
 /// Notifier Provider
 final manageCateNotifierProvider =
     NotifierProvider<ManageCategoryRepository, List<CategoryList>>(
-        ManageCategoryRepository.new);
+  ManageCategoryRepository.new,
+);
 
-/// Notifier
+/// Notifier Class
 class ManageCategoryRepository extends Notifier<List<CategoryList>> {
   late UserPreferences userPrefs;
-
-  // late int categoryId;
   late String? userPassEncoded;
   late String? baseUrl;
 
   @override
   List<CategoryList> build() {
-    // catId = ref.watch(categoryIdProvider);
     userPrefs = ref.watch(userPrefsProvider);
     userPassEncoded = userPrefs.getAuthData();
     baseUrl = userPrefs.getUrlData();
@@ -51,8 +37,6 @@ class ManageCategoryRepository extends Notifier<List<CategoryList>> {
     BuildContext context,
     int categoryId,
   ) async {
-    log('Cat Id: $categoryId');
-
     checkAuth(context, userPassEncoded, baseUrl, userPrefs);
 
     try {
@@ -60,7 +44,9 @@ class ManageCategoryRepository extends Notifier<List<CategoryList>> {
 
       final res = await getHttpResp(uri, userPassEncoded!);
 
-      log(res.statusCode.toString());
+      if (res.statusCode >= 400 && res.statusCode <= 599) {
+        throw ServerErrorException(res);
+      }
 
       final List<CategoryList> list = [];
 
@@ -75,35 +61,23 @@ class ManageCategoryRepository extends Notifier<List<CategoryList>> {
 
           list.add(data);
         }
-      } else {
-        if (context.mounted) {
-          showErrorSnackBar(
-            context: context,
-            text: ErrorString.somethingWrongAdmin.value,
-          );
-        }
       }
 
       return state = list;
-    } on TimeoutException catch (e) {
-      log('Timeout Error: $e');
-      rethrow;
-    } on SocketException catch (e) {
-      log('Socket Error: $e');
-
-      showSnackBar(
-        context: context,
-        text: 'Please check Internet Connectivity',
-      );
-      rethrow;
-    } on Error catch (e) {
-      log('General Error: $e');
-      rethrow;
+    } on SocketException catch (_) {
+      showErrorSnackBar(
+          context: context, text: ErrorString.checkInternet.value);
+      return [];
+    } on TimeoutException catch (_) {
+      showErrorSnackBar(
+          context: context, text: ErrorString.requestTimeout.value);
+      return [];
+    } on ServerErrorException catch (e) {
+      showErrorSnackBar(context: context, text: '$e');
+      return [];
     } catch (e) {
-      log('MAN-CAT-FETCH: $e');
-      showSnackBar(context: context, text: '$e');
-      // return [];
-      rethrow;
+      showErrorSnackBar(context: context, text: ErrorString.generalError.value);
+      return [];
     }
   }
 
@@ -123,7 +97,6 @@ class ManageCategoryRepository extends Notifier<List<CategoryList>> {
         if (item.id != itemId) item,
     ];
 
-    // 'https://read.rusi.me/v1/categories/$id
     Uri uri = Uri.https(baseUrl!, 'v1/feeds/$itemId');
 
     try {
@@ -154,8 +127,6 @@ class ManageCategoryRepository extends Notifier<List<CategoryList>> {
       }
     } on TimeoutException catch (_) {
       state = [...state]..insert(itemIndex, catItem);
-      // state = [...state].insert(itemIndex, catItem);
-
       showErrorSnackBar(
           context: context,
           text:
@@ -182,8 +153,6 @@ class ManageCategoryRepository extends Notifier<List<CategoryList>> {
     required String newFeedTitle,
   }) async {
     checkAuth(listContext, userPassEncoded, baseUrl, userPrefs);
-    final navigator = Navigator.of(listContext);
-
     try {
       final res = await putHttpResp(
           uri: null,
@@ -195,7 +164,7 @@ class ManageCategoryRepository extends Notifier<List<CategoryList>> {
           });
 
       if (res.statusCode == 201) {
-        navigator.pop();
+        if (listContext.mounted) Navigator.of(listContext).pop();
 
         state = [
           for (final item in state)
@@ -216,69 +185,15 @@ class ManageCategoryRepository extends Notifier<List<CategoryList>> {
           );
         }
       }
-      log('UPDATE-SUBS-C: ${res.statusCode}');
-    } on TimeoutException catch (e) {
-      log('Timeout Error: $e');
-    } on SocketException catch (e) {
-      log('Socket Error: $e');
-
-      showSnackBar(
-        context: listContext,
-        text: 'Please check Internet Connectivity',
-      );
-    } on Error catch (e) {
-      log('General Error: $e');
+    } on SocketException catch (_) {
+      showErrorSnackBar(
+          context: listContext, text: ErrorString.checkInternet.value);
+    } on TimeoutException catch (_) {
+      showErrorSnackBar(
+          context: listContext, text: ErrorString.requestTimeout.value);
     } catch (e) {
-      log('UPDATE-SUBS: $e');
-      showSnackBar(context: listContext, text: '$e');
+      showErrorSnackBar(
+          context: listContext, text: ErrorString.generalError.value);
     }
   }
-
-// ///
-// Future<List> categoryFeedDetails(
-//   BuildContext context,
-// ) async {
-//   checkAuth(context, userPassEncoded, baseUrl, userPrefs);
-//
-//   try {
-//     Uri uri = Uri.https(baseUrl!, 'v1/categories/$categoryId/feeds');
-//
-//     // http.Response res = await http.get(
-//     //   uri,
-//     //   headers: {
-//     //     'Content-Type': 'application/json; charset=UTF-8',
-//     //     // 'X-Auth-Token': '-5YfpcHn8F__jMhC0MFA-AaMrqLl5ehBaesPuvjCOzg=',
-//     //     'authorization': userPassEncoded!,
-//     //   },
-//     // );
-//
-//     final res = await getHttpResp(uri, userPassEncoded!);
-//
-//     log(res.statusCode.toString());
-//
-//     List<dynamic> decodedData = jsonDecode(res.body);
-//
-//     final List<CategoryList> list = [];
-//     //
-//     for (var i = 0; i < decodedData.length; i++) {
-//       log(decodedData[i]['title']);
-//
-//       final data = decodedData[i]['title'];
-//
-//       list.add(data);
-//     }
-//     return state = list;
-//   }
-//   // on SocketException catch (e) {
-//   //   log('CAT-LIST-FETCH: SOCKET EXCEPTION: $e');
-//   //   // Navigator.of(context).pushNamed(ErrorScreen.routeNamed);
-//   //   return [];
-//   // }
-//   catch (e) {
-//     log('MAN-CAT-FETCH: $e');
-//     showSnackBar(context: context, text: '$e');
-//     // return [];
-//     rethrow;
-//   }
-// }
 }

@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-// import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:news_app/common/common_widgets.dart';
-
 import '../../../common/constants.dart';
 import '../../../components/app_back_button.dart';
-import '../../../models/model.dart';
 import '../../subscription/screens/add_subscription_screen.dart';
 import '../repository/manage_category_repository.dart';
 import 'edit_feed_screen.dart';
@@ -67,11 +64,11 @@ class ManageCategoryScreen extends HookConsumerWidget {
         actions: [
           IconButton(
             onPressed: () async {
-
-              final subListener = ref.listenManual(selectedCategoryProvider, (previous, next) {});
+              final subListener = ref.listenManual(
+                  selectedCategoryProvider, (previous, next) {});
               ref.read(selectedCategoryProvider.notifier).update(
                     (state) => catListItemTitle,
-              );
+                  );
 
               isManageLoading || isManageProcessing
                   ? null
@@ -92,6 +89,7 @@ class ManageCategoryScreen extends HookConsumerWidget {
           ? const LinearLoader()
           : Stack(
               children: [
+                /// Todo: List Empty
                 if (!isManageProcessing && isManageNotifier.isEmpty)
                   const Text('List is Empty')
                 else if (isManageProcessing)
@@ -106,7 +104,6 @@ class ManageCategoryScreen extends HookConsumerWidget {
                             final item = isManageNotifier[i];
 
                             return ListTile(
-                              leading: Text('${item.id}'),
                               title: Text(item.title),
                               trailing: Wrap(
                                 children: [
@@ -125,17 +122,6 @@ class ManageCategoryScreen extends HookConsumerWidget {
                                         },
                                         extra: listContext,
                                       );
-
-                                      /// Todo: Nav
-                                      // Navigator.of(listContext).pushNamed(
-                                      //   EditFeedScreen.routeNamed,
-                                      //   arguments: {
-                                      //     'feedTitle': item.title,
-                                      //     'feedId': item.id,
-                                      //     'catId': catListItemId,
-                                      //     'listContext': listContext,
-                                      //   },
-                                      // );
                                     },
                                   ),
                                   IconButton(
@@ -158,9 +144,9 @@ class ManageCategoryScreen extends HookConsumerWidget {
                                             item,
                                           )
                                           .then(
-                                        (_) => isManageProcessingController
-                                              .update((state) => false),
-                                      );
+                                            (_) => isManageProcessingController
+                                                .update((state) => false),
+                                          );
                                     },
                                   ),
                                 ],
@@ -169,9 +155,6 @@ class ManageCategoryScreen extends HookConsumerWidget {
                           },
                         ),
                       ),
-                      // Expanded(
-                      //   child: Text(''),
-                      // ),
                     ],
                   ),
               ],
@@ -179,44 +162,3 @@ class ManageCategoryScreen extends HookConsumerWidget {
     );
   }
 }
-
-/*
-          Expanded(
-            child: catFeedsRepoFetcher.when(
-              data: (data) {
-                return ListView.builder(
-                  itemCount: data.length,
-                  itemBuilder: (context, i) {
-                    return ListTile(
-                      leading: Text('${data[i].id}'),
-                      title: Text(data[i].title),
-                      trailing: IconButton(
-                        icon: const Icon(Icons.delete),
-                        onPressed: () {
-                          // ref
-                          //     .read(catDetailsContextProvider.notifier)
-                          //     .update((state) => context);
-                          //
-                          // ref.read(catDetailsProvider.notifier).update(
-                          //       (state) => data[i],
-                          //     );
-
-                          ref.read(catFeedRepoProvider.notifier).deleteFeed(context, data[i]);
-                        },
-                      ),
-                    );
-                  },
-                );
-              },
-              error: (e, s) {
-                return Container(
-                    decoration:
-                        BoxDecoration(color: Colors.deepOrangeAccent[100]),
-                    child: Center(child: Text('Error... $e')));
-              },
-              loading: () {
-                return const Center(child: Text('Loading...'));
-              },
-            ),
-          ),
- */
