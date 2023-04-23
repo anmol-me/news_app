@@ -25,43 +25,15 @@ class SearchScreen extends HookConsumerWidget {
     final searchTextController = useTextEditingController();
 
     final showResults = ref.watch(showResultsProvider);
-    final showResultsController = ref.watch(showResultsProvider.notifier);
 
     final showSearchLoader = ref.watch(showSearchLoaderProvider);
-    final showSearchLoaderController =
-        ref.watch(showSearchLoaderProvider.notifier);
 
     final searchNotifier = ref.watch(searchNotifierProvider);
     final searchNotifierController = ref.watch(searchNotifierProvider.notifier);
 
     final newsNotifierController = ref.watch(homeFeedProvider.notifier);
 
-    void searchFunction() {
-      FocusManager.instance.primaryFocus?.unfocus();
-
-      if (searchTextController.text.isEmpty) {
-        showResultsController.update((state) => false);
-      } else {
-        showSearchLoaderController.update((state) => true);
-
-        searchNotifierController
-            .fetchSearchResults(
-          context,
-          searchTextController.text,
-        )
-            .then((value) {
-          if (value.isEmpty) {
-            showResultsController.update((state) => false);
-          } else {
-            showResultsController.update((state) => true);
-          }
-
-          showSearchLoaderController.update((state) => false);
-        });
-      }
-    }
-
-    final scrollController = ScrollController();
+    final scrollController = useScrollController();
 
     return Scaffold(
       appBar: AppBar(
@@ -72,21 +44,19 @@ class SearchScreen extends HookConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // const Text(
-            //   'Search through feeds',
-            //   style: TextStyle(
-            //     fontSize: 16,
-            //     fontWeight: FontWeight.w400,
-            //   ),
-            // ),
-            const SizedBox(height: 5),
             TextField(
               controller: searchTextController,
-              onSubmitted: (val) => searchFunction(),
+              onSubmitted: (val) => searchNotifierController.searchFunction(
+                searchTextController,
+                context,
+              ),
               decoration: InputDecoration(
                 suffixIcon: IconButton(
                   icon: const Icon(Icons.search),
-                  onPressed: searchFunction,
+                  onPressed: () => searchNotifierController.searchFunction(
+                    searchTextController,
+                    context,
+                  ),
                 ),
                 border: const OutlineInputBorder(),
               ),
@@ -95,6 +65,8 @@ class SearchScreen extends HookConsumerWidget {
             showSearchLoader
                 ? const LinearLoader()
                 : !showResults
+
+                    /// Todo: List Empty Search
                     ? const Center(child: Text('No results'))
                     : Expanded(
                         child: Scrollbar(
