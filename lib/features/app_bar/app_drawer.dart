@@ -20,6 +20,7 @@ final isLoadingNameProvider = StateProvider((ref) => false);
 
 final isInitProvider = StateProvider((ref) => true);
 
+/// Widgets
 class AppDrawer extends HookConsumerWidget {
   static const routeNamed = '/app-drawer';
 
@@ -27,6 +28,7 @@ class AppDrawer extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // Using useEffect in place of init()
     // Fetches User data only once
     useEffect(
       () {
@@ -37,7 +39,7 @@ class AppDrawer extends HookConsumerWidget {
               ref.read(isLoadingNameProvider.notifier);
 
           Future.delayed(Duration.zero)
-              .then((value) => isLoadingNameController.update((state) => true));
+              .then((_) => isLoadingNameController.update((state) => true));
 
           Future.delayed(Duration.zero).then(
             (value) => ref
@@ -66,14 +68,11 @@ class AppDrawer extends HookConsumerWidget {
         child: Column(
           children: [
             const BuildHeader(),
-            SizedBox(
-              // width: MediaQuery.of(context).size.width * 0.60,
-              child: Divider(
-                color: colorRed,
-                thickness: 1.5,
-                indent: 60,
-                endIndent: 60,
-              ),
+            Divider(
+              color: colorRed,
+              thickness: 1.5,
+              indent: 60,
+              endIndent: 60,
             ),
             Wrap(
               runSpacing: 1,
@@ -196,6 +195,9 @@ class BuildHeader extends HookConsumerWidget {
 
 extension StringExtension on String {
   String capitalize() {
-    return "${this[0].toUpperCase()}${this.substring(1).toLowerCase()}";
+    if (isEmpty) {
+      return this;
+    }
+    return "${this[0].toUpperCase()}${substring(1).toLowerCase()}";
   }
 }

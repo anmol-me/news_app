@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -17,10 +15,9 @@ final appBarRepoProvider = Provider(
   },
 );
 
-
 /// Class
 class AppBarRepository {
-  final ProviderRef ref;
+  final Ref ref;
   final StateController<bool> isLoadingPageController;
 
   AppBarRepository(this.ref, this.isLoadingPageController);
@@ -47,8 +44,6 @@ class AppBarRepository {
 
     ref.refresh(homeIsShowReadProvider.notifier).update((state) => false);
 
-    log('PATH: ${GoRouterState.of(context).location}');
-
     if (GoRouterState.of(context).location == '/home') {
       ref.read(homeFeedProvider.notifier).fetchEntries(context).then(
             (_) => isLoadingPageController.update((state) => false),
@@ -59,8 +54,5 @@ class AppBarRepository {
             (_) => isLoadingPageController.update((state) => false),
           );
     }
-
-    /// Nav-> TODO:
-    // Navigator.of(context).push(MaterialPageRoute(builder: (context) => HomeFeedScreen()));
   }
 }

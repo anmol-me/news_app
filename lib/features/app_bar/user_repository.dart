@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:developer' show log;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -39,8 +38,6 @@ class UserNotifier extends Notifier<User?> {
   }
 
   Future<User> fetchUserData(BuildContext context) async {
-    checkAuth(context, userPassEncoded, baseUrl, userPrefs);
-
     try {
       Uri uri = Uri.https(baseUrl, 'v1/me');
 
@@ -55,8 +52,7 @@ class UserNotifier extends Notifier<User?> {
 
       return state = currentUser;
     } catch (e) {
-      log('Cannot fetch User Data');
-      return state!;
+      return state ?? User(id: 0, username: 'Loading');
     }
   }
 }
