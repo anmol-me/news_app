@@ -33,4 +33,11 @@ class DiscoverSubscription {
     required this.title,
     required this.url,
   });
+
+  factory DiscoverSubscription.fromJson(Map<String, dynamic> data) {
+    return DiscoverSubscription(
+      title: data['title'] as String,
+      url: data['url'] as String,
+    );
+  }
 }

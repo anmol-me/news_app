@@ -13,8 +13,8 @@ import '../../../common/error.dart';
 import '../../../models/model.dart';
 import '../screens/add_subscription_screen.dart';
 
-final discoveryProvider = NotifierProvider.autoDispose<
-    DiscoveryNotifier, List<DiscoverSubscription>>(
+final discoveryProvider =
+    NotifierProvider.autoDispose<DiscoveryNotifier, List<DiscoverSubscription>>(
   DiscoveryNotifier.new,
 );
 
@@ -51,19 +51,10 @@ class DiscoveryNotifier
       if (res.statusCode == 200) {
         List<dynamic> decodedData = jsonDecode(res.body);
 
-        final List<DiscoverSubscription> fetchedCategoryList = [];
+        final fetchedCategories =
+            decodedData.map((e) => DiscoverSubscription.fromJson(e)).toList();
 
-        for (var i = 0; i < decodedData.length; i++) {
-          var info = decodedData[i];
-
-          final fetchedCategory = DiscoverSubscription(
-            title: info['title'],
-            url: info['url'],
-          );
-
-          fetchedCategoryList.add(fetchedCategory);
-        }
-        state = fetchedCategoryList;
+        state = fetchedCategories;
       }
     } on TimeoutException catch (_) {
       showErrorSnackBar(
@@ -79,8 +70,7 @@ class DiscoveryNotifier
     TextEditingController urlController,
     BuildContext context,
   ) {
-    final discoverSubscriptionController =
-        ref.read(discoveryProvider.notifier);
+    final discoverSubscriptionController = ref.read(discoveryProvider.notifier);
 
     final isDiscoverLoadingController =
         ref.read(isDiscoverLoadingProvider.notifier);

@@ -59,17 +59,6 @@ class SubscriptionNotifier extends Notifier<List<CategoryList>> {
 
       List<dynamic> decodedData = jsonDecode(res.body);
 
-      // final List<CategoryList> fetchedCategoryList = [];
-      //
-      // for (var i = 0; i < decodedData.length; i++) {
-      //   final categoryList = CategoryList(
-      //     id: decodedData[i]['id'],
-      //     title: decodedData[i]['title'],
-      //   );
-      //
-      //   fetchedCategoryList.add(categoryList);
-      // }
-
       final fetchedCategories =
           decodedData.map((e) => CategoryList.fromJson(e)).toList();
 
