@@ -1,29 +1,26 @@
+import 'dart:async';
 import 'dart:convert';
-import 'dart:developer' show log;
+import 'dart:io';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:http/http.dart' as http;
 import 'package:news_app/features/authentication/repository/auth_repo.dart';
 
+import '../../../common/common_widgets.dart';
 import '../../../common/enums.dart';
 import '../../../common/backend_methods.dart';
+import '../../../common/error.dart';
 import '../../../models/news.dart';
-import '../../home/repository/home_feed_repo.dart';
 import '../screens/category_screen.dart';
 
+/// Providers
 final catOffsetProvider = StateProvider<int>((ref) => 0);
-
 final isCatLoadingProvider = StateProvider<bool>((ref) => false);
-
-final isCatAscProvider = StateProvider<bool>((ref) => false);
-
-final menuProvider = StateProvider<DropItems>((ref) => DropItems.refresh);
-
-// final isNextCatProvider = StateProvider<bool>((ref) => false);
 
 final categoryNotifierProvider =
     NotifierProvider<CategoryNotifier, List<News>>(CategoryNotifier.new);
 
+/// Notifier Class
 class CategoryNotifier extends Notifier<List<News>> {
   late String url;
   late String userPassEncoded;
@@ -39,18 +36,12 @@ class CategoryNotifier extends Notifier<List<News>> {
     return [];
   }
 
-  /// Fetch --------------------------------------------------------------------------------
   Future<void> fetchCategoryEntries(
     int id,
-    // Sort sort,
-    // int catOffset,
+    BuildContext context,
   ) async {
     final catOffset = ref.read(catOffsetProvider);
     final isShowReadCat = ref.read(isShowReadCatProvider);
-
-    log('CAT-ID: $id');
-    log('CHECK SORT: ${catSort.value}');
-    log('CHECK READ: $isShowReadCat');
 
     Uri uri = Uri.https(url, 'v1/categories/$id/entries', {
       'order': 'published_at',
@@ -59,10 +50,12 @@ class CategoryNotifier extends Notifier<List<News>> {
       if (isShowReadCat == true) 'status': 'read',
     });
 
-    log('$uri');
-
     try {
       final res = await getHttpResp(uri, userPassEncoded);
+
+      if (res.statusCode >= 400 && res.statusCode <= 599) {
+        throw ServerErrorException(res);
+      }
 
       Map<String, dynamic> decodedData = jsonDecode(res.body);
 
@@ -101,12 +94,19 @@ class CategoryNotifier extends Notifier<List<News>> {
         fetchedCategoryList.add(createdNews);
       }
       state = fetchedCategoryList;
+    } on SocketException catch (_) {
+      showErrorSnackBar(
+          context: context, text: ErrorString.checkInternet.value);
+    } on TimeoutException catch (_) {
+      showErrorSnackBar(
+          context: context, text: ErrorString.requestTimeout.value);
+    } on ServerErrorException catch (e) {
+      showErrorSnackBar(context: context, text: '$e');
     } catch (e) {
-      log('CATEGORY: $e');
+      showErrorSnackBar(context: context, text: ErrorString.generalError.value);
     }
   }
 
-  /// catTotalPage --------------------------------------------------------------------------------
   Future<int> catTotalPage(int id) async {
     Uri uri = Uri.https(url, 'v1/categories/$id/entries', {
       'order': 'published_at',
@@ -119,39 +119,40 @@ class CategoryNotifier extends Notifier<List<News>> {
 
       double numOfHundreds = decodedData['total'] / 100;
       int pages = numOfHundreds.ceil();
-      log('TOTAL PAGES: $pages');
       return pages;
     } catch (e) {
       return 1;
     }
   }
 
-  Future<void> refresh(int catId) async {
+  Future<void> refresh(
+    int catId,
+    BuildContext context,
+  ) async {
     isCatLoadingController.update((state) => true);
 
     ref.refresh(catSortProvider).value;
     ref.refresh(catOffsetProvider.notifier).update((state) => 0);
     ref.refresh(isShowReadCatProvider.notifier).update((state) => false);
-    // ref.refresh(homeSortDirectionProvider);
-
     ref
         .refresh(categoryNotifierProvider.notifier)
-        .fetchCategoryEntries(catId)
+        .fetchCategoryEntries(catId, context)
         .then(
           (_) => isCatLoadingController.update((state) => false),
         );
   }
 
-  /// Next
-  void next(int catId) {
+  void next(
+    int catId,
+    BuildContext context,
+  ) {
     isCatLoadingController.update((state) => true);
 
     final catOffsetController = ref.read(catOffsetProvider.notifier);
     catOffsetController.update((state) => state += 100);
-
     ref
         .read(categoryNotifierProvider.notifier)
-        .fetchCategoryEntries(catId)
+        .fetchCategoryEntries(catId, context)
         .then(
       (_) {
         isCatLoadingController.update((state) => false);
@@ -159,8 +160,10 @@ class CategoryNotifier extends Notifier<List<News>> {
     );
   }
 
-  /// Previous
-  void previous(int catId) {
+  void previous(
+    int catId,
+    BuildContext context,
+  ) {
     isCatLoadingController.update((state) => true);
 
     final catOffsetController = ref.read(catOffsetProvider.notifier);
@@ -168,7 +171,7 @@ class CategoryNotifier extends Notifier<List<News>> {
 
     ref
         .read(categoryNotifierProvider.notifier)
-        .fetchCategoryEntries(catId)
+        .fetchCategoryEntries(catId, context)
         .then(
       (_) {
         isCatLoadingController.update((state) => false);
@@ -176,8 +179,10 @@ class CategoryNotifier extends Notifier<List<News>> {
     );
   }
 
-  /// Sort
-  void sortCatFunction(int catId) {
+  void sortCatFunction(
+    int catId,
+    BuildContext context,
+  ) {
     isCatLoadingController.update((state) => true);
     ref.refresh(catOffsetProvider.notifier).update((state) => 0);
 
@@ -192,7 +197,7 @@ class CategoryNotifier extends Notifier<List<News>> {
     Future.delayed(const Duration(seconds: 0)).then((_) {
       ref
           .refresh(categoryNotifierProvider.notifier)
-          .fetchCategoryEntries(catId)
+          .fetchCategoryEntries(catId, context)
           .then(
             (_) => isCatLoadingController.update((state) => false),
           );
@@ -200,8 +205,10 @@ class CategoryNotifier extends Notifier<List<News>> {
     });
   }
 
-  /// Show Read
-  void readCatFunction(int catId) {
+  void readCatFunction(
+    int catId,
+    BuildContext context,
+  ) {
     isCatLoadingController.update((state) => true);
 
     final isShowReadCatController = ref.read(isShowReadCatProvider.notifier);
@@ -209,7 +216,7 @@ class CategoryNotifier extends Notifier<List<News>> {
 
     ref
         .read(categoryNotifierProvider.notifier)
-        .fetchCategoryEntries(catId)
+        .fetchCategoryEntries(catId, context)
         .then(
           (_) => isCatLoadingController.update((state) => false),
         );

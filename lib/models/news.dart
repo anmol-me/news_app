@@ -34,43 +34,6 @@ class News {
     this.isExpanded = false,
   });
 
-  // factory News.fromJson(Map<String, dynamic> json) => _$NewsFromJson(json);
-
-  News.fromJson(Map<String, dynamic> json)
-      : entryId = json['entryId'],
-        feedId = json['feedId'],
-        catId = json['catId'],
-        categoryTitle = json['categoryTitle'],
-        titleText = json['titleText'],
-        author = json['author'],
-        readTime = json['readTime'],
-        isFav = json['isFav'],
-        link = json['link'],
-        content = json['content'],
-        imageUrl = json['imageUrl'],
-        status = json['status'],
-        publishedTime = json['publishedTime'],
-        isExpanded = json['isExpanded'];
-
-  // Map<String, dynamic> toJson() => _$NewsToJson(this);
-
-  Map<String, dynamic> toJson() => {
-    'entryId': entryId,
-    'feedId': feedId,
-    'catId': catId,
-    'categoryTitle': categoryTitle,
-    'titleText': titleText,
-    'author': author,
-    'readTime': readTime,
-    'isFav': isFav,
-    'link': link,
-    'content': content,
-    'imageUrl': imageUrl,
-    'status': status,
-    'publishedTime': publishedTime,
-    'isExpanded': isExpanded,
-  };
-
   News copyWith({
     int? entryId,
     int? feedId,
