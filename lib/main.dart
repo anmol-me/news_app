@@ -10,7 +10,7 @@ import 'features/authentication/repository/auth_repo.dart';
 
 import 'package:string_validator/string_validator.dart';
 
-import 'features/settings/settings_repository.dart';
+import 'features/settings/repository/settings_repository.dart';
 
 final themeModeProvider = Provider<ThemeMode>((ref) {
   final isDarkModeEnabled = ref.watch(userSettingsProvider);

@@ -3,12 +3,12 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../../components/app_back_button.dart';
 import '../../home/providers/home_providers.dart';
-import '../settings_repository.dart';
+import '../repository/settings_repository.dart';
 
-final isSettingsLoadingProvider = StateProvider((ref) => false);
-
+/// Providers
 final isRefreshAllLoadingProvider = StateProvider((ref) => false);
 
+/// Widgets
 class SettingsScreen extends HookConsumerWidget {
   static const routeNamed = '/settings-screen';
 
@@ -16,10 +16,6 @@ class SettingsScreen extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // final isSettingsLoading = ref.watch(isSettingsLoadingProvider);
-    // final isSettingsLoadingController =
-    //     ref.watch(isSettingsLoadingProvider.notifier);
-
     final themeState = ref.watch(userSettingsProvider);
     final themeStateController = ref.watch(userSettingsProvider.notifier);
 
@@ -54,7 +50,6 @@ class SettingsScreen extends HookConsumerWidget {
             title: const Text('Enable Dark Mode'),
             value: themeState ?? false,
             onChanged: (val) {
-              // setThemeMode.setThemeMode(val);
               themeStateController.setThemeMode(val);
             },
           ),
