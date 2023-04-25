@@ -10,7 +10,7 @@ import '../../../common/common_widgets.dart';
 import '../../../common/backend_methods.dart';
 import '../../../common/error.dart';
 import '../../../models/news.dart';
-import '../../authentication/repository/auth_repo.dart';
+import '../../authentication/repository/user_preferences.dart';
 import '../../home/providers/home_providers.dart';
 import '../screens/search_screen.dart';
 

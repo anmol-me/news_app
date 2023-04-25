@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../features/authentication/repository/user_preferences.dart';
 import 'error_screen.dart';
-import '../features/authentication/repository/auth_repo.dart';
 import '../features/authentication/screens/auth_screen.dart';
 
 Future<Object?> navigateError(

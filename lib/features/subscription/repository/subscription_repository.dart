@@ -6,12 +6,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 import 'package:news_app/common/backend_methods.dart';
-import 'package:news_app/features/authentication/repository/auth_repo.dart';
 
 import '../../../common/common_widgets.dart';
 import '../../../common/enums.dart';
 import '../../../common/error.dart';
 import '../../../models/model.dart';
+import '../../authentication/repository/user_preferences.dart';
 
 final isDeletingCatProvider = StateProvider((ref) => false);
 

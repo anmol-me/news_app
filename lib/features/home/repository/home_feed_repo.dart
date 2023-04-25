@@ -4,7 +4,6 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:news_app/features/authentication/repository/auth_repo.dart';
 
 import '../../../common/common_widgets.dart';
 import '../../../common/enums.dart';
@@ -12,6 +11,7 @@ import '../../../common/error.dart';
 import '../../../common/backend_methods.dart';
 import '../../../common/frontend_methods.dart';
 import '../../../models/news.dart';
+import '../../authentication/repository/user_preferences.dart';
 import '../providers/home_providers.dart';
 
 class HomeFeedNotifier extends Notifier<List<News>> {

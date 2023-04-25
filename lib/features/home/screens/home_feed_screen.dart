@@ -15,7 +15,7 @@ import 'package:go_router/go_router.dart';
 
 import 'package:news_app/features/search/screens/search_screen.dart';
 import '../../../common/common_widgets.dart';
-import '../../authentication/repository/auth_repo.dart';
+import '../../authentication/repository/user_preferences.dart';
 import '../providers/home_providers.dart';
 
 import 'package:news_app/common/constants.dart';

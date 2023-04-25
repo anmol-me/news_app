@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../common/backend_methods.dart';
-import '../authentication/repository/auth_repo.dart';
+import '../authentication/repository/user_preferences.dart';
 
 /// User Model
 class User {

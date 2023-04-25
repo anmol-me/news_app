@@ -6,10 +6,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:news_app/router.dart';
 import 'package:news_app/common/constants.dart';
 
-import 'features/authentication/repository/auth_repo.dart';
-
 import 'package:string_validator/string_validator.dart';
 
+import 'features/authentication/repository/user_preferences.dart';
 import 'features/settings/repository/settings_repository.dart';
 
 final themeModeProvider = Provider<ThemeMode>((ref) {

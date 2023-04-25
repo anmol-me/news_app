@@ -11,7 +11,7 @@ import '../../../common/common_widgets.dart';
 import '../../../common/enums.dart';
 import '../../../common/error.dart';
 import '../../../models/model.dart';
-import '../../authentication/repository/auth_repo.dart';
+import '../../authentication/repository/user_preferences.dart';
 
 /// Notifier Provider
 final manageCateNotifierProvider =

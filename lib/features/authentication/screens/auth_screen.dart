@@ -1,23 +1,20 @@
-import 'dart:convert';
-import 'dart:developer' show log;
-
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:news_app/common/common_widgets.dart';
 import 'package:news_app/features/authentication/repository/auth_repo.dart';
-import 'package:news_app/features/home/screens/home_feed_screen.dart';
 
 import '../../../common/constants.dart';
 import '../../../common/enums.dart';
 import '../../../common/sizer.dart';
 
+/// Providers
 final modeProvider = StateProvider<Mode>((ref) => Mode.basic);
 
 final isLoadingLoginProvider = StateProvider((ref) => false);
-// -------------------
 
+/// Widgets
 class AuthScreen extends HookConsumerWidget {
   static const routeNamed = '/auth-screen';
 
@@ -25,7 +22,13 @@ class AuthScreen extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    FlutterNativeSplash.remove();
+    useEffect(
+      () {
+        FlutterNativeSplash.remove();
+        return null;
+      },
+      [],
+    );
 
     final formKey = useMemoized(GlobalKey<FormState>.new, const []);
 
@@ -33,10 +36,10 @@ class AuthScreen extends HookConsumerWidget {
     final passwordController = useTextEditingController(text: demoPassword);
     final urlController = useTextEditingController();
 
-    final usernameFocusNode = useFocusNode();
+    final focusNode = useFocusNode();
 
     final mode = ref.watch(modeProvider);
-    final modeController = ref.watch(modeProvider.state);
+    final modeController = ref.watch(modeProvider.notifier);
     final modeText = mode == Mode.basic ? 'Advanced' : 'Switch to Basic';
 
     final isLoadingLogin = ref.watch(isLoadingLoginProvider);
@@ -57,11 +60,11 @@ class AuthScreen extends HookConsumerWidget {
                   Sizer(
                     child: TextFormField(
                       controller: usernameController,
-                      focusNode: usernameFocusNode,
+                      focusNode: focusNode,
                       decoration: InputDecoration(
                         labelText: 'Username',
                         floatingLabelStyle: TextStyle(
-                          color: usernameFocusNode.hasFocus
+                          color: focusNode.hasFocus
                               ? colorLabel
                               : colorAppbarForeground,
                         ),
@@ -85,7 +88,7 @@ class AuthScreen extends HookConsumerWidget {
                       decoration: InputDecoration(
                         labelText: 'Password',
                         floatingLabelStyle: TextStyle(
-                          color: usernameFocusNode.hasFocus
+                          color: focusNode.hasFocus
                               ? colorLabel
                               : colorAppbarForeground,
                         ),
@@ -102,92 +105,45 @@ class AuthScreen extends HookConsumerWidget {
                       },
                     ),
                   ),
-                  // if (selectedValue == urlCustomValue)
                   if (mode == Mode.advanced)
-                    Row(
-                      children: [
-                        // Text(
-                        //   'https://  ',
-                        //   style: TextStyle(
-                        //       color: colorAppbarForeground, fontSize: 16),
-                        // ),
-                        Expanded(
-                          child: Sizer(
-                            child: TextFormField(
-                              controller: urlController,
-                              decoration: InputDecoration(
-                                hintText: defaultUrlHint,
-                                labelText: 'URL',
-                                floatingLabelStyle: TextStyle(
-                                  color: usernameFocusNode.hasFocus
-                                      ? colorLabel
-                                      : colorAppbarForeground,
-                                ),
-                                focusedBorder: UnderlineInputBorder(
-                                  borderSide: BorderSide(color: colorLabel),
-                                ),
-                              ),
-                              validator: (val) {
-                                if (urlController.text.isNotEmpty) {
-                                  return null;
-                                } else {
-                                  return ErrorString.validUrl.value;
-                                }
-                              },
-                            ),
+                    Sizer(
+                      child: TextFormField(
+                        controller: urlController,
+                        decoration: InputDecoration(
+                          hintText: defaultUrlHint,
+                          labelText: 'URL',
+                          floatingLabelStyle: TextStyle(
+                            color: focusNode.hasFocus
+                                ? colorLabel
+                                : colorAppbarForeground,
+                          ),
+                          focusedBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(color: colorLabel),
                           ),
                         ),
-                      ],
+                        validator: (val) {
+                          if (urlController.text.isNotEmpty) {
+                            return null;
+                          } else {
+                            return ErrorString.validUrl.value;
+                          }
+                        },
+                      ),
                     ),
-                  // Row(
-                  //   mainAxisAlignment: MainAxisAlignment.center,
-                  //   children: [
-                  //     const Text(
-                  //       'Url:',
-                  //       style: TextStyle(
-                  //         fontWeight: FontWeight.w500,
-                  //         fontSize: 16,
-                  //       ),
-                  //     ),
-                  //     Radio(
-                  //       value: urlDefaultValue,
-                  //       groupValue: selectedValue,
-                  //       onChanged: (val) {
-                  //         selectedValueController
-                  //             .update((state) => urlDefaultValue);
-                  //       },
-                  //     ),
-                  //     const SizedBox(width: 5),
-                  //     const Text(
-                  //       'Default',
-                  //       style: TextStyle(),
-                  //     ),
-                  //     Radio(
-                  //       value: urlCustomValue,
-                  //       groupValue: selectedValue,
-                  //       onChanged: (val) {
-                  //         selectedValueController
-                  //             .update((state) => urlCustomValue);
-                  //       },
-                  //     ),
-                  //     const Text('Custom'),
-                  //   ],
-                  // ),
                   const SizedBox(height: 20),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       ElevatedButton(
-                        style:
-                            ElevatedButton.styleFrom(backgroundColor: colorRed),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: colorRed,
+                        ),
                         onPressed: () => authRepo.login(
                           formKey: formKey,
                           context: context,
-                          ref: ref,
                           usernameController: usernameController,
                           passwordController: passwordController,
                           urlController: urlController,
-                          mode: mode,
                         ),
                         child: isLoadingLogin
                             ? const CircularLoading()
@@ -209,12 +165,6 @@ class AuthScreen extends HookConsumerWidget {
                       ),
                     ],
                   ),
-                  // TextButton(
-                  //   onPressed: () {
-                  //     ref.read(authRepoProvider).logout(context);
-                  //   },
-                  //   child: const Text('Sign Out'),
-                  // ),
                 ],
               ),
             ),

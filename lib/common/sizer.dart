@@ -42,7 +42,7 @@ class Sizer extends StatelessWidget {
       } else if (isTablet) {
         return widthTablet != null ? width * widthTablet! : width * 0.40;
       } else if (isDesktopOrWeb) {
-        return widthDesktopOrWeb != null ? width * widthDesktopOrWeb! : width * 0.20;
+        return widthDesktopOrWeb != null ? width * widthDesktopOrWeb! : width * 0.30;
       }
       return width;
     }

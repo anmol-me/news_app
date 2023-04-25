@@ -9,8 +9,8 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:http/http.dart' as http;
 import 'package:html/parser.dart' as html_parser;
 import 'package:news_app/common/enums.dart';
-import 'package:news_app/features/authentication/repository/auth_repo.dart';
 
+import '../features/authentication/repository/user_preferences.dart';
 import 'error_screen.dart';
 import '../features/authentication/screens/auth_screen.dart';
 import 'common_widgets.dart';
