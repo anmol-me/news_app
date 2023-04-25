@@ -4,7 +4,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../common/backend_methods.dart';
+import '../../common/api_methods.dart';
 import '../authentication/repository/user_preferences.dart';
 
 /// User Model

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import '../../../common/common_widgets.dart';
+import '../../../common_widgets/common_widgets.dart';
 import '../../../common/sizer.dart';
 import '../../../components/app_back_button.dart';
 import '../../../components/app_text_form_field.dart';

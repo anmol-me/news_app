@@ -6,8 +6,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:http/http.dart' as http;
 
-import '../../../common/backend_methods.dart';
-import '../../../common/common_widgets.dart';
+import '../../../common/api_methods.dart';
+import '../../../common_widgets/common_widgets.dart';
 import '../../../common/enums.dart';
 import '../../../common/error.dart';
 import '../../../models/model.dart';
@@ -37,8 +37,6 @@ class ManageCategoryRepository extends Notifier<List<CategoryList>> {
     BuildContext context,
     int categoryId,
   ) async {
-    checkAuth(context, userPassEncoded, baseUrl, userPrefs);
-
     try {
       Uri uri = Uri.https(baseUrl!, 'v1/categories/$categoryId/feeds');
 
@@ -152,7 +150,6 @@ class ManageCategoryRepository extends Notifier<List<CategoryList>> {
     required int catId,
     required String newFeedTitle,
   }) async {
-    checkAuth(listContext, userPassEncoded, baseUrl, userPrefs);
     try {
       final res = await putHttpResp(
           uri: null,

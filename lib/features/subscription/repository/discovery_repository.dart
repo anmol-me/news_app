@@ -6,8 +6,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:news_app/common/enums.dart';
 
-import '../../../common/backend_methods.dart';
-import '../../../common/common_widgets.dart';
+import '../../../common/api_methods.dart';
+import '../../../common_widgets/common_widgets.dart';
 import '../../../common/error.dart';
 import '../../../models/model.dart';
 import '../../authentication/repository/user_preferences.dart';

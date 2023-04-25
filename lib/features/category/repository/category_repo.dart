@@ -5,9 +5,10 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../common/common_widgets.dart';
+import '../../../common/common_methods.dart';
+import '../../../common_widgets/common_widgets.dart';
 import '../../../common/enums.dart';
-import '../../../common/backend_methods.dart';
+import '../../../common/api_methods.dart';
 import '../../../common/error.dart';
 import '../../../models/news.dart';
 import '../../authentication/repository/user_preferences.dart';

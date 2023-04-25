@@ -3,8 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:jiffy/jiffy.dart';
-import 'package:news_app/features/home/repository/home_methods.dart';
+import 'package:html/parser.dart' as html_parser;
 
+import 'package:news_app/features/home/repository/home_methods.dart';
 import '../features/home/providers/home_providers.dart';
 import '../features/home/screens/home_feed_screen.dart';
 import '../models/news.dart';
@@ -79,4 +80,26 @@ String getDate(News newsItem) {
               : dateFormatted;
 
   return dateUsed;
+}
+
+DateTime getDateTime(info) {
+  var time = info['published_at'];
+  int startIndex = time.indexOf('T');
+  int endIndex = time.indexOf('Z');
+
+  final timeLoaded = time.substring(startIndex + 1, endIndex + "T".length - 1);
+  final dateLoaded = time.substring(0, startIndex);
+
+  return DateTime.parse('$dateLoaded $timeLoaded');
+}
+
+String getImageUrl(info) {
+  final imageUrl =
+  html_parser.parse(info['content']).getElementsByTagName('img');
+
+  if (imageUrl.isNotEmpty) {
+    return imageUrl[0].attributes['src'] ?? '';
+  } else {
+    return '';
+  }
 }

@@ -30,22 +30,11 @@ Widget topSectionRow(
               'isBackButton': 'true',
             },
           );
-
-          /// Todo: Nav
-          // Navigator.of(context).pushNamed(
-          //   CategoryScreen.routeNamed,
-          //   arguments: {
-          //     'id': newsItem.catId,
-          //     'catTitle': newsItem.categoryTitle,
-          //     'isBackButton': true,
-          //   },
-          // );
         },
         child: Text(
           newsItem.categoryTitle,
           style: TextStyle(
             color: colorRed,
-            // fontSize: 15,
           ),
         ),
       ),
@@ -53,14 +42,12 @@ Widget topSectionRow(
         ' / ',
         style: TextStyle(
           color: colorSubtitle,
-          // fontSize: 15,
         ),
       ),
       Text(
         dateTime,
         style: TextStyle(
           color: colorSubtitle,
-          // fontSize: 15,
         ),
       ),
     ],

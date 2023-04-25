@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:news_app/common/common_widgets.dart';
+import 'package:news_app/common_widgets/common_widgets.dart';
 import 'package:news_app/features/home/screens/home_feed_screen.dart';
 import 'package:news_app/features/search/repository/search_repo.dart';
 
@@ -77,12 +77,10 @@ class SearchScreen extends HookConsumerWidget {
                             itemCount: searchNotifier.length,
                             itemBuilder: (context, index) {
                               final newsItem = searchNotifier[index];
-                              final dateTime = getDate(newsItem);
 
                               return buildExpansionWidget(
                                 'search',
                                 newsItem,
-                                dateTime,
                                 context,
                                 newsNotifierController,
                                 ref,

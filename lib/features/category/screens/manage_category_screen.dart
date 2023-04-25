@@ -3,7 +3,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:news_app/common/common_widgets.dart';
+import 'package:news_app/common_widgets/common_widgets.dart';
 import '../../../common/constants.dart';
 import '../../../components/app_back_button.dart';
 import '../../subscription/screens/add_subscription_screen.dart';

@@ -3,7 +3,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:news_app/components/app_back_button.dart';
 
-import '../../../common/common_widgets.dart';
+import '../../../common_widgets/common_widgets.dart';
 import '../../../common/constants.dart';
 import '../../../models/model.dart';
 import '../repository/subscription_repository.dart';

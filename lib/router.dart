@@ -33,6 +33,7 @@ final goRouterProvider = Provider(
       debugLogDiagnostics: true,
       initialLocation: '/auth',
       navigatorKey: rootNavigatorKey,
+      errorBuilder: (context, state) => ErrorScreen(message: state.error.toString()),
       routes: [
         GoRoute(
           path: '/error-screen',

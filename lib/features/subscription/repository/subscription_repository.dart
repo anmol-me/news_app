@@ -5,9 +5,9 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
-import 'package:news_app/common/backend_methods.dart';
+import 'package:news_app/common/api_methods.dart';
 
-import '../../../common/common_widgets.dart';
+import '../../../common_widgets/common_widgets.dart';
 import '../../../common/enums.dart';
 import '../../../common/error.dart';
 import '../../../models/model.dart';

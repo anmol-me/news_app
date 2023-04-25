@@ -1,7 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
-import '../../../common/common_widgets.dart';
+import '../../../common/enums.dart';
+import '../../../common_widgets/common_widgets.dart';
 
 class HeaderImage extends StatelessWidget {
   const HeaderImage({
@@ -26,7 +27,7 @@ class HeaderImage extends StatelessWidget {
           child: CircularLoadingImage(),
         ),
         errorWidget: (context, url, error) => Image.asset(
-          'assets/notfound.png',
+          Constants.imageNotFoundUrl.value,
           height: 90,
           width: 120,
           fit: BoxFit.cover,

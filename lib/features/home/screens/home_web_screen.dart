@@ -16,7 +16,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:news_app/features/search/screens/search_screen.dart';
-import '../../../common/common_widgets.dart';
+import '../../../common_widgets/common_widgets.dart';
 import '../../authentication/repository/user_preferences.dart';
 import '../providers/home_providers.dart';
 
@@ -189,12 +189,10 @@ class _HomeWebScreenState extends ConsumerState<HomeWebScreen> {
                                     itemCount: newsNotifier.length,
                                     itemBuilder: (context, index) {
                                       final newsItem = newsNotifier[index];
-                                      final dateTime = getDate(newsItem);
 
                                       return buildExpansionWidget(
                                         'home',
                                         newsItem,
-                                        dateTime,
                                         context,
                                         newsNotifierController,
                                         ref,

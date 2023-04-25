@@ -1,6 +1,6 @@
 import 'package:flutter/rendering.dart';
 import 'package:intl/intl.dart';
-import 'package:news_app/common/common_widgets.dart';
+import 'package:news_app/common_widgets/common_widgets.dart';
 import 'package:share_plus/share_plus.dart';
 
 import 'package:flutter/material.dart';

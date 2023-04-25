@@ -36,9 +36,7 @@ enum ErrorString {
 enum Message {
   categoryEmpty('No categories available.'),
   catCreated('Category successfully created.'),
-  feedAdded('Subscription feed successfully added'),
-  // o('unread'),
-  ;
+  feedAdded('Subscription feed successfully added');
 
   final String value;
 
@@ -61,4 +59,12 @@ enum OrderBy {
   final String value;
 
   const OrderBy(this.value);
+}
+
+enum Constants {
+  imageNotFoundUrl('assets/notfound.png');
+
+  final String value;
+
+  const Constants(this.value);
 }

@@ -5,8 +5,8 @@ import 'package:news_app/models/news.dart';
 import '../features/details/components/providers.dart';
 import '../features/home/providers/home_providers.dart';
 import '../features/search/repository/search_repo.dart';
-import 'constants.dart';
-import 'enums.dart';
+import '../common/constants.dart';
+import '../common/enums.dart';
 
 class LinearLoader extends StatelessWidget {
   const LinearLoader({super.key});
@@ -15,7 +15,6 @@ class LinearLoader extends StatelessWidget {
   Widget build(BuildContext context) {
     return LinearProgressIndicator(
       color: colorRed,
-      // backgroundColor: Colors.red[100],
       backgroundColor: colorAppbarBackground,
     );
   }

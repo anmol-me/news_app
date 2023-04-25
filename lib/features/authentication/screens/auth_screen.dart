@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:news_app/common/common_widgets.dart';
+import 'package:news_app/common_widgets/common_widgets.dart';
 import 'package:news_app/features/authentication/repository/auth_repo.dart';
 
 import '../../../common/constants.dart';

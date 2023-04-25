@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:html/parser.dart';
-import 'package:news_app/common/common_widgets.dart';
+import 'package:news_app/common_widgets/common_widgets.dart';
 import 'package:news_app/common/enums.dart';
 import 'package:url_launcher/url_launcher.dart';
 

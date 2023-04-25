@@ -38,15 +38,6 @@ Future showModelSheet({
                           'listItemId': listItem.id.toString(),
                     },
                   );
-
-                  /// Todo: Nav
-                  // Navigator.of(context).pushNamed(
-                  //   EditSubscriptionScreen.routeNamed,
-                  //   arguments: {
-                  //     'oldTitle': listItem.title,
-                  //     'listItemId': listItem.id,
-                  //   },
-                  // );
                 },
                 text: 'Edit',
                 fontSize: 18,
@@ -63,13 +54,6 @@ Future showModelSheet({
                       'catListItemTitle': listItem.title,
                     },
                   );
-
-                  // Navigator.of(context).pushNamed(
-                  //   ManageCategoryScreen.routeNamed,
-                  //   arguments: {
-                  //     'listItem': listItem,
-                  //   },
-                  // );
                 },
                 text: 'Manage ${listItem.title}',
                 fontSize: 18,
@@ -125,15 +109,6 @@ Future showCupertinoSheet(
                 'listItemId': listItem.id.toString(),
               },
             );
-
-            /// Todo: Nav
-            // Navigator.of(context).pushNamed(
-            //   EditSubscriptionScreen.routeNamed,
-            //   arguments: {
-            //     'oldTitle': listItem.title,
-            //     'listItemId': listItem.id,
-            //   },
-            // );
           },
         ),
         CupertinoActionSheetAction(

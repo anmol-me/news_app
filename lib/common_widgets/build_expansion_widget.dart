@@ -4,7 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:news_app/common_widgets/top_section_row.dart';
 
-import '../common/common_widgets.dart';
+import '../common/common_methods.dart';
+import 'common_widgets.dart';
 import '../common/constants.dart';
 import '../common/enums.dart';
 import '../features/search/repository/search_repo.dart';
@@ -16,11 +17,12 @@ import 'package:news_app/features/details/screens/news_details_screen.dart';
 Widget buildExpansionWidget(
   String screenName,
   News newsItem,
-  String dateTime,
   BuildContext context,
   HomeFeedNotifier newsNotifierController,
   WidgetRef ref,
 ) {
+  final dateTime = getDate(newsItem);
+
   return Padding(
     padding: const EdgeInsets.only(
       top: 5,
@@ -57,7 +59,7 @@ Widget buildExpansionWidget(
                   error,
                 ) =>
                     Image.asset(
-                  'assets/notfound.png',
+                  Constants.imageNotFoundUrl.value,
                   height: 90,
                   width: 120,
                   fit: BoxFit.cover,

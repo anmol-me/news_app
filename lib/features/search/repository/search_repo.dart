@@ -6,8 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:news_app/common/enums.dart';
 
-import '../../../common/common_widgets.dart';
-import '../../../common/backend_methods.dart';
+import '../../../common/common_methods.dart';
+import '../../../common_widgets/common_widgets.dart';
+import '../../../common/api_methods.dart';
 import '../../../common/error.dart';
 import '../../../models/news.dart';
 import '../../authentication/repository/user_preferences.dart';
@@ -49,8 +50,6 @@ class SearchNotifier extends AutoDisposeNotifier<List<News>> {
     BuildContext context,
     String searchText,
   ) async {
-    checkAuth(context, userPassEncoded, baseUrl, userPrefs);
-
     try {
       Uri uri = Uri.https(baseUrl, 'v1/entries', {
         'order': 'published_at',

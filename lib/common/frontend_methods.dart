@@ -19,7 +19,7 @@ Future<Object?> navigateError(
 Future showErrorDialogue(
   BuildContext context,
   Ref ref,
-  e,
+  dynamic e,
 ) {
   return showDialog(
     context: context,
@@ -27,13 +27,12 @@ Future showErrorDialogue(
       title: const Text('An Error Occurred!'),
       content: Text('$e'),
       actions: [
+        /// Todo: Set buttons for error dialogue
         TextButton(
           onPressed: () {
             Navigator.of(ctx).pop();
             ref.read(userPrefsProvider).clearPrefs();
             context.pushNamed(AuthScreen.routeNamed);
-            // Todo: Nav
-            // Navigator.of(context).pushNamed(AuthScreen.routeNamed);
           },
           child: const Text('Exit'),
         ),

@@ -8,10 +8,10 @@ import 'package:go_router/go_router.dart';
 import 'package:news_app/features/authentication/repository/user_preferences.dart';
 
 import 'package:news_app/features/authentication/screens/auth_screen.dart';
-import '../../../common/common_widgets.dart';
+import '../../../common_widgets/common_widgets.dart';
 import '../../../common/constants.dart';
 import '../../../common/enums.dart';
-import '../../../common/backend_methods.dart';
+import '../../../common/api_methods.dart';
 import '../../home/screens/home_feed_screen.dart';
 
 final authRepoProvider = Provider(
