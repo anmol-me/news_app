@@ -153,26 +153,12 @@ class NewsDetailsScreen extends ConsumerWidget {
                   ),
                 ),
               ),
-              // WebView(
-              //   javascriptMode: JavascriptMode.unrestricted,
-              //   initialUrl: link,
-              //   zoomEnabled: true,
-              //   gestureRecognizers: {
-              //     Factory<VerticalDragGestureRecognizer>(
-              //         () => VerticalDragGestureRecognizer())
-              //   },
-              // ),
               WebViewWidget(
                 controller: webController,
               ),
             ],
-            // child: isWeb
-            //     ?
-            //     : ,
           ),
         ),
-        // ),
-        // ),
         floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
         floatingActionButton: isFabButton
             ? FloatingActionButton(

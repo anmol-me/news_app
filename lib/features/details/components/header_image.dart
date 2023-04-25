@@ -2,8 +2,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 import '../../../common/common_widgets.dart';
-import '../../../common/constants.dart';
-import '../../../common/enums.dart';
 
 class HeaderImage extends StatelessWidget {
   const HeaderImage({

@@ -26,8 +26,7 @@ enum ErrorString {
   catNotDelete('Could not delete category.'),
   listEmpty('List is empty.'),
   generalError('An Error Occurred. Please retry.'),
-  // catCreated('Category successfully created.')
-  ;
+  notOpenLink('Could not open link.');
 
   final String value;
 

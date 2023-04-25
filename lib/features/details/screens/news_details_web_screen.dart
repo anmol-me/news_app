@@ -1,11 +1,9 @@
-import 'package:flutter/rendering.dart';
-import 'package:intl/intl.dart';
-import 'package:news_app/common/common_widgets.dart';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:webview_flutter/webview_flutter.dart';
+import 'package:flutter/rendering.dart';
+import 'package:intl/intl.dart';
 
+import 'package:news_app/common/common_widgets.dart';
 import '../../../common/constants.dart';
 import '../../../models/news.dart';
 import '../../home/providers/home_providers.dart';
@@ -32,7 +30,8 @@ class NewsDetailsWebScreen extends ConsumerWidget {
     final newsNotifier = ref.watch(homeFeedProvider);
     final newsNotifierController = ref.watch(homeFeedProvider.notifier);
 
-    var isFav = newsNotifier.firstWhere((e) => e.entryId == newsItem.entryId).isFav;
+    var isFav =
+        newsNotifier.firstWhere((e) => e.entryId == newsItem.entryId).isFav;
 
     final contentFormatted = getContent(newsItem.content);
 
@@ -121,8 +120,7 @@ class NewsDetailsWebScreen extends ConsumerWidget {
                 newsNotifierController.toggleFavStatus(
                     newsItem.entryId, context);
               },
-              child: Icon(
-                  isFav ? Icons.bookmark_added : Icons.bookmark_add),
+              child: Icon(isFav ? Icons.bookmark_added : Icons.bookmark_add),
             )
           : null,
     );
