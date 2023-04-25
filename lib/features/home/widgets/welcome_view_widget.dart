@@ -33,13 +33,8 @@ class WelcomeViewWidget extends StatelessWidget {
               style: ElevatedButton.styleFrom(
                 backgroundColor: colorRed,
               ),
-              onPressed: () {
-                context.pushNamed(SelectSubscriptionScreen.routeNamed);
-
-                // Todo: Nav
-                // Navigator.of(context)
-                //     .pushNamed(SelectSubscriptionScreen.routeNamed);
-              },
+              onPressed: () =>
+                  context.pushNamed(SelectSubscriptionScreen.routeNamed),
               child: const Text(
                 'Add Subscription',
               ),

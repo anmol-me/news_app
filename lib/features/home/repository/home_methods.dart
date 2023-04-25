@@ -1,11 +1,8 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../common/enums.dart';
 import '../providers/home_providers.dart';
-import 'home_feed_repo.dart';
 
 final homeMethodsProvider = Provider.family<HomeMethods, BuildContext>(
   (ref, context) => HomeMethods(
@@ -16,7 +13,7 @@ final homeMethodsProvider = Provider.family<HomeMethods, BuildContext>(
 );
 
 class HomeMethods {
-  final ProviderRef ref;
+  final Ref ref;
   final BuildContext context;
   final StateController<bool> isLoadingHomePageController;
 
@@ -34,11 +31,8 @@ class HomeMethods {
     ref.read(homeOffsetProvider.notifier).update((state) => state += 100);
 
     ref.read(homeFeedProvider.notifier).fetchEntries(context).then(
-      (_) {
-        // log(newsNotifier.length.toString());
-        isLoadingHomePageController.update((state) => false);
-      },
-    );
+          (_) => isLoadingHomePageController.update((state) => false),
+        );
   }
 
   void previousFunction() {
@@ -49,7 +43,6 @@ class HomeMethods {
         );
 
     ref.read(homeOffsetProvider.notifier).update((state) => state -= 100);
-    // log('PREVIOUS-OFFSET: ${ref.watch(offsetProvider)}');
 
     ref.read(homeFeedProvider.notifier).fetchEntries(context).then(
           (_) => isLoadingHomePageController.update((state) => false),
@@ -73,7 +66,7 @@ class HomeMethods {
     }
 
     ref.refresh(homeFeedProvider.notifier).fetchEntries(context).then(
-          (value) => isLoadingHomePageController.update((state) => false),
+          (_) => isLoadingHomePageController.update((state) => false),
         );
   }
 
@@ -83,7 +76,17 @@ class HomeMethods {
     ref.read(homeIsShowReadProvider.notifier).update((state) => state = !state);
 
     ref.refresh(homeFeedProvider.notifier).fetchEntries(context).then(
-          (value) => isLoadingHomePageController.update((state) => false),
+          (_) => isLoadingHomePageController.update((state) => false),
         );
+  }
+
+
+  void refreshHomeProviders() {
+    ref.invalidate(isStarredProvider);
+    ref.invalidate(homeSortDirectionProvider);
+    ref.invalidate(homeIsShowReadProvider);
+    ref.invalidate(homeIsNextProvider);
+    ref.invalidate(homeOffsetProvider);
+    ref.invalidate(homeFeedProvider);
   }
 }

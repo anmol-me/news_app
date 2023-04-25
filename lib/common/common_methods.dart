@@ -1,14 +1,11 @@
-import 'dart:developer';
-
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:jiffy/jiffy.dart';
+import 'package:news_app/features/home/repository/home_methods.dart';
 
 import '../features/home/providers/home_providers.dart';
-import '../features/home/repository/home_feed_repo.dart';
 import '../features/home/screens/home_feed_screen.dart';
 import '../models/news.dart';
 
@@ -19,7 +16,7 @@ final refreshProvider = Provider((ref) {
 });
 
 class RefreshMethods {
-  final ProviderRef ref;
+  final Ref ref;
 
   RefreshMethods(this.ref);
 
@@ -31,7 +28,6 @@ class RefreshMethods {
 
     final currentLocation = GoRouterState.of(context).name;
 
-    log("Refresh ---> $currentLocation");
     final isDrawerOpened = ref.read(isHomeDrawerOpened);
 
     if (isDrawerOpened) {
@@ -41,19 +37,15 @@ class RefreshMethods {
 
     isLoadingHomePageController.update((state) => true);
 
-    refreshHomeProviders(ref);
+    ref.read(homeMethodsProvider(context)).refreshHomeProviders();
 
-    // if (ModalRoute.of(context)!.settings.name == '/') {
     if (currentLocation == '/home-feed-screen' ||
         currentLocation == '/home-web-screen') {
-      log('HOME PAGE REFRESHED');
       ref.refresh(homeFeedProvider.notifier).fetchEntries(context).then(
             (_) => isLoadingHomePageController.update((state) => false),
           );
     } else {
       isLoadingHomePageController.update((state) => false);
-      log('NOT HOME PAGE');
-
       context.pushNamed(HomeFeedScreen.routeNamed);
     }
   }

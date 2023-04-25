@@ -1,19 +1,19 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:developer' show log;
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:news_app/features/authentication/repository/auth_repo.dart';
 
+import '../../../common/common_widgets.dart';
 import '../../../common/enums.dart';
+import '../../../common/error.dart';
 import '../../../common/backend_methods.dart';
 import '../../../common/frontend_methods.dart';
 import '../../../models/news.dart';
 import '../providers/home_providers.dart';
 
-/// Method -------------------------------------------------------------------------------
 class HomeFeedNotifier extends Notifier<List<News>> {
   late UserPreferences userPrefs;
   late String userPassEncoded;
@@ -37,11 +37,8 @@ class HomeFeedNotifier extends Notifier<List<News>> {
     return [];
   }
 
-  /// Fetch all Feeds
   Future<void> fetchEntries(BuildContext context) async {
     final url = userPrefs.getUrlData();
-
-    log('Fetching thro $url');
 
     Uri uri = Uri.https(url!, 'v1/entries', {
       'order': orderBy.value,
@@ -51,17 +48,18 @@ class HomeFeedNotifier extends Notifier<List<News>> {
       if (isStarred == true) 'starred': '$isStarred',
     });
 
-    log("$uri");
-
     try {
       final res = await getHttpResp(uri, userPassEncoded);
+
+      if (res.statusCode >= 400 && res.statusCode <= 599) {
+        throw ServerErrorException(res);
+      }
 
       Map<String, dynamic> decodedData = jsonDecode(res.body);
 
       final List<News> fetchedNewsList = [];
 
       for (var i = 0; i < decodedData['entries'].length; i++) {
-        // log('${i} -> ${decodedData['entries'][i]['title']}');
         final info = decodedData['entries'][i];
 
         String imageUrl = getImageUrl(info);
@@ -71,7 +69,7 @@ class HomeFeedNotifier extends Notifier<List<News>> {
         String titleTextDecoded = utf8.decode(info['title'].runes.toList());
 
         Status status =
-        info['status'] == 'unread' ? Status.unread : Status.read;
+            info['status'] == 'unread' ? Status.unread : Status.read;
 
         final createdNews = News(
           entryId: info['id'],
@@ -92,25 +90,22 @@ class HomeFeedNotifier extends Notifier<List<News>> {
         fetchedNewsList.add(createdNews);
       }
       state = fetchedNewsList;
-      // state = [];
 
       /// Todo: On error, goto authScreen
-    } on TimeoutException catch (e) {
-      log('Timeout Error: $e');
-      return showErrorDialogue(context, ref, ErrorString.requestTimeout.value);
-    } on SocketException catch (e) {
-      log('Socket Error: $e');
-      return showErrorDialogue(context, ref, ErrorString.socket.value);
+    } on TimeoutException catch (_) {
+      showErrorDialogue(context, ref, ErrorString.requestTimeout.value);
+    } on SocketException catch (_) {
+      showErrorDialogue(context, ref, ErrorString.socket.value);
+    } on ServerErrorException catch (e) {
+      showErrorDialogue(context, ref, '$e');
     } catch (e) {
-      log('General Error: $e');
-      return showErrorDialogue(
-          context, ref, ErrorString.somethingWrongAdmin.value);
+      showErrorDialogue(context, ref, ErrorString.somethingWrongAdmin.value);
     }
   }
 
   Future<void> refreshAll(
-      BuildContext context,
-      ) async {
+    BuildContext context,
+  ) async {
     final url = userPrefs.getUrlData();
 
     try {
@@ -123,28 +118,26 @@ class HomeFeedNotifier extends Notifier<List<News>> {
         userPassEncoded: userPassEncoded,
       );
 
-      log('${res.statusCode}');
-    } on TimeoutException catch (e) {
-      log('Timeout Error: $e');
-      return showErrorDialogue(context, ref, ErrorString.requestTimeout.value);
-    } on SocketException catch (e) {
-      log('Socket Error: $e');
-      return showErrorDialogue(context, ref, ErrorString.socket.value);
-    } on Error catch (e) {
-      log('General Error HFR: $e');
-      return showErrorDialogue(
-          context, ref, ErrorString.somethingWrongAdmin.value);
+      if (res.statusCode >= 400 && res.statusCode <= 599) {
+        throw ServerErrorException(res);
+      }
+    } on SocketException catch (_) {
+      showErrorSnackBar(
+          context: context, text: ErrorString.checkInternet.value);
+    } on TimeoutException catch (_) {
+      showErrorSnackBar(
+          context: context, text: ErrorString.requestTimeout.value);
+    } on ServerErrorException catch (e) {
+      showErrorSnackBar(context: context, text: '$e');
     } catch (e) {
-      log('All other Errors: $e');
-      return showErrorDialogue(
-          context, ref, ErrorString.somethingWrongAdmin.value);
+      showErrorSnackBar(context: context, text: ErrorString.generalError.value);
     }
   }
 
   void toggleFavStatus(
-      int newsId,
-      BuildContext context,
-      ) async {
+    int newsId,
+    BuildContext context,
+  ) async {
     final url = userPrefs.getUrlData();
 
     try {
@@ -166,29 +159,27 @@ class HomeFeedNotifier extends Notifier<List<News>> {
         userPassEncoded: userPassEncoded,
       );
 
-      log('${res.statusCode}');
-    } on TimeoutException catch (e) {
-      log('Timeout Error: $e');
-      return showErrorDialogue(context, ref, ErrorString.requestTimeout.value);
-    } on SocketException catch (e) {
-      log('Socket Error: $e');
-      return showErrorDialogue(context, ref, ErrorString.socket.value);
-    } on Error catch (e) {
-      log('General Error HFR: $e');
-      return showErrorDialogue(
-          context, ref, ErrorString.somethingWrongAdmin.value);
+      if (res.statusCode >= 400 && res.statusCode <= 599) {
+        throw ServerErrorException(res);
+      }
+    } on SocketException catch (_) {
+      showErrorSnackBar(
+          context: context, text: ErrorString.checkInternet.value);
+    } on TimeoutException catch (_) {
+      showErrorSnackBar(
+          context: context, text: ErrorString.requestTimeout.value);
+    } on ServerErrorException catch (e) {
+      showErrorSnackBar(context: context, text: '$e');
     } catch (e) {
-      log('All other Errors: $e');
-      return showErrorDialogue(
-          context, ref, ErrorString.somethingWrongAdmin.value);
+      showErrorSnackBar(context: context, text: ErrorString.generalError.value);
     }
   }
 
   void toggleRead(
-      int newsId,
-      Status stat,
-      BuildContext context,
-      ) async {
+    int newsId,
+    Status stat,
+    BuildContext context,
+  ) async {
     try {
       final url = userPrefs.getUrlData();
 
@@ -208,58 +199,21 @@ class HomeFeedNotifier extends Notifier<List<News>> {
         userPassEncoded: userPassEncoded,
       );
 
-      log('Toggle Read -> ${res.statusCode} -> ${stat.value}');
-    } on TimeoutException catch (e) {
-      log('Timeout Error: $e');
-      return showErrorDialogue(context, ref, ErrorString.requestTimeout.value);
-    } on SocketException catch (e) {
-      log('Socket Error: $e');
-      return showErrorDialogue(context, ref, ErrorString.socket.value);
-    } on Error catch (e) {
-      log('General Error HFR: $e');
-      return showErrorDialogue(
-          context, ref, ErrorString.somethingWrongAdmin.value);
+      if (res.statusCode >= 400 && res.statusCode <= 599) {
+        throw ServerErrorException(res);
+      }
+    } on SocketException catch (_) {
+      showErrorSnackBar(
+          context: context, text: ErrorString.checkInternet.value);
+    } on TimeoutException catch (_) {
+      showErrorSnackBar(
+          context: context, text: ErrorString.requestTimeout.value);
+    } on ServerErrorException catch (e) {
+      showErrorSnackBar(context: context, text: '$e');
     } catch (e) {
-      log('All other Errors: $e');
-      return showErrorDialogue(
-          context, ref, ErrorString.somethingWrongAdmin.value);
+      showErrorSnackBar(context: context, text: ErrorString.generalError.value);
     }
   }
-
-  // TODO: Called by Category
-  Future<Map<String, dynamic>> viewEntryDetails(
-      int feedId,
-      int entryId,
-      ) async {
-    final res = await getHttpResp(
-      Uri.parse('https://read.rusi.me/v1/feeds/$feedId/entries/$entryId'),
-      userPassEncoded,
-    );
-
-    Map<String, dynamic> decodedData = jsonDecode(res.body);
-
-    log('${feedId}');
-    log('${res.statusCode}');
-    log(decodedData.toString());
-    return decodedData;
-  }
-
-  // Future<int> getCount() async {
-  //   http.Response res = await http.get(
-  //     Uri.parse(
-  //         'https://read.rusi.me/v1/entries?&order=published_at&direction=asc'),
-  //     headers: {
-  //       'Content-Type': 'application/json; charset=UTF-8',
-  //       // 'X-Auth-Token': '-5YfpcHn8F__jMhC0MFA-AaMrqLl5ehBaesPuvjCOzg=',
-  //       'authorization': userPassEncoded,
-  //     },
-  //   );
-  //
-  //   Map<String, dynamic> decodedData = jsonDecode(res.body);
-  //
-  //   // log('TOTAL COUNT: ${decodedData['total']}');
-  //   return decodedData['total'];
-  // }
 
   Future<int> totalPage() async {
     final url = userPrefs.getUrlData();
@@ -275,104 +229,17 @@ class HomeFeedNotifier extends Notifier<List<News>> {
     try {
       final res = await getHttpResp(uri, userPassEncoded);
 
+      if (res.statusCode >= 400 && res.statusCode <= 599) {
+        return 1;
+      }
+
       Map<String, dynamic> decodedData = jsonDecode(res.body);
 
       double numOfHundreds = decodedData['total'] / 100;
       int pages = numOfHundreds.ceil();
-      log('TOTAL PAGES: $pages');
       return pages;
     } catch (e) {
       return 1;
     }
   }
-
-////////////////////////////////////////////////////////////////////////
-// Future<bool> enableNext() async {
-//   var num = ref.watch(offsetProvider) + 100;
-//   // log('enableNext : ${num}');
-//
-//   Uri url = Uri.parse(
-//       'https://read.rusi.me/v1/entries?&order=published_at&direction=desc&offset=$num');
-//
-//   try {
-//     http.Response res = await http.get(
-//       url,
-//       headers: {
-//         'Content-Type': 'application/json; charset=UTF-8',
-//         'X-Auth-Token': '-5YfpcHn8F__jMhC0MFA-AaMrqLl5ehBaesPuvjCOzg=',
-//       },
-//     );
-//
-//     Map<String, dynamic> decodedData = jsonDecode(res.body);
-//
-//     // for (var i = 0; i < decodedData['entries'].length; i++) {
-//     // }
-//
-//     log('NUMBER is: ${decodedData['entries'].length > 100}');
-//
-//     var canGoNext = decodedData['entries'].length > 100;
-//     return canGoNext;
-//   } catch (e) {
-//     rethrow;
-//   }
-// }
 }
-
-// final getCountProvider =
-//     FutureProvider((ref) => ref.watch(homeFeedProvider.notifier).getCount());
-
-// final canGoNextFuture = FutureProvider(
-//         (ref) => ref.watch(newsNotifierProvider.notifier).enableNext());
-
-/// /// /// Image Load
-// final content = info['content'];
-//
-// String? imageUrl;
-// var re = RegExp(r'(?=https)(.*)(?<=jpg)');
-// var match = re.firstMatch(content);
-// // if (match != null) log(match.group(0)!);
-// if (match != null) imageUrl = match.group(0).toString();
-//
-// if (imageUrl == null) {
-//   var re = RegExp(r'(?=https)(.*)(?<=png)');
-//   var match = re.firstMatch(content);
-//   if (match != null) imageUrl = match.group(0).toString();
-// }
-//
-// if (imageUrl == null) {
-//   var re = RegExp(r'(?=https)(.*)(?<=jpeg)');
-//   var match = re.firstMatch(content);
-//   if (match != null) imageUrl = match.group(0).toString();
-// }
-//
-
-/// Old unread
-// if (ref.read(isShowReadProvider)) {
-//   ref.read(isLoadingPageProvider.notifier).update((state) => true);
-//   if (!mounted) return;
-//   state = [
-//     ...fetchedNewsList
-//         .where((element) => element.status == 'unread')
-//         .toList()
-//   ];
-//   log('UNREAD LIST');
-//   ref.read(isLoadingPageProvider.notifier).update((state) => false);
-// } else {
-//   if (!mounted) return;
-//   log('LIST UPDATED');
-//   state = [...fetchedNewsList];
-// }
-
-// extension Extract on String {
-//   String? extractImage() {
-//     if (contains('img')) {
-//       return html_parser
-//               .parse(this)
-//               .getElementsByTagName('img')[0]
-//               .attributes['src'] ??
-//           '';
-//     } else {
-//       return '';
-//     }
-//   }
-// }

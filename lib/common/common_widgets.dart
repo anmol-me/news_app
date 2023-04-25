@@ -144,8 +144,8 @@ class ReadButton extends ConsumerWidget {
           ),
           const SizedBox(width: 6),
           newsItem.status == Status.unread
-              ? const BarTextButton(text: 'Unread')
-              : const BarTextButton(text: 'Read'),
+              ? const TextBar(text: 'Unread')
+              : const TextBar(text: 'Read'),
         ],
       ),
     );
@@ -202,8 +202,8 @@ class StarredButton extends ConsumerWidget {
           ),
           const SizedBox(width: 6),
           newsItem.isFav
-              ? const BarTextButton(text: 'Unstar')
-              : const BarTextButton(text: 'Star'),
+              ? const TextBar(text: 'Unstar')
+              : const TextBar(text: 'Star'),
         ],
       ),
     );
@@ -229,19 +229,19 @@ class OpenLinkButton extends ConsumerWidget {
         children: [
           Icon(Icons.link, color: colorRed),
           const SizedBox(width: 6),
-          const BarTextButton(text: 'Open link'),
+          const TextBar(text: 'Open link'),
         ],
       ),
     );
   }
 }
 
-class BarTextButton extends StatelessWidget {
+class TextBar extends StatelessWidget {
   final String text;
   final double size;
   final Color textColor;
 
-  const BarTextButton({
+  const TextBar({
     super.key,
     required this.text,
     this.size = 17,
@@ -255,6 +255,35 @@ class BarTextButton extends StatelessWidget {
       style: TextStyle(
         fontSize: size,
         color: textColor,
+      ),
+    );
+  }
+}
+
+class TextBarButton extends StatelessWidget {
+  final String text;
+  final double size;
+  final Color textColor;
+  final VoidCallback onTap;
+
+  const TextBarButton({
+    super.key,
+    required this.text,
+    this.size = 17,
+    this.textColor = Colors.black87,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      child: Text(
+        text,
+        style: TextStyle(
+          fontSize: size,
+          color: textColor,
+        ),
       ),
     );
   }

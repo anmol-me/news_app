@@ -1,11 +1,9 @@
 import 'package:flutter/rendering.dart';
 import 'package:intl/intl.dart';
 import 'package:news_app/common/common_widgets.dart';
-import 'package:share_plus/share_plus.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 import '../../../common/constants.dart';
