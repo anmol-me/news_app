@@ -10,6 +10,7 @@ class UserPreferences {
 
   static const keyAuthData = 'authData';
   static const keyUrlData = 'urlData';
+  static const keyUsername = 'username';
 
   static Future init() async => prefs = await SharedPreferences.getInstance();
 
@@ -28,6 +29,16 @@ class UserPreferences {
   }
 
   String? getUrlData() => prefs!.getString(keyUrlData);
+
+  Future setUsername(String username) async {
+    log('Prefs user set $username');
+    return await prefs!.setString(keyUsername, username);
+  }
+
+  String? getUsername() {
+    log('Prefs user get ${prefs!.getString(keyUsername)}');
+    return prefs?.getString(keyUsername);
+  }
 
   void clearPrefs() => prefs?.clear();
 }

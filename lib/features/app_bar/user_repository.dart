@@ -9,11 +9,9 @@ import '../authentication/repository/user_preferences.dart';
 
 /// User Model
 class User {
-  final int id;
   final String username;
 
   User({
-    required this.id,
     required this.username,
   });
 }
@@ -34,11 +32,19 @@ class UserNotifier extends Notifier<User?> {
     userPrefs = ref.watch(userPrefsProvider);
     baseUrl = userPrefs.getUrlData() ?? '';
     userPassEncoded = userPrefs.getAuthData() ?? '';
-    return User(id: 0, username: 'loading...');
+    return User(username: '');
   }
 
   Future<User> fetchUserData(BuildContext context) async {
     try {
+      // Get username from cache
+      String username = userPrefs.getUsername() ?? '';
+
+      if (username.isNotEmpty) {
+        return state = User(username: username);
+      }
+
+      // Else get username from server & save to cache
       Uri uri = Uri.https(baseUrl, 'v1/me');
 
       final res = await getHttpResp(uri, userPassEncoded);
@@ -46,13 +52,14 @@ class UserNotifier extends Notifier<User?> {
       Map<String, dynamic> decodedData = jsonDecode(res.body);
 
       final currentUser = User(
-        id: decodedData['id'],
         username: decodedData['username'],
       );
 
+      userPrefs.setUsername(currentUser.username);
+
       return state = currentUser;
     } catch (e) {
-      return state ?? User(id: 0, username: 'Loading');
+      return state ?? User(username: '');
     }
   }
 }
