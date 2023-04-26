@@ -44,9 +44,40 @@
       <source srcset="splash/img/light-1x.png 1x, splash/img/light-2x.png 2x, splash/img/light-3x.png 3x, splash/img/light-4x.png 4x" media="(prefers-color-scheme: light)">
       <source srcset="splash/img/dark-1x.png 1x, splash/img/dark-2x.png 2x, splash/img/dark-3x.png 3x, splash/img/dark-4x.png 4x" media="(prefers-color-scheme: dark)">
       <img class="center" aria-hidden="true" src="splash/img/light-1x.png" alt="">
-  </picture>      
-  
-  
+  </picture>
+
+<script>
+
+function isReload() {
+  try {
+    return (
+      (window.performance.navigation && window.performance.navigation.type === 1) ||
+        window.performance.getEntriesByType('navigation').map((nav) => nav.type).includes('reload')
+    );
+  } catch(err) {
+    return false;
+  }
+}
+
+if (isReload()) {
+  console.log("Page accessed by reload, redirecting...");
+  window.location.replace('/');
+} else {
+  window.addEventListener('load', function(ev) {
+  // Download main.dart.js
+  _flutter.loader.loadEntrypoint({
+    serviceWorker: {
+      serviceWorkerVersion: serviceWorkerVersion,
+    }
+  }).then(function(engineInitializer) {
+    return engineInitializer.initializeEngine();
+  }).then(function(appRunner) {
+    return appRunner.runApp();
+  });
+  });
+}
+
+</script>
   
   
   
