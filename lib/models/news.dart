@@ -1,4 +1,3 @@
-import 'package:json_annotation/json_annotation.dart';
 import 'package:news_app/common/enums.dart';
 
 class News {
