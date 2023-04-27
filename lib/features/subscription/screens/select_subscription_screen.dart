@@ -1,19 +1,16 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:universal_platform/universal_platform.dart';
+
 import 'package:news_app/common_widgets/common_widgets.dart';
 import 'package:news_app/components/app_back_button.dart';
 import 'package:news_app/features/subscription/screens/add_subscription_screen.dart';
-
-import 'package:news_app/common/model_sheet.dart';
 import '../../../common/constants.dart';
 import '../repository/subscription_repository.dart';
-import 'package:news_app/models/model.dart';
 import '../widgets/clear_subscription_widget.dart';
 import '../widgets/tile_build_methods.dart';
-import '../widgets/subscription_tile.dart';
 
 /// Providers
 final isLoadingSubsProvider = StateProvider((ref) => false);
@@ -64,9 +61,9 @@ class SelectSubscriptionScreen extends HookConsumerWidget {
           );
     }
 
-    final isIos = defaultTargetPlatform == TargetPlatform.iOS;
-    final isMacOs = defaultTargetPlatform == TargetPlatform.macOS;
-    final isAndroid = defaultTargetPlatform == TargetPlatform.android;
+    final isIos = UniversalPlatform.isIOS;
+    final isMacOs = UniversalPlatform.isMacOS;
+    final isAndroid = UniversalPlatform.isAndroid;
 
     return Scaffold(
       appBar: AppBar(
