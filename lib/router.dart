@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:universal_platform/universal_platform.dart';
 
 import 'package:news_app/common/error_screen.dart';
 import 'package:news_app/features/authentication/screens/auth_screen.dart';
@@ -33,7 +34,8 @@ final goRouterProvider = Provider(
       debugLogDiagnostics: true,
       initialLocation: '/auth',
       navigatorKey: rootNavigatorKey,
-      errorBuilder: (context, state) => ErrorScreen(message: state.error.toString()),
+      errorBuilder: (context, state) =>
+          ErrorScreen(message: state.error.toString()),
       routes: [
         GoRoute(
           path: '/error-screen',
@@ -80,7 +82,7 @@ final goRouterProvider = Provider(
           path: '/details',
           name: NewsDetailsScreen.routeNamed,
           builder: (context, state) {
-            if (kIsWeb) {
+            if (UniversalPlatform.isDesktopOrWeb) {
               return NewsDetailsWebScreen(newsItem: state.extra as News);
             } else {
               return NewsDetailsScreen(

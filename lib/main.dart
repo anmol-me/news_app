@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:news_app/router.dart';
-import 'package:flutter_web_plugins/url_strategy.dart';
-
+import 'nonweb_url_strategy.dart'
+    if (dart.library.html) 'web_url_strategy.dart';
 import 'package:news_app/common/constants.dart';
 import 'features/authentication/repository/user_preferences.dart';
 import 'features/settings/repository/settings_repository.dart';
@@ -27,7 +27,7 @@ void main() async {
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
   await UserPreferences.init();
   await UserSettings.init();
-  usePathUrlStrategy();
+  configureUrl();
   runApp(
     const ProviderScope(
       child: MyApp(),

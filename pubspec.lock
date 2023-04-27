@@ -302,6 +302,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.18.6"
+  flutter_html:
+    dependency: "direct main"
+    description:
+      name: flutter_html
+      sha256: "342c7908f0a67bcec62b6e0f7cf23e23bafe7f64693665dd35be98d5e783bdfd"
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.0.0-alpha.6"
   flutter_lints:
     dependency: "direct dev"
     description:
@@ -520,6 +528,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.4"
+  numerus:
+    dependency: transitive
+    description:
+      name: numerus
+      sha256: "436759d84f233b40107d0cc31cfa92d24e0960afeb2e506be70926d4cddffd9e"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.0"
   octo_image:
     dependency: transitive
     description:
@@ -893,6 +909,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.2.0"
+  universal_platform:
+    dependency: "direct main"
+    description:
+      name: universal_platform
+      sha256: d315be0f6641898b280ffa34e2ddb14f3d12b1a37882557869646e0cc363d0cc
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.0+1"
   url_launcher:
     dependency: "direct main"
     description:
