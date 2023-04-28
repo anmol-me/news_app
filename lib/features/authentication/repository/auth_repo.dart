@@ -5,6 +5,7 @@ import 'dart:developer' show log;
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:news_app/common/common_methods.dart';
 import 'package:news_app/features/authentication/repository/user_preferences.dart';
 
 import 'package:news_app/features/authentication/screens/auth_screen.dart';
@@ -29,19 +30,13 @@ class AuthRepo {
   AuthRepo(this.ref, this.userPrefs);
 
   bool get isAuthenticated {
-    if (userPrefs.getAuthData() == null) {
-      isAuth = false;
-    } else {
-      isAuth = true;
-    }
-    return isAuth;
+    print('Authenticated: ${userPrefs.getIsAuth()}');
+    return isAuth = userPrefs.getIsAuth()!;
   }
 
-  Future<int?> authUrlChecker(BuildContext context) async {
+  Future<int?> authUrlChecker(String userPassEncoded, String urlData) async {
     try {
-      String userPassEncoded = userPrefs.getAuthData()!;
-
-      Uri uri = Uri.https(userPrefs.getUrlData()!, 'v1/me');
+      Uri uri = Uri.https(urlData, 'v1/me');
 
       log("Prefs -> uri created: $uri");
 
@@ -78,7 +73,7 @@ class AuthRepo {
 
       if (isTestUser) {
         // Test Mode
-        userPrefs.setUrlData(staticUrl);
+        await userPrefs.setUrlData(staticUrl);
         // log('Login prefs test url : ${userPrefs.getUrlData()}');
 
         userPassEncoded = 'Basic ${base64.encode(utf8.encode(
@@ -87,11 +82,11 @@ class AuthRepo {
       } else {
         // Basic Mode
         if (mode == Mode.basic) {
-          userPrefs.setUrlData(defaultUrl);
+          await userPrefs.setUrlData(defaultUrl);
           log('Basic login Default url has been set: ${userPrefs.getUrlData()}');
         } else {
           // Advanced Mode
-          userPrefs.setUrlData(urlController.text);
+          await userPrefs.setUrlData(urlController.text);
           log('Advanced login Custom url has been set: ${userPrefs.getUrlData()}');
         }
 
@@ -102,39 +97,52 @@ class AuthRepo {
         )}';
       }
 
-      userPrefs.setAuthData(userPassEncoded);
+      final isAuthSet = await userPrefs.setAuthData(userPassEncoded);
+
       log('Login Prefs auth: ${userPrefs.getAuthData()}');
 
-      final userData = userPrefs.getAuthData();
+      final authData = userPrefs.getAuthData();
       final urlData = userPrefs.getUrlData();
 
-      if (userData == null ||
-          userData.isEmpty ||
+      if (authData == null ||
+          authData.isEmpty ||
           urlData == null ||
-          urlData.isEmpty) {
-        showErrorSnackBar(
-            context: context, text: ErrorString.internalError.value);
+          urlData.isEmpty ||
+          !isAuthSet) {
+        if (context.mounted) {
+          showErrorSnackBar(
+            context: context,
+            text: ErrorString.internalError.value,
+          );
+        }
         userPrefs.clearPrefs();
         return;
       }
 
-      final statusCode = await authUrlChecker(context);
+      final statusCode = await authUrlChecker(authData, urlData);
 
       log('Login Status: $statusCode');
 
       if (statusCode == 200) {
+        userPrefs.setIsAuth(true);
+
         if (context.mounted) {
           context.goNamed(HomeFeedScreen.routeNamed);
         }
       } else if (statusCode == 401) {
         if (context.mounted) {
-          showErrorSnackBar(context: context, text: ErrorString.accessDenied.value);
+          showErrorSnackBar(
+            context: context,
+            text: ErrorString.accessDenied.value,
+          );
         }
         userPrefs.clearPrefs();
       } else {
         if (context.mounted) {
           showErrorSnackBar(
-              context: context, text: ErrorString.somethingWrongAdmin.value);
+            context: context,
+            text: ErrorString.somethingWrongAdmin.value,
+          );
         }
         userPrefs.clearPrefs();
       }
@@ -144,6 +152,12 @@ class AuthRepo {
 
   void logout(BuildContext context) async {
     userPrefs.clearPrefs();
+    userPrefs.setIsAuth(false);
+
+    if (ref.read(isHomeDrawerOpened)) {
+      if (context.mounted) Navigator.of(context).pop();
+    }
+
     context.goNamed(AuthScreen.routeNamed);
   }
 }

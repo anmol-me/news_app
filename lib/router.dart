@@ -32,10 +32,11 @@ final goRouterProvider = Provider(
 
     return GoRouter(
       debugLogDiagnostics: true,
-      initialLocation: '/auth',
+      initialLocation: AuthScreen.routeNamed,
       navigatorKey: rootNavigatorKey,
-      errorBuilder: (context, state) =>
-          ErrorScreen(message: state.error.toString()),
+      errorBuilder: (context, state) => ErrorScreen(
+        message: state.error.toString(),
+      ),
       routes: [
         GoRoute(
           path: '/error-screen',
@@ -45,12 +46,12 @@ final goRouterProvider = Provider(
           ),
         ),
         GoRoute(
-          path: '/auth',
+          path: '/auth-screen',
           name: AuthScreen.routeNamed,
           redirect: (BuildContext context, state) {
             log('AUTH-> isAuth: ${authRepo.isAuthenticated}');
 
-            return authRepo.isAuthenticated ? '/home' : null;
+            return authRepo.isAuthenticated ? '/home' : AuthScreen.routeNamed;
           },
           builder: (context, state) => const AuthScreen(),
         ),
