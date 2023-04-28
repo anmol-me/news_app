@@ -6,7 +6,6 @@ import 'package:news_app/common_widgets/common_widgets.dart';
 import 'package:news_app/features/home/screens/home_feed_screen.dart';
 import 'package:news_app/features/search/repository/search_repo.dart';
 
-import '../../../common/common_methods.dart';
 import '../../home/providers/home_providers.dart';
 
 /// Providers
