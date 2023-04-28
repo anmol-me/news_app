@@ -3,11 +3,11 @@ import 'package:http/http.dart';
 import 'enums.dart';
 
 Map<int, String> errorMessages = {
-  400: "Please check your url",
+  400: ErrorString.validUrl.value,
   401: ErrorString.accessDenied.value,
-  403: "Forbidden request",
-  404: "Could not find feed",
-  500: "Server error. Could not complete your request",
+  403: ErrorString.generalError.value, // "Forbidden request",
+  404: ErrorString.generalError.value, // "Could not find feed",
+  500: ErrorString.socket.value,
 };
 
 class ServerErrorException implements Exception {
