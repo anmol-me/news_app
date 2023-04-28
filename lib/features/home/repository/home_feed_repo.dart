@@ -25,7 +25,6 @@ class HomeFeedNotifier extends Notifier<List<News>> {
   late bool isStarred;
   late bool isRead;
   late OrderBy orderBy;
-  late bool isDemo;
 
   @override
   List<News> build() {
@@ -38,12 +37,13 @@ class HomeFeedNotifier extends Notifier<List<News>> {
 
     isStarred = ref.watch(isStarredProvider);
     isRead = ref.watch(homeIsShowReadProvider);
-    isDemo = ref.watch(isDemoProvider);
     return [];
   }
 
   Future<void> fetchEntries(BuildContext context) async {
-    if (isDemo) {
+    final isDemoPref = userPrefs.getIsDemo() ?? false;
+
+    if (isDemoPref) {
       String data = await DefaultAssetBundle.of(context).loadString(
         'demo_files/entries.json',
       );
@@ -149,6 +149,7 @@ class HomeFeedNotifier extends Notifier<List<News>> {
     } on ServerErrorException catch (e) {
       showErrorDialogue(context, ref, '$e');
     } catch (e) {
+      print(e);
       showErrorDialogue(context, ref, ErrorString.somethingWrongAdmin.value);
     }
   }

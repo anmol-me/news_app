@@ -55,12 +55,11 @@ class AuthScreen extends HookConsumerWidget {
           TextButton(
             style: TextButton.styleFrom(foregroundColor: colorRed),
             onPressed: () {
-              ref.read(isDemoProvider.notifier).update((state) => true);
-
               final userPrefs = ref.read(userPrefsProvider);
+              userPrefs.setIsAuth(true);
+              userPrefs.setIsDemo(true);
               userPrefs.setAuthData('demo');
               userPrefs.setUrlData('demo');
-              userPrefs.setIsAuth(true);
               context.push('/home');
             },
             child: const Text(

@@ -10,10 +10,20 @@ class UserPreferences {
 
   static const keyAuthData = 'authData';
   static const keyIsAuthData = 'isAuth';
+  static const keyIsDemoUser = 'isDemoUser';
   static const keyUrlData = 'urlData';
   static const keyUsername = 'username';
 
   static Future init() async => prefs = await SharedPreferences.getInstance();
+
+  Future<bool> setIsDemo(bool isDemoUser) async {
+    return await prefs!.setBool(keyIsDemoUser, isDemoUser);
+  }
+
+  bool? getIsDemo() {
+    log('Prefs Demo get ${prefs!.getBool(keyIsDemoUser)}');
+    return prefs?.getBool(keyIsDemoUser) ?? false;
+  }
 
   Future<bool> setAuthData(String userPassEncoded) async {
     return await prefs!.setString(keyAuthData, userPassEncoded);
