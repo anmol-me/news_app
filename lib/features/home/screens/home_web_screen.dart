@@ -44,6 +44,12 @@ class _HomeWebScreenState extends ConsumerState<HomeWebScreen> {
     super.initState();
     Timer(const Duration(seconds: 20), () => FlutterNativeSplash.remove());
 
+    final isDemoPref = ref.read(userPrefsProvider).getIsDemo() ?? false;
+    if (isDemoPref) {
+      ref.read(homeFeedProvider.notifier).fetchEntries(context);
+      return;
+    }
+
     final isLoadingHomePageController =
         ref.read(homePageLoadingProvider.notifier);
 

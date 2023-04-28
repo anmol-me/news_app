@@ -147,6 +147,7 @@ class AuthRepo {
   void logout(BuildContext context) async {
     userPrefs.clearPrefs();
     userPrefs.setIsAuth(false);
+    ref.invalidate(userPrefsProvider);
 
     if (ref.read(isHomeDrawerOpened)) {
       if (context.mounted) Navigator.of(context).pop();

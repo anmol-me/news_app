@@ -30,7 +30,7 @@ class UserPreferences {
   }
 
   String? getAuthData() {
-    log('Prefs Auth get ${prefs!.getString(keyAuthData)}');
+    log('-----------------------> ${prefs!.getString(keyAuthData)}');
     return prefs?.getString(keyAuthData);
   }
 
