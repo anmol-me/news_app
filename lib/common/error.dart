@@ -4,7 +4,7 @@ import 'enums.dart';
 
 Map<int, String> errorMessages = {
   400: "Please check your url",
-  401: "You don't have authorization",
+  401: ErrorString.accessDenied.value,
   403: "Forbidden request",
   404: "Could not find feed",
   500: "Server error. Could not complete your request",

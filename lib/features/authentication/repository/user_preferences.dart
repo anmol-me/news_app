@@ -15,8 +15,8 @@ class UserPreferences {
 
   static Future init() async => prefs = await SharedPreferences.getInstance();
 
-  Future<bool> setAuthData(String authData) async {
-    return await prefs!.setString(keyAuthData, authData);
+  Future<bool> setAuthData(String userPassEncoded) async {
+    return await prefs!.setString(keyAuthData, userPassEncoded);
   }
 
   String? getAuthData() {
@@ -34,13 +34,13 @@ class UserPreferences {
     return prefs?.getBool(keyIsAuthData) ?? false;
   }
 
-  Future setUrlData(String urlData) async {
+  Future<bool> setUrlData(String urlData) async {
     return await prefs!.setString(keyUrlData, urlData);
   }
 
   String? getUrlData() => prefs!.getString(keyUrlData);
 
-  Future setUsername(String username) async {
+  Future<bool> setUsername(String username) async {
     log('Prefs user set $username');
     return await prefs!.setString(keyUsername, username);
   }
