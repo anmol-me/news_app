@@ -1,6 +1,5 @@
 import 'dart:developer' show log;
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -59,7 +58,11 @@ final goRouterProvider = Provider(
           path: '/home',
           name: HomeFeedScreen.routeNamed,
           builder: (context, state) {
-            return kIsWeb ? const HomeWebScreen() : const HomeFeedScreen();
+            if (UniversalPlatform.isDesktop || UniversalPlatform.isWeb) {
+              return const HomeWebScreen();
+            } else {
+              return const HomeFeedScreen();
+            }
           },
         ),
         GoRoute(
@@ -83,7 +86,7 @@ final goRouterProvider = Provider(
           path: '/details',
           name: NewsDetailsScreen.routeNamed,
           builder: (context, state) {
-            if (UniversalPlatform.isDesktopOrWeb) {
+            if (UniversalPlatform.isDesktop || UniversalPlatform.isWeb) {
               return NewsDetailsWebScreen(newsItem: state.extra as News);
             } else {
               return NewsDetailsScreen(
