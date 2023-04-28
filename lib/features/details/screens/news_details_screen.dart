@@ -48,8 +48,6 @@ class NewsDetailsScreen extends ConsumerWidget {
           newsNotifier.firstWhere((e) => e.entryId == newsItem.entryId).isFav;
     }
 
-    final contentFormatted = getContent(newsItem.content);
-
     final feedDate = DateFormat.yMMMMd().format(newsItem.publishedTime);
     final feedTime = DateFormat.jm().format(newsItem.publishedTime);
 
@@ -143,7 +141,7 @@ class NewsDetailsScreen extends ConsumerWidget {
                                 child: HeaderImage(imageUrl: newsItem.imageUrl),
                               ),
                         Text(
-                          contentFormatted,
+                          newsItem.content,
                           style: const TextStyle(
                             fontSize: 18,
                           ),

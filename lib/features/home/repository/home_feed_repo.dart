@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../common/common_methods.dart';
+import '../../../common/common_providers.dart';
 import '../../../common_widgets/common_widgets.dart';
 import '../../../common/enums.dart';
 import '../../../common/error.dart';
@@ -13,6 +14,7 @@ import '../../../common/api_methods.dart';
 import '../../../common/frontend_methods.dart';
 import '../../../models/news.dart';
 import '../../authentication/repository/user_preferences.dart';
+import '../../details/components/methods.dart';
 import '../providers/home_providers.dart';
 
 class HomeFeedNotifier extends Notifier<List<News>> {
@@ -23,6 +25,7 @@ class HomeFeedNotifier extends Notifier<List<News>> {
   late bool isStarred;
   late bool isRead;
   late OrderBy orderBy;
+  late bool isDemo;
 
   @override
   List<News> build() {
@@ -35,10 +38,54 @@ class HomeFeedNotifier extends Notifier<List<News>> {
 
     isStarred = ref.watch(isStarredProvider);
     isRead = ref.watch(homeIsShowReadProvider);
+    isDemo = ref.watch(isDemoProvider);
     return [];
   }
 
   Future<void> fetchEntries(BuildContext context) async {
+    if (isDemo) {
+      String data = await DefaultAssetBundle.of(context).loadString(
+        'demo_files/entries.json',
+      );
+
+      Map<String, dynamic> decodedData = jsonDecode(data);
+
+      final List<News> fetchedNewsList = [];
+
+      for (var i = 0; i < decodedData['entries'].length; i++) {
+        final info = decodedData['entries'][i];
+
+        String imageUrl = getImageUrl(info);
+
+        DateTime dateTime = getDateTime(info);
+
+        final contentFormatted = getContent(info['content']);
+
+        Status status =
+            info['status'] == 'unread' ? Status.unread : Status.read;
+
+        final createdNews = News(
+          entryId: info['id'],
+          feedId: info['feed_id'],
+          catId: info['feed']['category']['id'],
+          categoryTitle: info['feed']['category']['title'],
+          titleText: info['title'],
+          author: info['author'],
+          readTime: info['reading_time'],
+          isFav: info['starred'],
+          link: info['url'],
+          content: contentFormatted,
+          imageUrl: imageUrl,
+          status: status,
+          publishedTime: dateTime,
+        );
+
+        fetchedNewsList.add(createdNews);
+      }
+      state = fetchedNewsList;
+      return;
+    }
+
     final url = userPrefs.getUrlData();
 
     Uri uri = Uri.https(url!, 'v1/entries', {
@@ -56,7 +103,9 @@ class HomeFeedNotifier extends Notifier<List<News>> {
         throw ServerErrorException(res);
       }
 
-      Map<String, dynamic> decodedData = jsonDecode(res.body);
+      Map<String, dynamic> decodedData = jsonDecode(
+        utf8.decode(res.bodyBytes),
+      );
 
       final List<News> fetchedNewsList = [];
 
@@ -67,7 +116,7 @@ class HomeFeedNotifier extends Notifier<List<News>> {
 
         DateTime dateTime = getDateTime(info);
 
-        String titleTextDecoded = utf8.decode(info['title'].runes.toList());
+        final contentFormatted = getContent(info['content']);
 
         Status status =
             info['status'] == 'unread' ? Status.unread : Status.read;
@@ -77,12 +126,12 @@ class HomeFeedNotifier extends Notifier<List<News>> {
           feedId: info['feed_id'],
           catId: info['feed']['category']['id'],
           categoryTitle: info['feed']['category']['title'],
-          titleText: titleTextDecoded,
+          titleText: info['title'],
           author: info['author'],
           readTime: info['reading_time'],
           isFav: info['starred'],
           link: info['url'],
-          content: info['content'],
+          content: contentFormatted,
           imageUrl: imageUrl,
           status: status,
           publishedTime: dateTime,

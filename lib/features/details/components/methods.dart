@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:html/parser.dart';
 import 'package:news_app/common_widgets/common_widgets.dart';
@@ -10,8 +8,7 @@ String getContent(String content) {
   final preContent = content.replaceAll('</p>', '\n\n');
   final document = parse(preContent);
   final contentStripped = parse(document.body!.text).documentElement!.text;
-  final contentFormatted = utf8.decode(contentStripped.runes.toList());
-  return contentFormatted;
+  return contentStripped;
 }
 
 class NewsDetailsMethods {

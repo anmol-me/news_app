@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../common/api_methods.dart';
+import '../../common/common_providers.dart';
 import '../authentication/repository/user_preferences.dart';
 
 /// User Model
@@ -37,6 +38,10 @@ class UserNotifier extends Notifier<User?> {
 
   Future<User> fetchUserData(BuildContext context) async {
     try {
+      if (ref.read(isDemoProvider)) {
+        return state = User(username: 'Demo User');
+      }
+
       // Get username from cache
       String username = userPrefs.getUsername() ?? '';
 

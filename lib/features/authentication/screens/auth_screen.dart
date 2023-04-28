@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:news_app/common_widgets/common_widgets.dart';
 import 'package:news_app/features/authentication/repository/auth_repo.dart';
 
+import '../../../common/common_providers.dart';
 import '../../../common/constants.dart';
 import '../../../common/enums.dart';
 import '../../../common/sizer.dart';
+import '../repository/user_preferences.dart';
 
 /// Providers
 final modeProvider = StateProvider<Mode>((ref) => Mode.basic);
@@ -48,6 +51,24 @@ class AuthScreen extends HookConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Login'),
+        actions: [
+          TextButton(
+            style: TextButton.styleFrom(foregroundColor: colorRed),
+            onPressed: () {
+              ref.read(isDemoProvider.notifier).update((state) => true);
+
+              final userPrefs = ref.read(userPrefsProvider);
+              userPrefs.setAuthData('demo');
+              userPrefs.setUrlData('demo');
+              userPrefs.setIsAuth(true);
+              context.push('/home');
+            },
+            child: const Text(
+              'Demo',
+              style: TextStyle(fontSize: 20),
+            ),
+          )
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),

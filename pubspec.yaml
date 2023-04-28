@@ -28,7 +28,7 @@ dependencies:
   flutter_slidable: ^3.0.0
   shared_preferences: ^2.1.0
   fade_shimmer: ^2.2.0
-  share_plus: ^6.3.3
+  share_plus: ^6.3.4
   universal_platform: ^1.0.0+1
   path_provider: ^2.0.14
   path: ^1.8.2
@@ -64,6 +64,7 @@ flutter:
     - assets/splash.png
     - assets/plus.png
     - assets/notfound.png
+    - assets/demo_files/
   #   - images/a_dot_ham.jpeg
 
   # example:
