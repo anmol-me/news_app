@@ -4,9 +4,9 @@ import 'package:news_app/features/home/repository/home_feed_repo.dart';
 import '../../../common/enums.dart';
 import '../../../models/news.dart';
 
-final homeFeedProvider = NotifierProvider<HomeFeedNotifier, List<News>>(() {
-  return HomeFeedNotifier();
-});
+final homeFeedProvider = NotifierProvider<HomeFeedNotifier, List<News>>(
+  HomeFeedNotifier.new,
+);
 
 final homeOffsetProvider = StateProvider((ref) => 0);
 

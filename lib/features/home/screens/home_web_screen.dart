@@ -46,7 +46,7 @@ class _HomeWebScreenState extends ConsumerState<HomeWebScreen> {
 
     final isDemoPref = ref.read(userPrefsProvider).getIsDemo() ?? false;
     if (isDemoPref) {
-      ref.read(homeFeedProvider.notifier).fetchEntries(context);
+      ref.read(homeFeedProvider.notifier).fetchDemoEntries(context);
       return;
     }
 

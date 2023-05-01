@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../common/api_methods.dart';
-import '../../common/common_providers.dart';
 import '../authentication/repository/user_preferences.dart';
 
 /// User Model
@@ -38,33 +37,39 @@ class UserNotifier extends Notifier<User?> {
 
   Future<User> fetchUserData(BuildContext context) async {
     try {
-      if (ref.read(isDemoProvider)) {
-        return state = User(username: 'Demo User');
-      }
+      // Get username from server & save to cache
+      String? username = ref.read(userPrefsProvider).getUsername();
 
-      // Get username from cache
-      String username = userPrefs.getUsername() ?? '';
+      if (username == null || username.isEmpty) {
+        final baseUrl = userPrefs.getUrlData() ?? '';
+        final userPassEncoded = userPrefs.getAuthData() ?? '';
 
-      if (username.isNotEmpty) {
+        Uri uri = Uri.https(baseUrl, 'v1/me');
+
+        final res = await getHttpResp(uri, userPassEncoded);
+
+        Map<String, dynamic> decodedData = jsonDecode(res.body);
+
+        final currentUser = User(
+          username: decodedData['username'],
+        );
+
+        userPrefs.setUsername(currentUser.username);
+        return state = currentUser;
+      } else {
+        // Get username from cache
         return state = User(username: username);
       }
-
-      // Else get username from server & save to cache
-      Uri uri = Uri.https(baseUrl, 'v1/me');
-
-      final res = await getHttpResp(uri, userPassEncoded);
-
-      Map<String, dynamic> decodedData = jsonDecode(res.body);
-
-      final currentUser = User(
-        username: decodedData['username'],
-      );
-
-      userPrefs.setUsername(currentUser.username);
-
-      return state = currentUser;
     } catch (e) {
       return state ?? User(username: '');
+    }
+  }
+
+  Future<User> fetchDemoUserData(BuildContext context) async {
+    try {
+      return state = User(username: 'Demo User');
+    } catch (_) {
+      return User(username: '');
     }
   }
 }

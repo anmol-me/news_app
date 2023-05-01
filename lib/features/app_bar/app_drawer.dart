@@ -11,6 +11,7 @@ import 'package:news_app/features/subscription/screens/select_subscription_scree
 import '../../common/common_providers.dart';
 import '../../common/constants.dart';
 import '../authentication/repository/auth_repo.dart';
+import '../authentication/repository/user_preferences.dart';
 import '../home/providers/home_providers.dart';
 import '../settings/screens/settings_screen.dart';
 import '../category/screens/category_screen.dart';
@@ -18,7 +19,11 @@ import '../category/screens/category_screen.dart';
 /// Provider
 final isLoadingNameProvider = StateProvider((ref) => false);
 
-final isInitProvider = StateProvider((ref) => true);
+final isInitProvider = StateProvider((ref) {
+  final isStateEmpty =
+      ref.watch(userNotifierProvider)?.username.isEmpty ?? false;
+  return isStateEmpty;
+});
 
 /// Widgets
 class AppDrawer extends HookConsumerWidget {
@@ -32,6 +37,14 @@ class AppDrawer extends HookConsumerWidget {
     // Fetches User data only once
     useEffect(
       () {
+        final isDemoPref = ref.read(userPrefsProvider).getIsDemo() ?? false;
+        final isUserEmpty = ref.read(userNotifierProvider)?.username.isEmpty ?? false;
+
+        if (isDemoPref && isUserEmpty) {
+          ref.read(userNotifierProvider.notifier).fetchDemoUserData(context);
+          return;
+        }
+
         final isInit = ref.read(isInitProvider);
 
         if (isInit) {
@@ -42,7 +55,7 @@ class AppDrawer extends HookConsumerWidget {
               .then((_) => isLoadingNameController.update((state) => true));
 
           Future.delayed(Duration.zero).then(
-            (value) => ref
+            (_) => ref
                 .read(userNotifierProvider.notifier)
                 .fetchUserData(context)
                 .then(

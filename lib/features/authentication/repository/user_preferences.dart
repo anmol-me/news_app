@@ -21,7 +21,7 @@ class UserPreferences {
   }
 
   bool? getIsDemo() {
-    log('Prefs Demo get ${prefs!.getBool(keyIsDemoUser)}');
+    log('P: isDemoUser --> ${prefs!.getBool(keyIsDemoUser)}');
     return prefs?.getBool(keyIsDemoUser) ?? false;
   }
 
@@ -30,7 +30,7 @@ class UserPreferences {
   }
 
   String? getAuthData() {
-    log('-----------------------> ${prefs!.getString(keyAuthData)}');
+    log('P: userAuthData --> ${prefs!.getString(keyAuthData)}');
     return prefs?.getString(keyAuthData);
   }
 
@@ -51,12 +51,12 @@ class UserPreferences {
   String? getUrlData() => prefs!.getString(keyUrlData);
 
   Future<bool> setUsername(String username) async {
-    log('Prefs user set $username');
+    log('P: SET username --> $username');
     return await prefs!.setString(keyUsername, username);
   }
 
   String? getUsername() {
-    log('Prefs user get ${prefs!.getString(keyUsername)}');
+    log('P: username --> ${prefs!.getString(keyUsername)}');
     return prefs?.getString(keyUsername);
   }
 

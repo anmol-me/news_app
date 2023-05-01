@@ -43,6 +43,12 @@ class _HomeFeedScreenState extends ConsumerState<HomeFeedScreen> {
     super.initState();
     Timer(const Duration(seconds: 20), () => FlutterNativeSplash.remove());
 
+    final isDemoPref = ref.read(userPrefsProvider).getIsDemo() ?? false;
+    if (isDemoPref) {
+      ref.read(homeFeedProvider.notifier).fetchDemoEntries(context);
+      return;
+    }
+
     final isLoadingHomePageController =
         ref.read(homePageLoadingProvider.notifier);
 

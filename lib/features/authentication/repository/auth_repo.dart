@@ -15,7 +15,13 @@ import '../../../common_widgets/common_widgets.dart';
 import '../../../common/constants.dart';
 import '../../../common/enums.dart';
 import '../../../common/api_methods.dart';
+import '../../app_bar/user_repository.dart';
+import '../../category/repository/category_repo.dart';
+import '../../category/repository/manage_category_repository.dart';
+import '../../home/providers/home_providers.dart';
 import '../../home/screens/home_feed_screen.dart';
+import '../../settings/repository/settings_repository.dart';
+import '../../subscription/repository/subscription_repository.dart';
 
 final authRepoProvider = Provider(
   (ref) {
@@ -146,8 +152,14 @@ class AuthRepo {
 
   void logout(BuildContext context) async {
     userPrefs.clearPrefs();
-    userPrefs.setIsAuth(false);
-    ref.invalidate(userPrefsProvider);
+
+    ref.invalidate(userNotifierProvider);
+    ref.invalidate(homeFeedProvider);
+    ref.invalidate(subscriptionNotifierProvider);
+    ref.invalidate(categoryNotifierProvider);
+    ref.invalidate(manageCateNotifierProvider);
+    ref.invalidate(userSettingsProvider);
+    ref.invalidate(authRepoProvider);
 
     if (ref.read(isHomeDrawerOpened)) {
       if (context.mounted) Navigator.of(context).pop();

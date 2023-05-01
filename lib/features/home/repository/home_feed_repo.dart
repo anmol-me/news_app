@@ -41,131 +41,123 @@ class HomeFeedNotifier extends Notifier<List<News>> {
 
   Future<void> fetchEntries(BuildContext context) async {
     state.clear();
-    final isDemoPref = userPrefs.getIsDemo() ?? false;
 
-    if (isDemoPref) {
-      try {
-        print('FETCHING for demo user');
-        String data = await DefaultAssetBundle.of(context).loadString(
-          'assets/demo_files/entries.json',
-        );
-        print('1');
 
-        Map<String, dynamic> decodedData = jsonDecode(data);
+    final url = userPrefs.getUrlData();
 
-        final List<News> fetchedNewsList = [];
-        print('2');
+    Uri uri = Uri.https(url!, 'v1/entries', {
+      'order': orderBy.value,
+      'direction': direction.value,
+      if (offsetNumber > 0) 'offset': '$offsetNumber',
+      if (isRead == true) 'status': 'read',
+      if (isStarred == true) 'starred': '$isStarred',
+    });
 
-        for (var i = 0; i < decodedData['entries'].length; i++) {
-          final info = decodedData['entries'][i];
+    try {
+      final userPassEncoded = ref.read(userPrefsProvider).getAuthData()!;
+      print('---> $userPassEncoded');
+      final res = await getHttpResp(uri, userPassEncoded);
 
-          String imageUrl = getImageUrl(info);
-
-          DateTime dateTime = getDateTime(info);
-
-          final contentFormatted = getContent(info['content']);
-
-          Status status =
-          info['status'] == 'unread' ? Status.unread : Status.read;
-
-          final createdNews = News(
-            entryId: info['id'],
-            feedId: info['feed_id'],
-            catId: info['feed']['category']['id'],
-            categoryTitle: info['feed']['category']['title'],
-            titleText: info['title'],
-            author: info['author'],
-            readTime: info['reading_time'],
-            isFav: info['starred'],
-            link: info['url'],
-            content: contentFormatted,
-            imageUrl: imageUrl,
-            status: status,
-            publishedTime: dateTime,
-          );
-
-          fetchedNewsList.add(createdNews);
-        }
-        print('3');
-        state = fetchedNewsList;
-        print('4');
-        // return;
-      } catch (e) {
-        print(e);
+      if (res.statusCode >= 400 && res.statusCode <= 599) {
+        throw ServerErrorException(res);
       }
-    } else {
-      print('FETCHING for online user');
 
-      final url = userPrefs.getUrlData();
+      Map<String, dynamic> decodedData = jsonDecode(
+        utf8.decode(res.bodyBytes),
+      );
 
-      Uri uri = Uri.https(url!, 'v1/entries', {
-        'order': orderBy.value,
-        'direction': direction.value,
-        if (offsetNumber > 0) 'offset': '$offsetNumber',
-        if (isRead == true) 'status': 'read',
-        if (isStarred == true) 'starred': '$isStarred',
-      });
+      final List<News> fetchedNewsList = [];
 
-      try {
-        final userInfo = ref.read(userPrefsProvider).getAuthData();
-        print('---> $userInfo');
-        final res = await getHttpResp(uri, userInfo!);
+      for (var i = 0; i < decodedData['entries'].length; i++) {
+        final info = decodedData['entries'][i];
 
-        if (res.statusCode >= 400 && res.statusCode <= 599) {
-          print('Are you the one?');
-          throw ServerErrorException(res);
-        }
+        String imageUrl = getImageUrl(info);
 
-        Map<String, dynamic> decodedData = jsonDecode(
-          utf8.decode(res.bodyBytes),
+        DateTime dateTime = getDateTime(info);
+
+        final contentFormatted = getContent(info['content']);
+
+        Status status =
+            info['status'] == 'unread' ? Status.unread : Status.read;
+
+        final createdNews = News(
+          entryId: info['id'],
+          feedId: info['feed_id'],
+          catId: info['feed']['category']['id'],
+          categoryTitle: info['feed']['category']['title'],
+          titleText: info['title'],
+          author: info['author'],
+          readTime: info['reading_time'],
+          isFav: info['starred'],
+          link: info['url'],
+          content: contentFormatted,
+          imageUrl: imageUrl,
+          status: status,
+          publishedTime: dateTime,
         );
 
-        final List<News> fetchedNewsList = [];
-
-        for (var i = 0; i < decodedData['entries'].length; i++) {
-          final info = decodedData['entries'][i];
-
-          String imageUrl = getImageUrl(info);
-
-          DateTime dateTime = getDateTime(info);
-
-          final contentFormatted = getContent(info['content']);
-
-          Status status =
-              info['status'] == 'unread' ? Status.unread : Status.read;
-
-          final createdNews = News(
-            entryId: info['id'],
-            feedId: info['feed_id'],
-            catId: info['feed']['category']['id'],
-            categoryTitle: info['feed']['category']['title'],
-            titleText: info['title'],
-            author: info['author'],
-            readTime: info['reading_time'],
-            isFav: info['starred'],
-            link: info['url'],
-            content: contentFormatted,
-            imageUrl: imageUrl,
-            status: status,
-            publishedTime: dateTime,
-          );
-
-          fetchedNewsList.add(createdNews);
-        }
-        state = fetchedNewsList;
-
-        /// Todo: On error, goto authScreen
-      } on TimeoutException catch (_) {
-        showErrorDialogue(context, ref, ErrorString.requestTimeout.value);
-      } on SocketException catch (_) {
-        showErrorDialogue(context, ref, ErrorString.socket.value);
-      } on ServerErrorException catch (e) {
-        print(e);
-        showErrorDialogue(context, ref, '$e');
-      } catch (e) {
-        print(e);
-        showErrorDialogue(context, ref, ErrorString.somethingWrongAdmin.value);
+        fetchedNewsList.add(createdNews);
       }
+      state = fetchedNewsList;
+
+      /// Todo: On error, goto authScreen
+    } on TimeoutException catch (_) {
+      showErrorDialogue(context, ref, ErrorString.requestTimeout.value);
+    } on SocketException catch (_) {
+      showErrorDialogue(context, ref, ErrorString.socket.value);
+    } on ServerErrorException catch (e) {
+      showErrorDialogue(context, ref, '$e');
+    } catch (e) {
+      showErrorDialogue(context, ref, ErrorString.somethingWrongAdmin.value);
+    }
+  }
+
+  Future<void> fetchDemoEntries(BuildContext context) async {
+    state.clear();
+    try {
+      print('FETCHING for demo user');
+      String data = await DefaultAssetBundle.of(context).loadString(
+        'assets/demo_files/entries.json',
+      );
+
+      Map<String, dynamic> decodedData = jsonDecode(data);
+
+      final List<News> fetchedNewsList = [];
+
+      for (var i = 0; i < decodedData['entries'].length; i++) {
+        final info = decodedData['entries'][i];
+
+        String imageUrl = getImageUrl(info);
+
+        DateTime dateTime = getDateTime(info);
+
+        final contentFormatted = getContent(info['content']);
+
+        Status status =
+            info['status'] == 'unread' ? Status.unread : Status.read;
+
+        final createdNews = News(
+          entryId: info['id'],
+          feedId: info['feed_id'],
+          catId: info['feed']['category']['id'],
+          categoryTitle: info['feed']['category']['title'],
+          titleText: info['title'],
+          author: info['author'],
+          readTime: info['reading_time'],
+          isFav: info['starred'],
+          link: info['url'],
+          content: contentFormatted,
+          imageUrl: imageUrl,
+          status: status,
+          publishedTime: dateTime,
+        );
+
+        fetchedNewsList.add(createdNews);
+      }
+
+      state = fetchedNewsList;
+    } catch (_) {
+      showErrorDialogue(context, ref, ErrorString.somethingWrongAdmin.value);
     }
   }
 
