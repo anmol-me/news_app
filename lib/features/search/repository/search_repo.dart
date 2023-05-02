@@ -200,6 +200,13 @@ class SearchNotifier extends AutoDisposeNotifier<List<News>> {
     TextEditingController searchTextController,
     BuildContext context,
   ) {
+    final isDemoPref = ref.read(userPrefsProvider).getIsDemo() ?? false;
+    if (isDemoPref) {
+      showErrorSnackBar(
+          context: context, text: ErrorString.demoSearch.value);
+      return;
+    }
+
     FocusManager.instance.primaryFocus?.unfocus();
 
     final showResultsController = ref.read(showResultsProvider.notifier);

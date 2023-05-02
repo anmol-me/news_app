@@ -4,9 +4,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:news_app/features/subscription/repository/subscription_repository.dart';
 
+import '../common_widgets/common_widgets.dart';
+import '../features/authentication/repository/user_preferences.dart';
 import '../features/category/screens/manage_category_screen.dart';
 import '../features/subscription/screens/edit_subscription_screen.dart';
 import '../models/model.dart';
+import 'enums.dart';
 
 Future showModelSheet({
   required CategoryList listItem,
@@ -31,11 +34,20 @@ Future showModelSheet({
                 onTap: () {
                   Navigator.of(context).pop();
 
+                  final isDemoPref =
+                      ref.read(userPrefsProvider).getIsDemo() ?? false;
+                  if (isDemoPref) {
+                    showErrorSnackBar(
+                        context: context,
+                        text: ErrorString.demoEditCategory.value);
+                    return;
+                  }
+
                   context.pushNamed(
                     EditSubscriptionScreen.routeNamed,
                     queryParams: {
-                          'oldTitle': listItem.title,
-                          'listItemId': listItem.id.toString(),
+                      'oldTitle': listItem.title,
+                      'listItemId': listItem.id.toString(),
                     },
                   );
                 },
@@ -46,6 +58,12 @@ Future showModelSheet({
                 context: context,
                 onTap: () {
                   Navigator.of(context).pop();
+
+                  final isDemoPref = ref.read(userPrefsProvider).getIsDemo() ?? false;
+                  if (isDemoPref) {
+                    showErrorSnackBar(context: context, text: ErrorString.demoManageCategory.value);
+                    return;
+                  }
 
                   context.pushNamed(
                     ManageCategoryScreen.routeNamed,
@@ -62,6 +80,12 @@ Future showModelSheet({
                 context: context,
                 onTap: () {
                   Navigator.of(context).pop();
+
+                  final isDemoPref = ref.read(userPrefsProvider).getIsDemo() ?? false;
+                  if (isDemoPref) {
+                    showErrorSnackBar(context: context, text: ErrorString.demoDeleteCategory.value);
+                    return;
+                  }
 
                   ref
                       .read(isDeletingCatProvider.notifier)

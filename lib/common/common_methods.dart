@@ -6,6 +6,7 @@ import 'package:jiffy/jiffy.dart';
 import 'package:html/parser.dart' as html_parser;
 
 import 'package:news_app/features/home/repository/home_methods.dart';
+import '../features/authentication/repository/user_preferences.dart';
 import '../features/home/providers/home_providers.dart';
 import '../features/home/screens/home_feed_screen.dart';
 import '../models/news.dart';
@@ -24,6 +25,13 @@ class RefreshMethods {
   Future<void> refreshAllMain(
     BuildContext context,
   ) async {
+    final isDemoPref = ref.read(userPrefsProvider).getIsDemo() ?? false;
+    if (isDemoPref) {
+      Navigator.of(context).pop();
+      context.go('/home');
+      return;
+    }
+
     final isLoadingHomePageController =
         ref.read(homePageLoadingProvider.notifier);
 

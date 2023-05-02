@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:news_app/common_widgets/top_section_row.dart';
 
 import '../common/common_methods.dart';
+import '../features/authentication/repository/user_preferences.dart';
 import 'common_widgets.dart';
 import '../common/constants.dart';
 import '../common/enums.dart';
@@ -70,18 +71,23 @@ Widget buildExpansionWidget(
             Expanded(
               child: GestureDetector(
                 onTap: () async {
-                  if (screenName == 'search') {
-                    ref.read(searchNotifierProvider.notifier).toggleRead(
-                          newsItem.entryId,
-                          Status.read,
-                          context,
-                        );
-                  } else {
-                    newsNotifierController.toggleRead(
-                      newsItem.entryId,
-                      Status.read,
-                      context,
-                    );
+                  final isDemoPref =
+                      ref.read(userPrefsProvider).getIsDemo() ?? false;
+
+                  if (!isDemoPref) {
+                    if (screenName == 'search') {
+                      ref.read(searchNotifierProvider.notifier).toggleRead(
+                            newsItem.entryId,
+                            Status.read,
+                            context,
+                          );
+                    } else {
+                      newsNotifierController.toggleRead(
+                        newsItem.entryId,
+                        Status.read,
+                        context,
+                      );
+                    }
                   }
 
                   context.pushNamed(

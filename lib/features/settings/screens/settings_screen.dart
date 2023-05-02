@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
+import '../../../common/enums.dart';
+import '../../../common_widgets/common_widgets.dart';
 import '../../../components/app_back_button.dart';
+import '../../authentication/repository/user_preferences.dart';
 import '../../home/providers/home_providers.dart';
 import '../repository/settings_repository.dart';
 
@@ -36,6 +39,12 @@ class SettingsScreen extends HookConsumerWidget {
             title: const Text('Refresh all feeds\n(in the background)'),
             trailing: IconButton(
               onPressed: () {
+                final isDemoPref = ref.read(userPrefsProvider).getIsDemo() ?? false;
+                if (isDemoPref) {
+                  showErrorSnackBar(context: context, text: ErrorString.demoRefreshSettings.value);
+                  return;
+                }
+
                 isRefreshAllLoadingController.update((state) => true);
                 ref.read(homeFeedProvider.notifier).refreshAll(context).then(
                     (_) =>

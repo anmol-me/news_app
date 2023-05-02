@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:news_app/features/subscription/repository/subscription_repository.dart';
+import '../../../common/enums.dart';
 import '../../../common_widgets/common_widgets.dart';
 import '../../../common/constants.dart';
+import '../../authentication/repository/user_preferences.dart';
 
 class AddCatSheetButton extends ConsumerWidget {
   final TextEditingController catNameController;
@@ -19,6 +21,13 @@ class AddCatSheetButton extends ConsumerWidget {
     final mediaQuery = MediaQuery.of(context);
 
     void createCategory(StateSetter setState) {
+      final isDemoPref = ref.read(userPrefsProvider).getIsDemo() ?? false;
+      if (isDemoPref) {
+        Navigator.of(context).pop();
+        showErrorSnackBar(context: context, text: ErrorString.demoAddCategory.value);
+        return;
+      }
+
       final categoryListController =
           ref.read(subscriptionNotifierProvider.notifier);
 

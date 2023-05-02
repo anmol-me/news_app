@@ -70,6 +70,12 @@ class DiscoveryNotifier
     TextEditingController urlController,
     BuildContext context,
   ) {
+    final isDemoPref = ref.read(userPrefsProvider).getIsDemo() ?? false;
+    if (isDemoPref) {
+      showErrorSnackBar(context: context, text: ErrorString.demoDiscover.value);
+      return;
+    }
+
     final discoverSubscriptionController = ref.read(discoveryProvider.notifier);
 
     final isDiscoverLoadingController =
