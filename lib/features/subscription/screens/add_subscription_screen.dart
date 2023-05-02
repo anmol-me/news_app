@@ -112,7 +112,11 @@ class AddSubscription extends HookConsumerWidget {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.only(left: 16.0),
+                padding: const EdgeInsets.only(
+                  left: 16,
+                  top: 5,
+                  bottom: 5,
+                ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -162,7 +166,7 @@ class AddSubscription extends HookConsumerWidget {
                     ? const CircularLoading()
                     : const Text('Discover'),
               ),
-              const SizedBox(height: 10),
+              const SizedBox(height: 15),
               Expanded(
                 child: discoverSubscription.isEmpty
                     ? const Text('Empty List')

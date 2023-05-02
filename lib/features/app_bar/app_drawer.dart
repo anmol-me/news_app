@@ -145,6 +145,8 @@ class AppDrawer extends HookConsumerWidget {
                 const Divider(
                   color: Colors.black54,
                   thickness: 0.6,
+                  indent: 60,
+                  endIndent: 60,
                 ),
                 ListTile(
                   leading: const Icon(Icons.settings),
@@ -179,7 +181,7 @@ class BuildHeader extends HookConsumerWidget {
 
     return Material(
       child: Container(
-        height: size.height * 0.20,
+        height: size.height * 0.17,
         padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top + 40),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,

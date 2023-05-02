@@ -97,14 +97,17 @@ class AddCatSheetButton extends ConsumerWidget {
                         const SizedBox(height: 20),
                         Column(
                           children: [
-                            ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: colorRed,
+                            Padding(
+                              padding: const EdgeInsets.only(bottom: 5),
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: colorRed,
+                                ),
+                                onPressed: () => createCategory(set),
+                                child: isLoading
+                                    ? const CircularLoading()
+                                    : const Text('Create Category'),
                               ),
-                              onPressed: () => createCategory(set),
-                              child: isLoading
-                                  ? const CircularLoading()
-                                  : const Text('Create Category'),
                             ),
                             isLoading
                                 ? TextButton(
