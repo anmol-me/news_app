@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:news_app/components/app_text_form_field.dart';
 import 'package:news_app/features/subscription/repository/subscription_repository.dart';
 import '../../../common/enums.dart';
 import '../../../common_widgets/common_widgets.dart';
@@ -17,6 +18,7 @@ class AddCatSheetButton extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     bool isLoading = false;
+    bool titleFocus = false;
 
     final mediaQuery = MediaQuery.of(context);
 
@@ -24,7 +26,10 @@ class AddCatSheetButton extends ConsumerWidget {
       final isDemoPref = ref.read(userPrefsProvider).getIsDemo() ?? false;
       if (isDemoPref) {
         Navigator.of(context).pop();
-        showErrorSnackBar(context: context, text: ErrorString.demoAddCategory.value);
+        showErrorSnackBar(
+          context: context,
+          text: ErrorString.demoAddCategory.value,
+        );
         return;
       }
 
@@ -68,10 +73,25 @@ class AddCatSheetButton extends ConsumerWidget {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        TextFormField(
-                          controller: catNameController,
-                          decoration: const InputDecoration(
+                        Focus(
+                          onFocusChange: (hasFocus) {
+                            if (hasFocus) {
+                              set(() {
+                                titleFocus = true;
+                              });
+                            } else {
+                              set(() {
+                                titleFocus = false;
+                              });
+                            }
+                          },
+                          child: AppTextFormField(
+                            controller: catNameController,
                             labelText: 'Category Name',
+                            labelStyle: TextStyle(
+                              color:
+                                  titleFocus ? colorRed : colorAppbarForeground,
+                            ),
                           ),
                         ),
                         const SizedBox(height: 20),

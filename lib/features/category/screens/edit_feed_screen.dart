@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
+import '../../../common/constants.dart';
 import '../../../common_widgets/common_widgets.dart';
 import '../../../common/sizer.dart';
 import '../../../components/app_back_button.dart';
@@ -30,6 +31,7 @@ class EditFeedScreen extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final formKey = useMemoized(GlobalKey<FormState>.new, const []);
     final newFeedTitleController = useTextEditingController();
+    final titleFocus = useState(false);
 
     final isFeedTitleUpdating = ref.watch(isFeedTitleUpdatingProvider);
     final isFeedTitleUpdatingController =
@@ -50,9 +52,21 @@ class EditFeedScreen extends HookConsumerWidget {
                 padding: const EdgeInsets.all(8.0),
                 child: Column(
                   children: [
-                    AppTextFormField(
-                      controller: newFeedTitleController,
-                      labelText: 'New Feed Title',
+                    Focus(
+                      onFocusChange: (hasFocus) {
+                        hasFocus
+                            ? titleFocus.value = true
+                            : titleFocus.value = false;
+                      },
+                      child: AppTextFormField(
+                        controller: newFeedTitleController,
+                        labelText: 'New Feed Title',
+                        labelStyle: TextStyle(
+                          color: titleFocus.value
+                              ? colorRed
+                              : colorAppbarForeground,
+                        ),
+                      ),
                     ),
                   ],
                 ),

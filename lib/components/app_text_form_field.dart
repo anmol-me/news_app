@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:news_app/common/constants.dart';
 
 class AppTextFormField extends StatelessWidget {
   final TextEditingController controller;
   final String labelText;
+  final TextStyle? labelStyle;
 
   const AppTextFormField({
     super.key,
     required this.controller,
     required this.labelText,
+    this.labelStyle,
   });
 
   @override
@@ -16,9 +19,11 @@ class AppTextFormField extends StatelessWidget {
       controller: controller,
       decoration: InputDecoration(
         labelText: labelText,
-        floatingLabelStyle: const TextStyle(color: Colors.black),
-        focusedBorder: const UnderlineInputBorder(
-          borderSide: BorderSide(color: Colors.black),
+        labelStyle: labelStyle,
+        focusedBorder: UnderlineInputBorder(
+          borderSide: BorderSide(
+            color: colorRed,
+          ),
         ),
       ),
     );

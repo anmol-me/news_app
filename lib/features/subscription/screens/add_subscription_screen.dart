@@ -28,7 +28,9 @@ class AddSubscription extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final formKey = useMemoized(() => GlobalKey<FormState>());
+    final formKey = useMemoized(GlobalKey<FormState>.new, const []);
+
+    final textFocus = useState(false);
 
     final showAsterisk = ref.watch(showAsteriskProvider);
     final selectedCategory = ref.watch(selectedCategoryProvider);
@@ -79,10 +81,28 @@ class AddSubscription extends HookConsumerWidget {
           padding: const EdgeInsets.all(8.0),
           child: Column(
             children: [
-              TextFormField(
-                controller: urlController,
-                decoration: const InputDecoration(
-                  labelText: 'RSS address',
+              Focus(
+                onFocusChange: (hasFocus) {
+                  hasFocus
+                      ? textFocus.value = true
+                      : textFocus.value = false;
+                },
+                child: TextFormField(
+                  controller: urlController,
+                  decoration: InputDecoration(
+                    labelText: 'RSS address',
+                    labelStyle: TextStyle(
+                      color: textFocus.value ? colorRed : colorAppbarForeground,
+                    ),
+                    border: const OutlineInputBorder(),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        width: 1.5,
+                        color: colorRed,
+                      ),
+                    ),
+                    suffixIconColor: colorAppbarForeground,
+                  ),
                 ),
               ),
               Padding(

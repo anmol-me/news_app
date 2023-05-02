@@ -6,7 +6,6 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:news_app/common_widgets/common_widgets.dart';
 import 'package:news_app/features/authentication/repository/auth_repo.dart';
 
-import '../../../common/common_providers.dart';
 import '../../../common/constants.dart';
 import '../../../common/enums.dart';
 import '../../../common/sizer.dart';
@@ -39,7 +38,9 @@ class AuthScreen extends HookConsumerWidget {
     final passwordController = useTextEditingController(text: demoPassword);
     final urlController = useTextEditingController();
 
-    final focusNode = useFocusNode();
+    final usernameFocus = useState(false);
+    final passwordFocus = useState(false);
+    final urlFocus = useState(false);
 
     final mode = ref.watch(modeProvider);
     final modeController = ref.watch(modeProvider.notifier);
@@ -78,63 +79,19 @@ class AuthScreen extends HookConsumerWidget {
               child: Column(
                 children: [
                   Sizer(
-                    child: TextFormField(
-                      controller: usernameController,
-                      focusNode: focusNode,
-                      decoration: InputDecoration(
-                        labelText: 'Username',
-                        floatingLabelStyle: TextStyle(
-                          color: focusNode.hasFocus
-                              ? colorLabel
-                              : colorAppbarForeground,
-                        ),
-                        focusedBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color: colorLabel),
-                        ),
-                        focusColor: colorRed,
-                      ),
-                      validator: (val) {
-                        if (usernameController.text.isEmpty) {
-                          return ErrorString.username.value;
-                        } else {
-                          return null;
-                        }
+                    child: Focus(
+                      onFocusChange: (hasFocus) {
+                        hasFocus
+                            ? usernameFocus.value = true
+                            : usernameFocus.value = false;
                       },
-                    ),
-                  ),
-                  Sizer(
-                    child: TextFormField(
-                      controller: passwordController,
-                      decoration: InputDecoration(
-                        labelText: 'Password',
-                        floatingLabelStyle: TextStyle(
-                          color: focusNode.hasFocus
-                              ? colorLabel
-                              : colorAppbarForeground,
-                        ),
-                        focusedBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color: colorLabel),
-                        ),
-                      ),
-                      validator: (val) {
-                        if (passwordController.text.isEmpty) {
-                          return ErrorString.password.value;
-                        } else {
-                          return null;
-                        }
-                      },
-                    ),
-                  ),
-                  if (mode == Mode.advanced)
-                    Sizer(
                       child: TextFormField(
-                        controller: urlController,
+                        controller: usernameController,
                         decoration: InputDecoration(
-                          hintText: defaultUrlHint,
-                          labelText: 'URL',
+                          labelText: 'Username',
                           floatingLabelStyle: TextStyle(
-                            color: focusNode.hasFocus
-                                ? colorLabel
+                            color: usernameFocus.value
+                                ? colorRed
                                 : colorAppbarForeground,
                           ),
                           focusedBorder: UnderlineInputBorder(
@@ -142,12 +99,75 @@ class AuthScreen extends HookConsumerWidget {
                           ),
                         ),
                         validator: (val) {
-                          if (urlController.text.isNotEmpty) {
-                            return null;
+                          if (usernameController.text.isEmpty) {
+                            return ErrorString.username.value;
                           } else {
-                            return ErrorString.validUrl.value;
+                            return null;
                           }
                         },
+                      ),
+                    ),
+                  ),
+                  Sizer(
+                    child: Focus(
+                      onFocusChange: (hasFocus) {
+                        hasFocus
+                            ? passwordFocus.value = true
+                            : passwordFocus.value = false;
+                      },
+                      child: TextFormField(
+                        controller: passwordController,
+                        decoration: InputDecoration(
+                          labelText: 'Password',
+                          floatingLabelStyle: TextStyle(
+                            color: passwordFocus.value
+                                ? colorRed
+                                : colorAppbarForeground,
+                          ),
+                          focusedBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(color: colorLabel),
+                          ),
+                        ),
+                        validator: (val) {
+                          if (passwordController.text.isEmpty) {
+                            return ErrorString.password.value;
+                          } else {
+                            return null;
+                          }
+                        },
+                      ),
+                    ),
+                  ),
+                  if (mode == Mode.advanced)
+                    Sizer(
+                      child: Focus(
+                        onFocusChange: (hasFocus) {
+                          hasFocus
+                              ? urlFocus.value = true
+                              : urlFocus.value = false;
+                        },
+                        child: TextFormField(
+                          controller: urlController,
+                          decoration: InputDecoration(
+                            hintText: defaultUrlHint,
+                            labelText: 'URL',
+                            floatingLabelStyle: TextStyle(
+                              color: urlFocus.value
+                                  ? colorRed
+                                  : colorAppbarForeground,
+                            ),
+                            focusedBorder: UnderlineInputBorder(
+                              borderSide: BorderSide(color: colorLabel),
+                            ),
+                          ),
+                          validator: (val) {
+                            if (urlController.text.isNotEmpty) {
+                              return null;
+                            } else {
+                              return ErrorString.validUrl.value;
+                            }
+                          },
+                        ),
                       ),
                     ),
                   const SizedBox(height: 20),

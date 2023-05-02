@@ -6,6 +6,7 @@ import 'package:news_app/common_widgets/common_widgets.dart';
 import 'package:news_app/features/home/screens/home_feed_screen.dart';
 import 'package:news_app/features/search/repository/search_repo.dart';
 
+import '../../../common/constants.dart';
 import '../../home/providers/home_providers.dart';
 
 /// Providers
@@ -58,6 +59,13 @@ class SearchScreen extends HookConsumerWidget {
                   ),
                 ),
                 border: const OutlineInputBorder(),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(
+                    width: 1.5,
+                    color: colorRed,
+                  ),
+                ),
+                suffixIconColor: colorAppbarForeground,
               ),
             ),
             const SizedBox(height: 5),

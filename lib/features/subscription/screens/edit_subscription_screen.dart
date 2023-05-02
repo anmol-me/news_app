@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
+import '../../../common/constants.dart';
 import '../../../common_widgets/common_widgets.dart';
 import '../../../common/sizer.dart';
 import '../../../components/app_back_button.dart';
@@ -28,6 +29,7 @@ class EditSubscriptionScreen extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final formKey = useMemoized(GlobalKey<FormState>.new, const []);
     final newTitleController = useTextEditingController();
+    final titleFocus = useState(false);
 
     final isTitleUpdating = ref.watch(isTitleUpdatingProvider);
     final isTitleUpdatingController =
@@ -49,9 +51,21 @@ class EditSubscriptionScreen extends HookConsumerWidget {
                 child: Column(
                   // crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    AppTextFormField(
-                      controller: newTitleController,
-                      labelText: 'New Title',
+                    Focus(
+                      onFocusChange: (hasFocus) {
+                        hasFocus
+                            ? titleFocus.value = true
+                            : titleFocus.value = false;
+                      },
+                      child: AppTextFormField(
+                        controller: newTitleController,
+                        labelText: 'New Title',
+                        labelStyle: TextStyle(
+                          color: titleFocus.value
+                              ? colorRed
+                              : colorAppbarForeground,
+                        ),
+                      ),
                     ),
                   ],
                 ),
@@ -76,8 +90,8 @@ class EditSubscriptionScreen extends HookConsumerWidget {
                           newTitleController.text,
                         )
                         .then(
-                          (_) =>
-                              isTitleUpdatingController.update((state) => false),
+                          (_) => isTitleUpdatingController
+                              .update((state) => false),
                         );
                   },
             child: const Text('Update'),
