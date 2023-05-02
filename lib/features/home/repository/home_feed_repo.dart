@@ -42,7 +42,6 @@ class HomeFeedNotifier extends Notifier<List<News>> {
   Future<void> fetchEntries(BuildContext context) async {
     state.clear();
 
-
     final url = userPrefs.getUrlData();
 
     Uri uri = Uri.https(url!, 'v1/entries', {

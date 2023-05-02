@@ -8,6 +8,7 @@ import 'package:news_app/common_widgets/common_widgets.dart';
 import 'package:news_app/components/app_back_button.dart';
 import 'package:news_app/features/subscription/screens/add_subscription_screen.dart';
 import '../../../common/constants.dart';
+import '../../authentication/repository/user_preferences.dart';
 import '../repository/subscription_repository.dart';
 import '../widgets/clear_subscription_widget.dart';
 import '../widgets/tile_build_methods.dart';
@@ -29,10 +30,19 @@ class SelectSubscriptionScreen extends HookConsumerWidget {
     final isLoadingSubsController = ref.watch(isLoadingSubsProvider.notifier);
 
     final isDeletingCat = ref.watch(isDeletingCatProvider);
+    final bundle = DefaultAssetBundle.of(context);
 
     // Using useEffect() instead of initState()
     useEffect(
       () {
+        final isDemoPref = ref.read(userPrefsProvider).getIsDemo() ?? false;
+        if (isDemoPref) {
+          ref
+              .read(subscriptionNotifierProvider.notifier)
+              .fetchDemoCategories(context, bundle);
+          return;
+        }
+
         Future.delayed(Duration.zero).then(
           (value) => isLoadingSubsController.update((state) => true),
         );
@@ -141,4 +151,3 @@ class SelectSubscriptionScreen extends HookConsumerWidget {
     );
   }
 }
-

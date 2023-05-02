@@ -78,7 +78,31 @@ class SubscriptionNotifier extends Notifier<List<CategoryList>> {
     } on ServerErrorException catch (e) {
       showErrorSnackBar(context: context, text: '$e');
       return [];
-    } catch (e) {
+    } catch (_) {
+      showErrorSnackBar(
+        context: context,
+        text: ErrorString.generalError.value,
+      );
+      return [];
+    }
+  }
+
+  Future<List<CategoryList>> fetchDemoCategories(
+      BuildContext context,
+      AssetBundle bundle,
+      ) async {
+    try {
+      String data = await bundle.loadString(
+        'assets/demo_files/categories.json',
+      );
+
+      List<dynamic> decodedData = jsonDecode(data);
+
+      final fetchedCategories =
+      decodedData.map((e) => CategoryList.fromJson(e)).toList();
+
+      return state = fetchedCategories;
+    } catch (_) {
       showErrorSnackBar(
         context: context,
         text: ErrorString.generalError.value,
