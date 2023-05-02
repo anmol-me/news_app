@@ -12,6 +12,7 @@ enum Sort {
 }
 
 enum ErrorString {
+  emptyField('Field cannot be empty'),
   username('Username field cannot be empty'),
   password('Password field cannot be empty'),
   validUrl('Please provide a valid url'),

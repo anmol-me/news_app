@@ -6,8 +6,8 @@ import 'package:news_app/common_widgets/common_widgets.dart';
 import 'package:news_app/features/home/screens/home_feed_screen.dart';
 import 'package:news_app/features/search/repository/search_repo.dart';
 
-import '../../../common/constants.dart';
 import '../../home/providers/home_providers.dart';
+import '../components/search_text_field.dart';
 
 /// Providers
 final showResultsProvider = StateProvider.autoDispose((ref) => false);
@@ -22,6 +22,7 @@ class SearchScreen extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final formKey = useMemoized(GlobalKey<FormState>.new, const []);
     final searchTextController = useTextEditingController();
 
     final showResults = ref.watch(showResultsProvider);
@@ -29,7 +30,6 @@ class SearchScreen extends HookConsumerWidget {
     final showSearchLoader = ref.watch(showSearchLoaderProvider);
 
     final searchNotifier = ref.watch(searchNotifierProvider);
-    final searchNotifierController = ref.watch(searchNotifierProvider.notifier);
 
     final newsNotifierController = ref.watch(homeFeedProvider.notifier);
 
@@ -39,64 +39,47 @@ class SearchScreen extends HookConsumerWidget {
       appBar: AppBar(
         title: const Text('Search Feeds'),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            TextField(
-              controller: searchTextController,
-              onSubmitted: (val) => searchNotifierController.searchFunction(
-                searchTextController,
-                context,
+      body: Form(
+        key: formKey,
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SearchTextField(
+                searchTextController: searchTextController,
+                formKey: formKey,
               ),
-              decoration: InputDecoration(
-                suffixIcon: IconButton(
-                  icon: const Icon(Icons.search),
-                  onPressed: () => searchNotifierController.searchFunction(
-                    searchTextController,
-                    context,
-                  ),
-                ),
-                border: const OutlineInputBorder(),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
-                    width: 1.5,
-                    color: colorRed,
-                  ),
-                ),
-                suffixIconColor: colorAppbarForeground,
-              ),
-            ),
-            const SizedBox(height: 5),
-            showSearchLoader
-                ? const LinearLoader()
-                : !showResults
+              const SizedBox(height: 5),
+              showSearchLoader
+                  ? const LinearLoader()
+                  : !showResults
 
-                    /// Todo: List Empty Search
-                    ? const Center(child: Text('No results'))
-                    : Expanded(
-                        child: Scrollbar(
-                          controller: scrollController,
-                          child: ListView.builder(
+                      /// Todo: List Empty Search
+                      ? const Center(child: Text('No results'))
+                      : Expanded(
+                          child: Scrollbar(
                             controller: scrollController,
-                            shrinkWrap: true,
-                            itemCount: searchNotifier.length,
-                            itemBuilder: (context, index) {
-                              final newsItem = searchNotifier[index];
+                            child: ListView.builder(
+                              controller: scrollController,
+                              shrinkWrap: true,
+                              itemCount: searchNotifier.length,
+                              itemBuilder: (context, index) {
+                                final newsItem = searchNotifier[index];
 
-                              return buildExpansionWidget(
-                                'search',
-                                newsItem,
-                                context,
-                                newsNotifierController,
-                                ref,
-                              );
-                            },
+                                return buildExpansionWidget(
+                                  'search',
+                                  newsItem,
+                                  context,
+                                  newsNotifierController,
+                                  ref,
+                                );
+                              },
+                            ),
                           ),
                         ),
-                      ),
-          ],
+            ],
+          ),
         ),
       ),
     );

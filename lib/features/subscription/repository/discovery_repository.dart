@@ -68,8 +68,12 @@ class DiscoveryNotifier
 
   void discoverFunction(
     TextEditingController urlController,
+    GlobalKey<FormState> formKey,
     BuildContext context,
   ) {
+    final isValid = formKey.currentState!.validate();
+    if (!isValid) return;
+
     final isDemoPref = ref.read(userPrefsProvider).getIsDemo() ?? false;
     if (isDemoPref) {
       showErrorSnackBar(context: context, text: ErrorString.demoDiscover.value);
@@ -80,11 +84,6 @@ class DiscoveryNotifier
 
     final isDiscoverLoadingController =
         ref.read(isDiscoverLoadingProvider.notifier);
-
-    if (urlController.text.isEmpty) {
-      showErrorSnackBar(context: context, text: ErrorString.validUrl.value);
-      return;
-    }
 
     isDiscoverLoadingController.update((state) => true);
 

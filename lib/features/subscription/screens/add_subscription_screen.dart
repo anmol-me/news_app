@@ -3,6 +3,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:news_app/components/app_back_button.dart';
 
+import '../../../common/enums.dart';
 import '../../../common_widgets/common_widgets.dart';
 import '../../../common/constants.dart';
 import '../../../models/model.dart';
@@ -83,9 +84,7 @@ class AddSubscription extends HookConsumerWidget {
             children: [
               Focus(
                 onFocusChange: (hasFocus) {
-                  hasFocus
-                      ? textFocus.value = true
-                      : textFocus.value = false;
+                  hasFocus ? textFocus.value = true : textFocus.value = false;
                 },
                 child: TextFormField(
                   controller: urlController,
@@ -103,6 +102,13 @@ class AddSubscription extends HookConsumerWidget {
                     ),
                     suffixIconColor: colorAppbarForeground,
                   ),
+                  validator: (val) {
+                    if (urlController.text.isEmpty) {
+                      return ErrorString.emptyField.value;
+                    } else {
+                      return null;
+                    }
+                  },
                 ),
               ),
               Padding(
@@ -145,8 +151,12 @@ class AddSubscription extends HookConsumerWidget {
                 ),
               ),
               ElevatedButton(
-                onPressed: () => discoverSubscriptionController
-                    .discoverFunction(urlController, context),
+                onPressed: () =>
+                    discoverSubscriptionController.discoverFunction(
+                  urlController,
+                  formKey,
+                  context,
+                ),
                 style: ElevatedButton.styleFrom(backgroundColor: colorRed),
                 child: isDiscoverLoading
                     ? const CircularLoading()

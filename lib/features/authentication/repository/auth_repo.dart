@@ -62,92 +62,92 @@ class AuthRepo {
 
     final mode = ref.read(modeProvider);
 
-    if (isValid) {
-      try {
-        String userPassEncoded;
+    if (!isValid) {
+      isLoadingLoginController.update((state) => false);
+      return;
+    }
 
-        final bool isTestUser = usernameController.text == demoUser &&
-            passwordController.text == demoPassword &&
-            mode == Mode.basic;
+    try {
+      String userPassEncoded;
 
-        if (isTestUser) {
-          // Test Mode
-          await userPrefs.setUrlData(staticUrl);
-          // log('Login prefs test url : ${userPrefs.getUrlData()}');
+      final bool isTestUser = usernameController.text == demoUser &&
+          passwordController.text == demoPassword &&
+          mode == Mode.basic;
 
-          userPassEncoded = 'Basic ${base64.encode(utf8.encode(
-            '$staticUsername:$staticPassword',
-          ))}';
+      if (isTestUser) {
+        // Test Mode
+        await userPrefs.setUrlData(staticUrl);
+        // log('Login prefs test url : ${userPrefs.getUrlData()}');
+
+        userPassEncoded = 'Basic ${base64.encode(utf8.encode(
+          '$staticUsername:$staticPassword',
+        ))}';
+      } else {
+        // Basic Mode
+        if (mode == Mode.basic) {
+          await userPrefs.setUrlData(defaultUrl);
+          log('Basic login Default url has been set: ${userPrefs.getUrlData()}');
         } else {
-          // Basic Mode
-          if (mode == Mode.basic) {
-            await userPrefs.setUrlData(defaultUrl);
-            log('Basic login Default url has been set: ${userPrefs.getUrlData()}');
-          } else {
-            // Advanced Mode
-            await userPrefs.setUrlData(urlController.text);
-            log('Advanced login Custom url has been set: ${userPrefs.getUrlData()}');
-          }
-
-          userPassEncoded = 'Basic ${base64.encode(
-            utf8.encode(
-              '${usernameController.text}:${passwordController.text}',
-            ),
-          )}';
+          // Advanced Mode
+          await userPrefs.setUrlData(urlController.text);
+          log('Advanced login Custom url has been set: ${userPrefs.getUrlData()}');
         }
 
-        final isAuthSet = await userPrefs.setAuthData(userPassEncoded);
-
-        log('Login Prefs auth: ${userPrefs.getAuthData()}');
-
-        final authData = userPrefs.getAuthData();
-        final urlData = userPrefs.getUrlData();
-
-        if (!isAuthSet) {
-          if (context.mounted) {
-            showErrorSnackBar(
-              context: context,
-              text: ErrorString.internalError.value,
-            );
-          }
-          userPrefs.clearPrefs();
-          return;
-        }
-
-        final res = await authUrlChecker(authData!, urlData!);
-
-        log('Login Status: ${res.statusCode}');
-
-        if (res.statusCode >= 400 && res.statusCode <= 599) {
-          throw ServerErrorException(res);
-        }
-
-        if (res.statusCode == 200) {
-          userPrefs.setIsAuth(true);
-
-          if (context.mounted) {
-            context.goNamed(HomeFeedScreen.routeNamed);
-          }
-        }
-      } on SocketException catch (_) {
-        userPrefs.clearPrefs();
-        showErrorSnackBar(
-            context: context, text: ErrorString.checkInternet.value);
-      } on TimeoutException catch (_) {
-        userPrefs.clearPrefs();
-        showErrorSnackBar(
-            context: context, text: ErrorString.requestTimeout.value);
-      } on ServerErrorException catch (e) {
-        userPrefs.clearPrefs();
-        showErrorSnackBar(context: context, text: '$e');
-      } catch (e) {
-        userPrefs.clearPrefs();
-        showErrorSnackBar(
-            context: context, text: ErrorString.generalError.value);
+        userPassEncoded = 'Basic ${base64.encode(
+          utf8.encode(
+            '${usernameController.text}:${passwordController.text}',
+          ),
+        )}';
       }
-    } // isValid
-    isLoadingLoginController.update((state) => false);
-    return;
+
+      final isAuthSet = await userPrefs.setAuthData(userPassEncoded);
+
+      log('Login Prefs auth: ${userPrefs.getAuthData()}');
+
+      final authData = userPrefs.getAuthData();
+      final urlData = userPrefs.getUrlData();
+
+      if (!isAuthSet) {
+        if (context.mounted) {
+          showErrorSnackBar(
+            context: context,
+            text: ErrorString.internalError.value,
+          );
+        }
+        userPrefs.clearPrefs();
+        return;
+      }
+
+      final res = await authUrlChecker(authData!, urlData!);
+
+      log('Login Status: ${res.statusCode}');
+
+      if (res.statusCode >= 400 && res.statusCode <= 599) {
+        throw ServerErrorException(res);
+      }
+
+      if (res.statusCode == 200) {
+        userPrefs.setIsAuth(true);
+
+        if (context.mounted) {
+          context.goNamed(HomeFeedScreen.routeNamed);
+        }
+      }
+    } on SocketException catch (_) {
+      userPrefs.clearPrefs();
+      showErrorSnackBar(
+          context: context, text: ErrorString.checkInternet.value);
+    } on TimeoutException catch (_) {
+      userPrefs.clearPrefs();
+      showErrorSnackBar(
+          context: context, text: ErrorString.requestTimeout.value);
+    } on ServerErrorException catch (e) {
+      userPrefs.clearPrefs();
+      showErrorSnackBar(context: context, text: '$e');
+    } catch (e) {
+      userPrefs.clearPrefs();
+      showErrorSnackBar(context: context, text: ErrorString.generalError.value);
+    }
   }
 
   void logout(BuildContext context) async {

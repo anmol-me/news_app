@@ -88,9 +88,9 @@ class SubscriptionNotifier extends Notifier<List<CategoryList>> {
   }
 
   Future<List<CategoryList>> fetchDemoCategories(
-      BuildContext context,
-      AssetBundle bundle,
-      ) async {
+    BuildContext context,
+    AssetBundle bundle,
+  ) async {
     try {
       String data = await bundle.loadString(
         'assets/demo_files/categories.json',
@@ -99,7 +99,7 @@ class SubscriptionNotifier extends Notifier<List<CategoryList>> {
       List<dynamic> decodedData = jsonDecode(data);
 
       final fetchedCategories =
-      decodedData.map((e) => CategoryList.fromJson(e)).toList();
+          decodedData.map((e) => CategoryList.fromJson(e)).toList();
 
       return state = fetchedCategories;
     } catch (_) {
@@ -242,9 +242,13 @@ class SubscriptionNotifier extends Notifier<List<CategoryList>> {
 
   Future<void> updateCategoryName(
     BuildContext context,
+    GlobalKey<FormState> formKey,
     int id,
     String newCategoryTitle,
   ) async {
+    final isValid = formKey.currentState!.validate();
+    if (!isValid) return;
+
     try {
       final res = await putHttpResp(
           uri: null,

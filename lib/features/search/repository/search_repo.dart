@@ -198,43 +198,48 @@ class SearchNotifier extends AutoDisposeNotifier<List<News>> {
 
   void searchFunction(
     TextEditingController searchTextController,
+    GlobalKey<FormState> formKey,
     BuildContext context,
   ) {
-    final isDemoPref = ref.read(userPrefsProvider).getIsDemo() ?? false;
-    if (isDemoPref) {
-      showErrorSnackBar(
-          context: context, text: ErrorString.demoSearch.value);
-      return;
-    }
+    final isValid = formKey.currentState!.validate();
 
-    FocusManager.instance.primaryFocus?.unfocus();
+    if (!isValid) return;
 
-    final showResultsController = ref.read(showResultsProvider.notifier);
+      final isDemoPref = ref.read(userPrefsProvider).getIsDemo() ?? false;
+      if (isDemoPref) {
+        showErrorSnackBar(context: context, text: ErrorString.demoSearch.value);
+        return;
+      }
 
-    final showSearchLoaderController =
-        ref.read(showSearchLoaderProvider.notifier);
+      FocusManager.instance.primaryFocus?.unfocus();
 
-    final searchNotifierController = ref.read(searchNotifierProvider.notifier);
+      final showResultsController = ref.read(showResultsProvider.notifier);
 
-    if (searchTextController.text.isEmpty) {
-      showResultsController.update((state) => false);
-    } else {
-      showSearchLoaderController.update((state) => true);
+      final showSearchLoaderController =
+          ref.read(showSearchLoaderProvider.notifier);
 
-      searchNotifierController
-          .fetchSearchResults(
-        context,
-        searchTextController.text,
-      )
-          .then((value) {
-        if (value.isEmpty) {
-          showResultsController.update((state) => false);
-        } else {
-          showResultsController.update((state) => true);
-        }
+      final searchNotifierController =
+          ref.read(searchNotifierProvider.notifier);
 
-        showSearchLoaderController.update((state) => false);
-      });
-    }
+      if (searchTextController.text.isEmpty) {
+        showResultsController.update((state) => false);
+      } else {
+        showSearchLoaderController.update((state) => true);
+
+        searchNotifierController
+            .fetchSearchResults(
+          context,
+          searchTextController.text,
+        )
+            .then((value) {
+          if (value.isEmpty) {
+            showResultsController.update((state) => false);
+          } else {
+            showResultsController.update((state) => true);
+          }
+
+          showSearchLoaderController.update((state) => false);
+        });
+      }
   }
 }

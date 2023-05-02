@@ -86,6 +86,7 @@ class EditSubscriptionScreen extends HookConsumerWidget {
                         .read(subscriptionNotifierProvider.notifier)
                         .updateCategoryName(
                           context,
+                          formKey,
                           listItemId,
                           newTitleController.text,
                         )
