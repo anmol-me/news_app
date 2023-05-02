@@ -4,11 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:news_app/router.dart';
+import 'package:universal_platform/universal_platform.dart';
 import 'url_strategy/nonweb_url_strategy.dart'
     if (dart.library.html) 'url_strategy/web_url_strategy.dart';
 import 'package:news_app/common/constants.dart';
 import 'features/authentication/repository/user_preferences.dart';
 import 'features/settings/repository/settings_repository.dart';
+import 'package:window_manager/window_manager.dart';
 
 final themeModeProvider = Provider<ThemeMode>((ref) {
   final isDarkModeEnabled = ref.watch(userSettingsProvider);
@@ -25,6 +27,17 @@ final themeModeProvider = Provider<ThemeMode>((ref) {
 void main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
+
+  if (UniversalPlatform.isDesktop) {
+    await windowManager.ensureInitialized();
+    WindowOptions windowOptions =
+        const WindowOptions(minimumSize: Size(430, 630));
+    windowManager.waitUntilReadyToShow(windowOptions, () async {
+      await windowManager.show();
+      await windowManager.focus();
+    });
+  }
+
   await UserPreferences.init();
   await UserSettings.init();
   configureUrl();
