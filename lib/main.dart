@@ -62,17 +62,26 @@ class _MyAppState extends ConsumerState<MyApp> {
       themeMode: themeMode,
       darkTheme: ThemeData.dark(),
       theme: ThemeData(
-        primarySwatch: Colors.red,
+        useMaterial3: true,
         colorScheme: ColorScheme.fromSwatch().copyWith(
-          secondary: colorRed,
+          background: Colors.grey.shade50,
+          surface: Colors.grey.shade50,
+          surfaceTint: Colors.grey.shade50,
+          outline: Colors.black54,
         ),
-
-        /// Todo: Change in Auth
+        //
+        textSelectionTheme: TextSelectionThemeData(
+          cursorColor: colorAppbarForeground,
+          selectionColor: Colors.red.shade100,
+        ),
+        //
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
             backgroundColor: colorRed,
+            foregroundColor: Colors.white,
           ),
         ),
+        //
         appBarTheme: AppBarTheme(
           color: colorAppbarBackground,
           foregroundColor: colorAppbarForeground,

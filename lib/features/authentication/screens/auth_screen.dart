@@ -155,9 +155,6 @@ class AuthScreen extends HookConsumerWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: colorRed,
-                        ),
                         onPressed: () => authRepo.login(
                           formKey: formKey,
                           context: context,
