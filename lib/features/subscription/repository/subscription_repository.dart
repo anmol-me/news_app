@@ -115,7 +115,15 @@ class SubscriptionNotifier extends Notifier<List<CategoryList>> {
     String categoryTitle,
     BuildContext context,
   ) async {
-    await Future.delayed(const Duration(seconds: 5));
+    if (categoryTitle == '') {
+      showErrorSnackBar(
+        context: context,
+        text: ErrorString.emptyField.value,
+      );
+      Navigator.of(context).pop();
+      return;
+    }
+
     try {
       final res = await postHttpResp(
         uri: null,
@@ -128,13 +136,11 @@ class SubscriptionNotifier extends Notifier<List<CategoryList>> {
         if (context.mounted) {
           // Pops bottom sheet for creating category
           Navigator.of(context).pop();
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              behavior: SnackBarBehavior.floating,
-              duration: const Duration(seconds: 10),
-              backgroundColor: Theme.of(context).colorScheme.error,
-              content: Text(ErrorString.catAlreadyExists.value),
-            ),
+
+          showErrorSnackBar(
+            context: context,
+            text: ErrorString.catAlreadyExists.value,
+            duration: const Duration(seconds: 10),
           );
         }
         return;

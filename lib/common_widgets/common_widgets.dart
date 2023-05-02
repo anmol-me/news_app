@@ -73,10 +73,12 @@ ScaffoldFeatureController<SnackBar, SnackBarClosedReason> showSnackBar({
 ScaffoldFeatureController<SnackBar, SnackBarClosedReason> showErrorSnackBar({
   required BuildContext context,
   required String text,
+  Duration? duration,
 }) {
   return ScaffoldMessenger.of(context).showSnackBar(
     SnackBar(
       behavior: SnackBarBehavior.floating,
+      duration: duration ?? const Duration(seconds: 5),
       backgroundColor: Theme.of(context).colorScheme.error,
       content: Text(text),
     ),
