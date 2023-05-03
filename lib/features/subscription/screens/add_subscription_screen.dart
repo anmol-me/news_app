@@ -169,7 +169,7 @@ class AddSubscription extends HookConsumerWidget {
               const SizedBox(height: 15),
               Expanded(
                 child: discoverSubscription.isEmpty
-                    ? const Text('Empty List')
+                    ? const Text('Discover new feeds')
                     : ListView.builder(
                         itemCount: discoverSubscription.length,
                         itemBuilder: (context, index) {

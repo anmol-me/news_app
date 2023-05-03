@@ -8,7 +8,7 @@ class FirstSearchWidget extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return Center(
       child: Image.asset(
-        'assets/search_results.png',
+        'assets/images/search_results.png',
         width: 350,
         height: 350,
         fit: BoxFit.cover,

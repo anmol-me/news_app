@@ -33,6 +33,8 @@ class SubscriptionNotifier extends Notifier<List<CategoryList>> {
     return [];
   }
 
+  void clearState() => state.clear();
+
   Future<List<CategoryList>> fetchCategories(
     BuildContext context,
   ) async {

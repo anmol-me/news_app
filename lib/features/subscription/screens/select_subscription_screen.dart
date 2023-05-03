@@ -82,6 +82,16 @@ class SelectSubscriptionScreen extends HookConsumerWidget {
         ),
         title: const Text('Select Subscription'),
         actions: [
+          TextButton(
+            onPressed: () =>
+                ref.refresh(subscriptionNotifierProvider.notifier).clearState(),
+            child: Text(
+              'Clear',
+              style: TextStyle(
+                color: colorRed,
+              ),
+            ),
+          ),
           IconButton(
             onPressed: () => !isLoadingSubs
                 ? context.pushNamed(AddSubscription.routeNamed)

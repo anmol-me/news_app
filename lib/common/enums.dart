@@ -71,7 +71,7 @@ enum OrderBy {
 }
 
 enum Constants {
-  imageNotFoundUrl('assets/notfound.png');
+  imageNotFoundUrl('assets/images/notfound.png');
 
   final String value;
 

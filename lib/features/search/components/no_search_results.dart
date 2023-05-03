@@ -9,7 +9,7 @@ class NoSearchResultsWidget extends ConsumerWidget {
 
     return Center(
       child: Image.asset(
-        'assets/search_results_not_found.png',
+        'assets/images/search_results_not_found.png',
         width: 350,
         height: 350,
         fit: BoxFit.cover,
