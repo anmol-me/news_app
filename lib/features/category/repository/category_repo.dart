@@ -12,6 +12,7 @@ import '../../../common/api_methods.dart';
 import '../../../common/error.dart';
 import '../../../models/news.dart';
 import '../../authentication/repository/user_preferences.dart';
+import '../../details/components/methods.dart';
 import '../screens/category_screen.dart';
 
 /// Providers
@@ -73,6 +74,8 @@ class CategoryNotifier extends Notifier<List<News>> {
         String categoryTitleTextDecoded =
             utf8.decode(info['feed']['category']['title'].runes.toList());
 
+        final contentFormatted = getContent(info['content']);
+
         Status status =
             info['status'] == 'unread' ? Status.unread : Status.read;
 
@@ -86,7 +89,7 @@ class CategoryNotifier extends Notifier<List<News>> {
           readTime: info['reading_time'],
           isFav: info['starred'],
           link: info['url'],
-          content: info['content'],
+          content: contentFormatted,
           imageUrl: imageUrl,
           status: status,
           publishedTime: dateTime,

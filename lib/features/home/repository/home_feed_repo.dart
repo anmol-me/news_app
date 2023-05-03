@@ -54,16 +54,14 @@ class HomeFeedNotifier extends Notifier<List<News>> {
 
     try {
       final userPassEncoded = ref.read(userPrefsProvider).getAuthData()!;
-      print('---> $userPassEncoded');
+
       final res = await getHttpResp(uri, userPassEncoded);
 
       if (res.statusCode >= 400 && res.statusCode <= 599) {
         throw ServerErrorException(res);
       }
 
-      Map<String, dynamic> decodedData = jsonDecode(
-        utf8.decode(res.bodyBytes),
-      );
+      Map<String, dynamic> decodedData = jsonDecode(res.body);
 
       final List<News> fetchedNewsList = [];
 
@@ -76,6 +74,10 @@ class HomeFeedNotifier extends Notifier<List<News>> {
 
         final contentFormatted = getContent(info['content']);
 
+        String titleTextDecoded = utf8.decode(info['title'].runes.toList());
+        String categoryTitleTextDecoded =
+        utf8.decode(info['feed']['category']['title'].runes.toList());
+
         Status status =
             info['status'] == 'unread' ? Status.unread : Status.read;
 
@@ -83,8 +85,8 @@ class HomeFeedNotifier extends Notifier<List<News>> {
           entryId: info['id'],
           feedId: info['feed_id'],
           catId: info['feed']['category']['id'],
-          categoryTitle: info['feed']['category']['title'],
-          titleText: info['title'],
+          categoryTitle: categoryTitleTextDecoded,
+          titleText: titleTextDecoded,
           author: info['author'],
           readTime: info['reading_time'],
           isFav: info['starred'],
