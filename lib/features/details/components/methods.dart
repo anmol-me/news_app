@@ -14,6 +14,13 @@ String getContent(String content) {
   return contentDecoded;
 }
 
+String getContentJson(String content) {
+  final preContent = content.replaceAll('</p>', '\n\n');
+  final document = parse(preContent);
+  final contentStripped = parse(document.body!.text).documentElement!.text;
+  return contentStripped;
+}
+
 class NewsDetailsMethods {
   void openLink(
     String link,

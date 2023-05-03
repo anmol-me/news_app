@@ -132,7 +132,7 @@ class HomeFeedNotifier extends Notifier<List<News>> {
 
         DateTime dateTime = getDateTime(info);
 
-        final contentFormatted = getContent(info['content']);
+        final contentFormatted = getContentJson(info['content']);
 
         Status status =
             info['status'] == 'unread' ? Status.unread : Status.read;
