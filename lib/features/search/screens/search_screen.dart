@@ -4,15 +4,19 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:news_app/common_widgets/common_widgets.dart';
 import 'package:news_app/features/home/screens/home_feed_screen.dart';
+import 'package:news_app/features/search/components/first_search_widget.dart';
+import 'package:news_app/features/search/components/no_search_results.dart';
 import 'package:news_app/features/search/repository/search_repo.dart';
 
 import '../../home/providers/home_providers.dart';
 import '../components/search_text_field.dart';
 
 /// Providers
-final showResultsProvider = StateProvider.autoDispose((ref) => false);
+final showNoResultsProvider = StateProvider.autoDispose((ref) => false);
 
 final showSearchLoaderProvider = StateProvider((ref) => false);
+
+final showFirstSearchProvider = StateProvider((ref) => true);
 
 /// Widgets
 class SearchScreen extends HookConsumerWidget {
@@ -25,7 +29,23 @@ class SearchScreen extends HookConsumerWidget {
     final formKey = useMemoized(GlobalKey<FormState>.new, const []);
     final searchTextController = useTextEditingController();
 
-    final showResults = ref.watch(showResultsProvider);
+    final showFirstSearch = ref.watch(showFirstSearchProvider);
+
+    useEffect(
+      () {
+        if (!showFirstSearch) {
+          Future.delayed(Duration.zero).then(
+            (_) => ref
+                .read(showFirstSearchProvider.notifier)
+                .update((state) => true),
+          );
+        }
+        return null;
+      },
+      [],
+    );
+
+    final showNoResults = ref.watch(showNoResultsProvider);
 
     final showSearchLoader = ref.watch(showSearchLoaderProvider);
 
@@ -44,40 +64,39 @@ class SearchScreen extends HookConsumerWidget {
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SearchTextField(
                 searchTextController: searchTextController,
                 formKey: formKey,
               ),
               const SizedBox(height: 5),
-              showSearchLoader
-                  ? const LinearLoader()
-                  : !showResults
+              showFirstSearch
+                  ? const FirstSearchWidget()
+                  : showSearchLoader
+                      ? const LinearLoader()
+                      : showNoResults
+                          ? const NoSearchResultsWidget()
+                          : Expanded(
+                              child: Scrollbar(
+                                controller: scrollController,
+                                child: ListView.builder(
+                                  controller: scrollController,
+                                  shrinkWrap: true,
+                                  itemCount: searchNotifier.length,
+                                  itemBuilder: (context, index) {
+                                    final newsItem = searchNotifier[index];
 
-                      /// Todo: List Empty Search
-                      ? const Center(child: Text('No results'))
-                      : Expanded(
-                          child: Scrollbar(
-                            controller: scrollController,
-                            child: ListView.builder(
-                              controller: scrollController,
-                              shrinkWrap: true,
-                              itemCount: searchNotifier.length,
-                              itemBuilder: (context, index) {
-                                final newsItem = searchNotifier[index];
-
-                                return buildExpansionWidget(
-                                  'search',
-                                  newsItem,
-                                  context,
-                                  newsNotifierController,
-                                  ref,
-                                );
-                              },
+                                    return buildExpansionWidget(
+                                      'search',
+                                      newsItem,
+                                      context,
+                                      newsNotifierController,
+                                      ref,
+                                    );
+                                  },
+                                ),
+                              ),
                             ),
-                          ),
-                        ),
             ],
           ),
         ),

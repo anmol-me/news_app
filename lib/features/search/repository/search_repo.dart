@@ -205,41 +205,38 @@ class SearchNotifier extends AutoDisposeNotifier<List<News>> {
 
     if (!isValid) return;
 
-      final isDemoPref = ref.read(userPrefsProvider).getIsDemo() ?? false;
-      if (isDemoPref) {
-        showErrorSnackBar(context: context, text: ErrorString.demoSearch.value);
-        return;
-      }
+    final isDemoPref = ref.read(userPrefsProvider).getIsDemo() ?? false;
+    if (isDemoPref) {
+      showErrorSnackBar(context: context, text: ErrorString.demoSearch.value);
+      return;
+    }
 
-      FocusManager.instance.primaryFocus?.unfocus();
+    ref.read(showFirstSearchProvider.notifier).update((state) => false);
 
-      final showResultsController = ref.read(showResultsProvider.notifier);
+    FocusManager.instance.primaryFocus?.unfocus();
 
-      final showSearchLoaderController =
-          ref.read(showSearchLoaderProvider.notifier);
+    final showNoResultsController = ref.read(showNoResultsProvider.notifier);
 
-      final searchNotifierController =
-          ref.read(searchNotifierProvider.notifier);
+    final showSearchLoaderController =
+        ref.read(showSearchLoaderProvider.notifier);
 
-      if (searchTextController.text.isEmpty) {
-        showResultsController.update((state) => false);
-      } else {
-        showSearchLoaderController.update((state) => true);
+      showSearchLoaderController.update((state) => true);
 
-        searchNotifierController
-            .fetchSearchResults(
-          context,
-          searchTextController.text,
-        )
-            .then((value) {
-          if (value.isEmpty) {
-            showResultsController.update((state) => false);
-          } else {
-            showResultsController.update((state) => true);
-          }
+      ref
+          .read(searchNotifierProvider.notifier)
+          .fetchSearchResults(
+            context,
+            searchTextController.text,
+          )
+          .then((value) {
+        if (value.isEmpty) {
+          showNoResultsController.update((state) => true);
+        } else {
+          showNoResultsController.update((state) => false);
+        }
 
-          showSearchLoaderController.update((state) => false);
-        });
-      }
+        showSearchLoaderController.update((state) => false);
+      });
+
   }
 }

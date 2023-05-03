@@ -65,6 +65,8 @@ flutter:
     - assets/splash.png
     - assets/plus.png
     - assets/notfound.png
+    - assets/search_results.png
+    - assets/search_results_not_found.png
     - assets/demo_files/
   #   - images/a_dot_ham.jpeg
 
