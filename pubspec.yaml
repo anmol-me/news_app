@@ -19,7 +19,7 @@ dependencies:
   hooks_riverpod: ^2.3.6
   webview_flutter: ^4.2.0
   webview_flutter_web: ^0.2.2+1
-  http: ^0.13.5
+  http: ^0.13.6
 #  flutter_html: ^2.2.1
   flutter_html: ^3.0.0-alpha.6
 #  universal_html: ^2.2.1
@@ -32,7 +32,7 @@ dependencies:
   universal_platform: ^1.0.0+1
   path_provider: ^2.0.14
   path: ^1.8.2
-  html: ^0.15.2
+  html: ^0.15.3
   beautiful_soup_dart: ^0.3.0
   cached_network_image: ^3.2.3
   loading_animation_widget: ^1.2.0+4
