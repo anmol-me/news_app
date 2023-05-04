@@ -11,6 +11,7 @@ import '../../../common/enums.dart';
 import '../../../common_widgets/build_popup_menu_button.dart';
 import '../../../common_widgets/build_top_bar.dart';
 import '../../../components/app_back_button.dart';
+import '../../authentication/repository/user_preferences.dart';
 import '../../home/providers/home_providers.dart';
 import '../../home/screens/home_feed_screen.dart';
 import '../../search/screens/search_screen.dart';
@@ -69,6 +70,16 @@ class CategoryScreen extends HookConsumerWidget {
 
     useEffect(
       () {
+        final isDemoPref = ref.read(userPrefsProvider).getIsDemo() ?? false;
+        if (isDemoPref) {
+          Future.delayed(Duration.zero).then(
+            (_) => ref
+                .read(categoryNotifierProvider.notifier)
+                .fetchDemoCategoryEntries(catId, context),
+          );
+          return;
+        }
+
         Future.delayed(Duration.zero)
             .then((_) => isCatLoadingController.update((state) => true));
 

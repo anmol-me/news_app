@@ -107,7 +107,11 @@ class AuthRepo {
       final authData = userPrefs.getAuthData();
       final urlData = userPrefs.getUrlData();
 
-      if (!isAuthSet) {
+      if (!isAuthSet ||
+          authData == null ||
+          authData.isEmpty ||
+          urlData == null ||
+          urlData.isEmpty) {
         if (context.mounted) {
           showErrorSnackBar(
             context: context,
@@ -118,7 +122,7 @@ class AuthRepo {
         return;
       }
 
-      final res = await authUrlChecker(authData!, urlData!);
+      final res = await authUrlChecker(authData, urlData);
 
       log('Login Status: ${res.statusCode}');
 

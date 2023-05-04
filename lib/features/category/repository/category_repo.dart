@@ -106,8 +106,62 @@ class CategoryNotifier extends Notifier<List<News>> {
           context: context, text: ErrorString.requestTimeout.value);
     } on ServerErrorException catch (e) {
       showErrorSnackBar(context: context, text: '$e');
-    } catch (e) {
+    } catch (_) {
       showErrorSnackBar(context: context, text: ErrorString.generalError.value);
+    }
+  }
+
+  Future<void> fetchDemoCategoryEntries(
+    int id,
+    BuildContext context,
+  ) async {
+    state.clear();
+    try {
+      String data = await DefaultAssetBundle.of(context).loadString(
+        'assets/demo_files/entries.json',
+      );
+
+      Map<String, dynamic> decodedData = jsonDecode(data);
+
+      final List<News> fetchedNewsList = [];
+
+      for (var i = 0; i < decodedData['entries'].length; i++) {
+        final info = decodedData['entries'][i];
+
+        if (info['feed']['category']['id'] == id) {
+          String imageUrl = getImageUrl(info);
+
+          DateTime dateTime = getDateTime(info);
+
+          final contentFormatted = getContentJson(info['content']);
+
+          Status status =
+              info['status'] == 'unread' ? Status.unread : Status.read;
+
+          final createdNews = News(
+            entryId: info['id'],
+            feedId: info['feed_id'],
+            catId: info['feed']['category']['id'],
+            categoryTitle: info['feed']['category']['title'],
+            titleText: info['title'],
+            author: info['author'],
+            readTime: info['reading_time'],
+            isFav: info['starred'],
+            link: info['url'],
+            content: contentFormatted,
+            imageUrl: imageUrl,
+            status: status,
+            publishedTime: dateTime,
+          );
+
+          fetchedNewsList.add(createdNews);
+        }
+      }
+
+      state = fetchedNewsList;
+    } catch (_) {
+      showErrorSnackBar(
+          context: context, text: ErrorString.somethingWrongAdmin.value);
     }
   }
 
