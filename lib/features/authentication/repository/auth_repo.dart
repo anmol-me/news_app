@@ -167,6 +167,7 @@ class AuthRepo {
     ref.invalidate(manageCateNotifierProvider);
     ref.invalidate(userSettingsProvider);
     ref.invalidate(authRepoProvider);
+    ref.invalidate(isStarredProvider);
 
     if (ref.read(isHomeDrawerOpened)) {
       if (context.mounted) Navigator.of(context).pop();

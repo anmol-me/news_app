@@ -175,8 +175,11 @@ class _HomeWebScreenState extends ConsumerState<HomeWebScreen> {
                 else
                   Expanded(
                     child: RefreshIndicator(
-                      onRefresh: () =>
-                          ref.read(refreshProvider).refreshAllMain(context),
+                      onRefresh: () {
+                        return ref
+                            .read(refreshProvider)
+                            .refreshAllMain(context);
+                      },
                       color: colorRed,
                       child: newsNotifier.isEmpty && isStarred
                           ? const CheckAgainWidget()

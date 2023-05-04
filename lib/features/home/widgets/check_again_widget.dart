@@ -1,19 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:news_app/common/common_providers.dart';
 import 'package:news_app/common_widgets/common_widgets.dart';
 
 import '../../../common/common_methods.dart';
 import '../../../common/constants.dart';
+import '../../authentication/repository/user_preferences.dart';
 import '../providers/home_providers.dart';
-import '../screens/home_feed_screen.dart';
 
-class CheckAgainWidget extends ConsumerWidget {
+class CheckAgainWidget extends HookConsumerWidget {
   const CheckAgainWidget({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final isLoading = useState(false);
+
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -29,24 +31,34 @@ class CheckAgainWidget extends ConsumerWidget {
               ref.invalidate(homeSortDirectionProvider);
               ref.invalidate(homeIsShowReadProvider);
 
-              ref
-                  .read(homePageLoadingProvider.notifier)
-                  .update((state) => false);
-              context.pushNamed(HomeFeedScreen.routeNamed);
+              final isDemoUser =
+                  ref.read(userPrefsProvider).getIsDemo() ?? false;
+              if (isDemoUser) {
+                ref
+                    .refresh(homeFeedProvider.notifier)
+                    .fetchDemoEntries(context);
+              } else {
+                isLoading.value = true;
+
+                ref
+                    .refresh(homeFeedProvider.notifier)
+                    .fetchEntries(context)
+                    .then(
+                      (_) => isLoading.value = false,
+                    );
+              }
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: colorRed,
             ),
-            child: const Text('Check Again'),
+            child:isLoading.value ? const CircularLoading() : const Text('Check Again'),
           ),
           const SizedBox(height: 10),
           TextBarButton(
             text: 'Home',
             textColor: colorRed,
             onTap: () {
-              if (ref.read(emptyStateDisableProvider)) {
-
-              }
+              if (ref.read(emptyStateDisableProvider)) {}
               ref.read(refreshProvider).refreshAllMain(context);
             },
           ),
