@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:news_app/models/news.dart';
 
+import '../features/authentication/repository/user_preferences.dart';
 import '../features/details/components/providers.dart';
 import '../features/home/providers/home_providers.dart';
 import '../features/search/repository/search_repo.dart';
@@ -113,6 +114,11 @@ class ReadButton extends ConsumerWidget {
 
     return InkWell(
       onTap: () {
+        final isDemoPref = ref.read(userPrefsProvider).getIsDemo() ?? false;
+        if (isDemoPref) {
+          return;
+        }
+
         Status stat;
 
         newsItem.status == Status.read
@@ -181,6 +187,11 @@ class StarredButton extends ConsumerWidget {
 
     return InkWell(
       onTap: () {
+        final isDemoPref = ref.read(userPrefsProvider).getIsDemo() ?? false;
+        if (isDemoPref) {
+          return;
+        }
+
         if (screenName == 'search') {
           searchNotifierController.toggleFavStatus(
             newsItem.entryId,

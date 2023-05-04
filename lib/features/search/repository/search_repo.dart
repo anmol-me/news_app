@@ -119,8 +119,6 @@ class SearchNotifier extends AutoDisposeNotifier<List<News>> {
     int newsId,
     BuildContext context,
   ) async {
-    final url = userPrefs.getUrlData();
-
     try {
       state = [
         for (final news in state)
@@ -131,6 +129,7 @@ class SearchNotifier extends AutoDisposeNotifier<List<News>> {
       ];
 
       // Online
+      final url = userPrefs.getUrlData();
       Uri uri = Uri.https(url!, 'v1/entries/$newsId/bookmark');
 
       final res = await putHttpResp(
@@ -162,14 +161,13 @@ class SearchNotifier extends AutoDisposeNotifier<List<News>> {
     BuildContext context,
   ) async {
     try {
-      final url = userPrefs.getUrlData();
-
       state = [
         for (final news in state)
           if (news.entryId == newsId) news.copyWith(status: stat) else news,
       ];
 
       // Online
+      final url = userPrefs.getUrlData();
       final res = await putHttpResp(
         url: 'https://$url/v1/entries',
         uri: null,
@@ -220,23 +218,22 @@ class SearchNotifier extends AutoDisposeNotifier<List<News>> {
     final showSearchLoaderController =
         ref.read(showSearchLoaderProvider.notifier);
 
-      showSearchLoaderController.update((state) => true);
+    showSearchLoaderController.update((state) => true);
 
-      ref
-          .read(searchNotifierProvider.notifier)
-          .fetchSearchResults(
-            context,
-            searchTextController.text,
-          )
-          .then((value) {
-        if (value.isEmpty) {
-          showNoResultsController.update((state) => true);
-        } else {
-          showNoResultsController.update((state) => false);
-        }
+    ref
+        .read(searchNotifierProvider.notifier)
+        .fetchSearchResults(
+          context,
+          searchTextController.text,
+        )
+        .then((value) {
+      if (value.isEmpty) {
+        showNoResultsController.update((state) => true);
+      } else {
+        showNoResultsController.update((state) => false);
+      }
 
-        showSearchLoaderController.update((state) => false);
-      });
-
+      showSearchLoaderController.update((state) => false);
+    });
   }
 }
