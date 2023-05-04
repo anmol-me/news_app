@@ -66,7 +66,7 @@ class _HomeFeedScreenState extends ConsumerState<HomeFeedScreen> {
 
   @override
   Widget build(BuildContext context) {
-    ref.listen(homeFeedProvider, (previous, List next) {
+    ref.listen<List>(homeFeedProvider, (previous, next) {
       if (next.isEmpty) {
         ref.read(emptyStateDisableProvider.notifier).update((state) => true);
       } else {

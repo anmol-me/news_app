@@ -70,7 +70,7 @@ class _HomeWebScreenState extends ConsumerState<HomeWebScreen> {
   Widget build(BuildContext context) {
     final isStarred = ref.watch(isStarredProvider);
 
-    ref.listen(homeFeedProvider, (previous, List next) {
+    ref.listen<List>(homeFeedProvider, (previous, next) {
       if (next.isEmpty && !isStarred) {
         ref.read(emptyStateDisableProvider.notifier).update((state) => true);
       } else {

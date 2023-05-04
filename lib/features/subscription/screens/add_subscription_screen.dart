@@ -36,7 +36,7 @@ class AddSubscription extends HookConsumerWidget {
     final showAsterisk = ref.watch(showAsteriskProvider);
     final selectedCategory = ref.watch(selectedCategoryProvider);
 
-    ref.listen(selectedCategoryProvider, (_, String nextSelectedCategory) {
+    ref.listen<String>(selectedCategoryProvider, (_, nextSelectedCategory) {
       if (showAsterisk == true && nextSelectedCategory != '') {
         ref.read(showAsteriskProvider.notifier).update((state) => false);
       }
