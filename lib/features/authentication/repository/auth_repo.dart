@@ -118,6 +118,7 @@ class AuthRepo {
             text: ErrorString.internalError.value,
           );
         }
+        isLoadingLoginController.update((state) => false);
         userPrefs.clearPrefs();
         return;
       }
@@ -127,6 +128,7 @@ class AuthRepo {
       log('Login Status: ${res.statusCode}');
 
       if (res.statusCode >= 400 && res.statusCode <= 599) {
+        isLoadingLoginController.update((state) => false);
         throw ServerErrorException(res);
       }
 
@@ -137,6 +139,7 @@ class AuthRepo {
           context.goNamed(HomeFeedScreen.routeNamed);
         }
       }
+      isLoadingLoginController.update((state) => false);
     } on SocketException catch (_) {
       userPrefs.clearPrefs();
       showErrorSnackBar(
