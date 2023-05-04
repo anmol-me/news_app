@@ -28,8 +28,8 @@ class SubscriptionNotifier extends Notifier<List<CategoryList>> {
   @override
   List<CategoryList> build() {
     userPrefs = ref.watch(userPrefsProvider);
-    userPassEncoded = userPrefs.getAuthData()!;
-    baseUrl = userPrefs.getUrlData()!;
+    userPassEncoded = userPrefs.getAuthData() ?? '';
+    baseUrl = userPrefs.getUrlData() ?? '';
     return [];
   }
 
