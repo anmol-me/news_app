@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:news_app/common/common_providers.dart';
+import 'package:news_app/common_widgets/app_image.dart';
 import 'package:news_app/common_widgets/common_widgets.dart';
 
 import '../../../common/common_methods.dart';
@@ -20,6 +21,11 @@ class CheckAgainWidget extends HookConsumerWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
+          const AppImage(
+            'assets/images/items_not_found.png',
+            height: 250,
+            width: 250,
+          ),
           const Text('You have no favourites'),
           const SizedBox(height: 10),
           ElevatedButton(
@@ -51,7 +57,9 @@ class CheckAgainWidget extends HookConsumerWidget {
             style: ElevatedButton.styleFrom(
               backgroundColor: colorRed,
             ),
-            child:isLoading.value ? const CircularLoading() : const Text('Check Again'),
+            child: isLoading.value
+                ? const CircularLoading()
+                : const Text('Check Again'),
           ),
           const SizedBox(height: 10),
           TextBarButton(

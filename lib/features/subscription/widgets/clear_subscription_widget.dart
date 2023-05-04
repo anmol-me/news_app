@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:news_app/common_widgets/app_image.dart';
 
 import '../screens/add_subscription_screen.dart';
 import '../screens/select_subscription_screen.dart';
@@ -17,17 +18,11 @@ class ClearSubscriptionWidget extends ConsumerWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          GestureDetector(
+          AppImage(
+            'assets/images/add_items.png',
             onTap: () => !isLoadingSubs
                 ? context.pushNamed(AddSubscription.routeNamed)
                 : null,
-            child: Image.asset(
-              'assets/images/add_items.png',
-              width: 230,
-              height: 230,
-              fit: BoxFit.contain,
-              opacity: const AlwaysStoppedAnimation(0.9),
-            ),
           ),
           const Text(
             'Add subscription to get started',

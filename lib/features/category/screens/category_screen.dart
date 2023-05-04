@@ -8,6 +8,7 @@ import 'package:news_app/features/app_bar/app_drawer.dart';
 
 import '../../../common/constants.dart';
 import '../../../common/enums.dart';
+import '../../../common_widgets/app_image.dart';
 import '../../../common_widgets/build_popup_menu_button.dart';
 import '../../../common_widgets/build_top_bar.dart';
 import '../../../components/app_back_button.dart';
@@ -187,7 +188,21 @@ class CategoryScreen extends HookConsumerWidget {
           if (isCatLoading || isCatLoading)
             const LinearLoader()
           else if (catNewsNotifier.isEmpty)
-            Expanded(child: Center(child: Text(Message.categoryEmpty.value)))
+            Expanded(
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const AppImage(
+                      'assets/images/items_not_found.png',
+                      height: 250,
+                      width: 250,
+                    ),
+                    Text(Message.categoryEmpty.value),
+                  ],
+                ),
+              ),
+            )
           else
             Expanded(
               child: RefreshIndicator(
