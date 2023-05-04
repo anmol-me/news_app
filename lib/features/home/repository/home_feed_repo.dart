@@ -39,8 +39,10 @@ class HomeFeedNotifier extends Notifier<List<News>> {
     return [];
   }
 
+  void clearHomeState() => state.clear();
+
   Future<void> fetchEntries(BuildContext context) async {
-    state.clear();
+    clearHomeState();
 
     final url = userPrefs.getUrlData();
 
@@ -76,7 +78,7 @@ class HomeFeedNotifier extends Notifier<List<News>> {
 
         String titleTextDecoded = utf8.decode(info['title'].runes.toList());
         String categoryTitleTextDecoded =
-        utf8.decode(info['feed']['category']['title'].runes.toList());
+            utf8.decode(info['feed']['category']['title'].runes.toList());
 
         Status status =
             info['status'] == 'unread' ? Status.unread : Status.read;
@@ -114,7 +116,10 @@ class HomeFeedNotifier extends Notifier<List<News>> {
   }
 
   Future<void> fetchDemoEntries(BuildContext context) async {
-    state.clear();
+    final isStarred = ref.read(isStarredProvider);
+
+    clearHomeState();
+
     try {
       print('FETCHING for demo user');
       String data = await DefaultAssetBundle.of(context).loadString(
@@ -128,32 +133,63 @@ class HomeFeedNotifier extends Notifier<List<News>> {
       for (var i = 0; i < decodedData['entries'].length; i++) {
         final info = decodedData['entries'][i];
 
-        String imageUrl = getImageUrl(info);
+        if (!isStarred) {
+          String imageUrl = getImageUrl(info);
 
-        DateTime dateTime = getDateTime(info);
+          DateTime dateTime = getDateTime(info);
 
-        final contentFormatted = getContentJson(info['content']);
+          final contentFormatted = getContentJson(info['content']);
 
-        Status status =
-            info['status'] == 'unread' ? Status.unread : Status.read;
+          Status status =
+              info['status'] == 'unread' ? Status.unread : Status.read;
 
-        final createdNews = News(
-          entryId: info['id'],
-          feedId: info['feed_id'],
-          catId: info['feed']['category']['id'],
-          categoryTitle: info['feed']['category']['title'],
-          titleText: info['title'],
-          author: info['author'],
-          readTime: info['reading_time'],
-          isFav: info['starred'],
-          link: info['url'],
-          content: contentFormatted,
-          imageUrl: imageUrl,
-          status: status,
-          publishedTime: dateTime,
-        );
+          final createdNews = News(
+            entryId: info['id'],
+            feedId: info['feed_id'],
+            catId: info['feed']['category']['id'],
+            categoryTitle: info['feed']['category']['title'],
+            titleText: info['title'],
+            author: info['author'],
+            readTime: info['reading_time'],
+            isFav: info['starred'],
+            link: info['url'],
+            content: contentFormatted,
+            imageUrl: imageUrl,
+            status: status,
+            publishedTime: dateTime,
+          );
 
-        fetchedNewsList.add(createdNews);
+          fetchedNewsList.add(createdNews);
+        } else {
+          if (info['starred'] == true) {
+            String imageUrl = getImageUrl(info);
+
+            DateTime dateTime = getDateTime(info);
+
+            final contentFormatted = getContentJson(info['content']);
+
+            Status status =
+                info['status'] == 'unread' ? Status.unread : Status.read;
+
+            final createdNews = News(
+              entryId: info['id'],
+              feedId: info['feed_id'],
+              catId: info['feed']['category']['id'],
+              categoryTitle: info['feed']['category']['title'],
+              titleText: info['title'],
+              author: info['author'],
+              readTime: info['reading_time'],
+              isFav: info['starred'],
+              link: info['url'],
+              content: contentFormatted,
+              imageUrl: imageUrl,
+              status: status,
+              publishedTime: dateTime,
+            );
+
+            fetchedNewsList.add(createdNews);
+          }
+        }
       }
 
       state = fetchedNewsList;

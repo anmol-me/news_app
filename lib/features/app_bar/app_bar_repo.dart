@@ -55,4 +55,19 @@ class AppBarRepository {
           );
     }
   }
+
+  void starredDemoFunction(
+    BuildContext context,
+  ) {
+    Navigator.of(context).pop();
+
+    ref.read(isStarredProvider.notifier).update((state) => !state);
+
+    if (GoRouterState.of(context).location == '/home') {
+      ref.refresh(homeFeedProvider.notifier).fetchDemoEntries(context);
+    } else {
+      context.goNamed(HomeFeedScreen.routeNamed);
+      ref.refresh(homeFeedProvider.notifier).fetchDemoEntries(context);
+    }
+  }
 }

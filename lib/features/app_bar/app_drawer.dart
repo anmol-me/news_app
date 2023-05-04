@@ -38,7 +38,8 @@ class AppDrawer extends HookConsumerWidget {
     useEffect(
       () {
         final isDemoPref = ref.read(userPrefsProvider).getIsDemo() ?? false;
-        final isUserEmpty = ref.read(userNotifierProvider)?.username.isEmpty ?? false;
+        final isUserEmpty =
+            ref.read(userNotifierProvider)?.username.isEmpty ?? false;
 
         if (isDemoPref && isUserEmpty) {
           ref.read(userNotifierProvider.notifier).fetchDemoUserData(context);
@@ -107,8 +108,9 @@ class AppDrawer extends HookConsumerWidget {
                     : ListTile(
                         leading: const Icon(Icons.home_outlined),
                         title: const Text('All Items'),
-                        onTap: () =>
-                            ref.read(refreshProvider).refreshAllMain(context),
+                        onTap: () => ref
+                            .refresh(refreshProvider)
+                            .refreshAllMain(context),
                       ),
                 emptyStateDisable
                     ? ListTile(
@@ -129,7 +131,16 @@ class AppDrawer extends HookConsumerWidget {
                           isStarred ? Icons.star : Icons.star_border_outlined,
                         ),
                         title: const Text('Starred Items'),
-                        onTap: () => appBarRepo.starredFunction(context),
+                        onTap: () {
+                          final isDemoPref =
+                              ref.read(userPrefsProvider).getIsDemo() ?? false;
+                          if (isDemoPref) {
+                            appBarRepo.starredDemoFunction(context);
+                            return;
+                          }
+
+                          appBarRepo.starredFunction(context);
+                        },
                       ),
                 ListTile(
                   leading: const Icon(Icons.subscriptions_rounded),

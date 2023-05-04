@@ -25,10 +25,16 @@ class RefreshMethods {
   Future<void> refreshAllMain(
     BuildContext context,
   ) async {
+    final isDrawerOpened = ref.read(isHomeDrawerOpened);
     final isDemoPref = ref.read(userPrefsProvider).getIsDemo() ?? false;
+
     if (isDemoPref) {
-      Navigator.of(context).pop();
-      context.go('/home');
+      if (isDrawerOpened) {
+        Navigator.of(context).pop();
+      }
+      ref.invalidate(isStarredProvider);
+      ref.refresh(homeFeedProvider.notifier).fetchDemoEntries(context);
+      context.push('/home');
       return;
     }
 
@@ -37,11 +43,8 @@ class RefreshMethods {
 
     final currentLocation = GoRouterState.of(context).name;
 
-    final isDrawerOpened = ref.read(isHomeDrawerOpened);
-
     if (isDrawerOpened) {
       Navigator.of(context).pop();
-      ref.read(isHomeDrawerOpened.notifier).update((state) => false);
     }
 
     isLoadingHomePageController.update((state) => true);
@@ -103,7 +106,7 @@ DateTime getDateTime(info) {
 
 String getImageUrl(info) {
   final imageUrl =
-  html_parser.parse(info['content']).getElementsByTagName('img');
+      html_parser.parse(info['content']).getElementsByTagName('img');
 
   if (imageUrl.isNotEmpty) {
     return imageUrl[0].attributes['src'] ?? '';
