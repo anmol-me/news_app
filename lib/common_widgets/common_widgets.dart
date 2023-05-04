@@ -63,6 +63,8 @@ ScaffoldFeatureController<SnackBar, SnackBarClosedReason> showSnackBar({
   required BuildContext context,
   required String text,
 }) {
+  ScaffoldMessenger.of(context).hideCurrentSnackBar();
+
   return ScaffoldMessenger.of(context).showSnackBar(
     SnackBar(
       behavior: SnackBarBehavior.floating,
@@ -76,6 +78,8 @@ ScaffoldFeatureController<SnackBar, SnackBarClosedReason> showErrorSnackBar({
   required String text,
   Duration? duration,
 }) {
+  ScaffoldMessenger.of(context).hideCurrentSnackBar();
+
   return ScaffoldMessenger.of(context).showSnackBar(
     SnackBar(
       behavior: SnackBarBehavior.floating,
