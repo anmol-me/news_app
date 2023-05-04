@@ -102,16 +102,22 @@ class HomeFeedNotifier extends Notifier<List<News>> {
         fetchedNewsList.add(createdNews);
       }
       state = fetchedNewsList;
-
-      /// Todo: On error, goto authScreen
     } on TimeoutException catch (_) {
-      showErrorDialogue(context, ref, ErrorString.requestTimeout.value);
+      if (context.mounted) {
+        showErrorDialogue(context, ref, ErrorString.requestTimeout.value);
+      }
     } on SocketException catch (_) {
-      showErrorDialogue(context, ref, ErrorString.socket.value);
+      if (context.mounted) {
+        showErrorDialogue(context, ref, ErrorString.socket.value);
+      }
     } on ServerErrorException catch (e) {
-      showErrorDialogue(context, ref, '$e');
-    } catch (e) {
-      showErrorDialogue(context, ref, ErrorString.somethingWrongAdmin.value);
+      if (context.mounted) {
+        showErrorDialogue(context, ref, '$e');
+      }
+    } catch (_) {
+      if (context.mounted) {
+        showErrorDialogue(context, ref, ErrorString.somethingWrongAdmin.value);
+      }
     }
   }
 
@@ -194,7 +200,9 @@ class HomeFeedNotifier extends Notifier<List<News>> {
 
       state = fetchedNewsList;
     } catch (_) {
-      showErrorDialogue(context, ref, ErrorString.somethingWrongAdmin.value);
+      if (context.mounted) {
+        showErrorDialogue(context, ref, ErrorString.somethingWrongAdmin.value);
+      }
     }
   }
 

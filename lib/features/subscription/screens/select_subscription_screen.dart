@@ -71,6 +71,8 @@ class SelectSubscriptionScreen extends HookConsumerWidget {
           );
     }
 
+    final isDemoPref = ref.watch(userPrefsProvider).getIsDemo() ?? false;
+
     final isIos = UniversalPlatform.isIOS;
     final isMacOs = UniversalPlatform.isMacOS;
     final isAndroid = UniversalPlatform.isAndroid;
@@ -82,16 +84,19 @@ class SelectSubscriptionScreen extends HookConsumerWidget {
         ),
         title: const Text('Select Subscription'),
         actions: [
-          TextButton(
-            onPressed: () =>
-                ref.refresh(subscriptionNotifierProvider.notifier).clearState(),
-            child: Text(
-              'Clear',
-              style: TextStyle(
-                color: colorRed,
-              ),
-            ),
-          ),
+          isDemoPref
+              ? TextButton(
+                  onPressed: () => ref
+                      .refresh(subscriptionNotifierProvider.notifier)
+                      .clearState(),
+                  child: Text(
+                    'Clear',
+                    style: TextStyle(
+                      color: colorRed,
+                    ),
+                  ),
+                )
+              : const SizedBox.shrink(),
           IconButton(
             onPressed: () => !isLoadingSubs
                 ? context.pushNamed(AddSubscription.routeNamed)
