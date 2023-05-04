@@ -38,6 +38,8 @@ class CategoryNotifier extends Notifier<List<News>> {
     return [];
   }
 
+  void clearCategoryState() => state.clear();
+
   Future<void> fetchCategoryEntries(
     int id,
     BuildContext context,

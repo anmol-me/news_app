@@ -100,10 +100,23 @@ class _HomeWebScreenState extends ConsumerState<HomeWebScreen> {
     final homeMethods = ref.watch(homeMethodsProvider(context));
     final emptyStateDisable = ref.watch(emptyStateDisableProvider);
 
+    final isDemoUser = ref.watch(userPrefsProvider).getIsDemo() ?? false;
+
     return Scaffold(
       appBar: AppBar(
         title: Text(isStarred ? 'Starred' : 'Feeds'),
         actions: [
+          isDemoUser
+              ? TextButton(
+                  onPressed: () => ref.refresh(homeFeedProvider),
+                  child: Text(
+                    'Clear',
+                    style: TextStyle(
+                      color: colorRed,
+                    ),
+                  ),
+                )
+              : const SizedBox.shrink(),
           if (emptyStateDisable && isLoadingHomePage)
             const SizedBox.shrink()
           else if (emptyStateDisable && !isStarred)
@@ -122,24 +135,6 @@ class _HomeWebScreenState extends ConsumerState<HomeWebScreen> {
                   onPressed: () => context.pushNamed(SearchScreen.routeNamed),
                   icon: const Icon(Icons.search),
                 ),
-
-          /// Todo: Temporary Clear Button
-          IconButton(
-            onPressed: () => ref.refresh(homeFeedProvider),
-            icon: Icon(
-              Icons.clear,
-              color: colorRed,
-            ),
-          ),
-
-          /// Todo: Temporary Clear Button
-          IconButton(
-            onPressed: () => ref.refresh(userPrefsProvider).clearPrefs(),
-            icon: Icon(
-              Icons.delete_outline,
-              color: colorRed,
-            ),
-          ),
           emptyStateDisable
               ? Padding(
                   padding: const EdgeInsets.only(right: 8.0),

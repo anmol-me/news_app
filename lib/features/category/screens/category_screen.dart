@@ -103,6 +103,8 @@ class CategoryScreen extends HookConsumerWidget {
 
     final categoryNotifier = ref.watch(categoryNotifierProvider.notifier);
 
+    final isDemoUser = ref.watch(userPrefsProvider).getIsDemo() ?? false;
+
     final scrollController = useScrollController();
 
     return Scaffold(
@@ -111,6 +113,19 @@ class CategoryScreen extends HookConsumerWidget {
               title: Text(catTitle),
               leading: const AppBackButton(controller: false),
               actions: [
+                isDemoUser
+                    ? TextButton(
+                        onPressed: () => ref
+                            .refresh(categoryNotifierProvider.notifier)
+                            .clearCategoryState(),
+                        child: Text(
+                          'Clear',
+                          style: TextStyle(
+                            color: colorRed,
+                          ),
+                        ),
+                      )
+                    : const SizedBox.shrink(),
                 IconButton(
                   onPressed: () => context.pushNamed(SearchScreen.routeNamed),
                   icon: const Icon(Icons.search),
@@ -128,6 +143,19 @@ class CategoryScreen extends HookConsumerWidget {
           : AppBar(
               title: Text(catTitle),
               actions: [
+                isDemoUser
+                    ? TextButton(
+                        onPressed: () => ref
+                            .refresh(categoryNotifierProvider.notifier)
+                            .clearCategoryState(),
+                        child: Text(
+                          'Clear',
+                          style: TextStyle(
+                            color: colorRed,
+                          ),
+                        ),
+                      )
+                    : const SizedBox.shrink(),
                 IconButton(
                   onPressed: () => context.pushNamed(SearchScreen.routeNamed),
                   icon: const Icon(Icons.search),
