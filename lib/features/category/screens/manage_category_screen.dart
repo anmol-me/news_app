@@ -115,7 +115,7 @@ class ManageCategoryScreen extends HookConsumerWidget {
                                     onPressed: () {
                                       context.pushNamed(
                                         EditFeedScreen.routeNamed,
-                                        queryParams: {
+                                        queryParameters: {
                                           'feedTitle': item.title,
                                           'feedId': item.id.toString(),
                                           'catId': catListItemId.toString(),

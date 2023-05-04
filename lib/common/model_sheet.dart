@@ -45,7 +45,7 @@ Future showModelSheet({
 
                   context.pushNamed(
                     EditSubscriptionScreen.routeNamed,
-                    queryParams: {
+                    queryParameters: {
                       'oldTitle': listItem.title,
                       'listItemId': listItem.id.toString(),
                     },
@@ -67,7 +67,7 @@ Future showModelSheet({
 
                   context.pushNamed(
                     ManageCategoryScreen.routeNamed,
-                    queryParams: {
+                    queryParameters: {
                       'catListItemId': listItem.id.toString(),
                       'catListItemTitle': listItem.title,
                     },
@@ -128,7 +128,7 @@ Future showCupertinoSheet(
           onPressed: () {
             context.pushNamed(
               EditSubscriptionScreen.routeNamed,
-              queryParams: {
+              queryParameters: {
                 'oldTitle': listItem.title,
                 'listItemId': listItem.id.toString(),
               },

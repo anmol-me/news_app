@@ -31,7 +31,7 @@ class SubscriptionTile extends ConsumerWidget {
 
         context.pushNamed(
           CategoryScreen.routeNamed,
-          queryParams: {
+          queryParameters: {
             'id': subscriptionItem.id.toString(),
             'catTitle': subscriptionItem.title,
             'isBackButton': 'false',

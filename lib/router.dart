@@ -41,7 +41,7 @@ final goRouterProvider = Provider(
           path: '/error-screen',
           name: ErrorScreen.routeNamed,
           builder: (context, state) => ErrorScreen(
-            message: state.queryParams['message']!,
+            message: state.queryParameters['message']!,
           ),
         ),
         GoRoute(
@@ -91,7 +91,7 @@ final goRouterProvider = Provider(
             } else {
               return NewsDetailsScreen(
                 newsItem: state.extra as News,
-                screenName: state.queryParams['screenName']!,
+                screenName: state.queryParameters['screenName']!,
               );
             }
           },
@@ -106,9 +106,9 @@ final goRouterProvider = Provider(
           name: CategoryScreen.routeNamed,
           builder: (context, state) {
             return CategoryScreen(
-              catId: int.parse(state.queryParams['id']!),
-              catTitle: state.queryParams['catTitle']!,
-              isBackButton: state.queryParams['isBackButton']! != 'false',
+              catId: int.parse(state.queryParameters['id']!),
+              catTitle: state.queryParameters['catTitle']!,
+              isBackButton: state.queryParameters['isBackButton']! != 'false',
               // Will not have button button
             );
           },
@@ -118,8 +118,8 @@ final goRouterProvider = Provider(
           name: EditSubscriptionScreen.routeNamed,
           builder: (context, state) {
             return EditSubscriptionScreen(
-              oldTitle: state.queryParams['oldTitle']!,
-              listItemId: int.parse(state.queryParams['listItemId']!),
+              oldTitle: state.queryParameters['oldTitle']!,
+              listItemId: int.parse(state.queryParameters['listItemId']!),
             );
           },
         ),
@@ -128,8 +128,8 @@ final goRouterProvider = Provider(
           name: ManageCategoryScreen.routeNamed,
           builder: (context, state) {
             return ManageCategoryScreen(
-              catListItemId: int.parse(state.queryParams['catListItemId']!),
-              catListItemTitle: state.queryParams['catListItemTitle']!,
+              catListItemId: int.parse(state.queryParameters['catListItemId']!),
+              catListItemTitle: state.queryParameters['catListItemTitle']!,
             );
           },
         ),
@@ -137,9 +137,9 @@ final goRouterProvider = Provider(
           path: '/edit-feed-screen',
           name: EditFeedScreen.routeNamed,
           builder: (context, state) => EditFeedScreen(
-            oldFeedTitle: state.queryParams['feedTitle']!,
-            feedId: int.parse(state.queryParams['feedId']!),
-            catId: int.parse(state.queryParams['catId']!),
+            oldFeedTitle: state.queryParameters['feedTitle']!,
+            feedId: int.parse(state.queryParameters['feedId']!),
+            catId: int.parse(state.queryParameters['catId']!),
             listContext: state.extra! as BuildContext,
           ),
         ),

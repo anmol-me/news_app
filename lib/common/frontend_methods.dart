@@ -12,7 +12,7 @@ Future<Object?> navigateError(
 ) {
   return context.pushNamed(
     ErrorScreen.routeNamed,
-    queryParams: {'message': message},
+    queryParameters: {'message': message},
   );
 }
 

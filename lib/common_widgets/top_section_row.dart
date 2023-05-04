@@ -24,7 +24,7 @@ Widget topSectionRow(
 
           context.pushNamed(
             CategoryScreen.routeNamed,
-            queryParams: {
+            queryParameters: {
               'id': newsItem.catId.toString(),
               'catTitle': newsItem.categoryTitle,
               'isBackButton': 'true',

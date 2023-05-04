@@ -64,7 +64,7 @@ Slidable buildSlidable(
           onPressed: (context) {
             context.pushNamed(
               EditSubscriptionScreen.routeNamed,
-              queryParams: {
+              queryParameters: {
                 'oldTitle': listItem.title,
                 'listItemId': listItem.id.toString(),
               },

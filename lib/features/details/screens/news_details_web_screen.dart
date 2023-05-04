@@ -9,7 +9,6 @@ import '../../../models/news.dart';
 import '../../home/providers/home_providers.dart';
 import '../components/card_header_row.dart';
 import '../components/header_image.dart';
-import '../components/methods.dart';
 import '../components/providers.dart';
 
 class NewsDetailsWebScreen extends ConsumerWidget {
