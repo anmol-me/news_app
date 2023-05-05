@@ -56,8 +56,8 @@ class SearchScreen extends HookConsumerWidget {
     final scrollController = useScrollController();
 
     return Scaffold(
-        resizeToAvoidBottomInset: false,
-        appBar: AppBar(
+      resizeToAvoidBottomInset: false,
+      appBar: AppBar(
         title: const Text('Search Feeds'),
       ),
       body: Form(
@@ -65,6 +65,7 @@ class SearchScreen extends HookConsumerWidget {
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
             children: [
               SearchTextField(
                 searchTextController: searchTextController,

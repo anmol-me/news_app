@@ -8,12 +8,13 @@ class FirstSearchWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return const Center(
-      child: AppImage(
-        'assets/images/search_results.png',
-        width: 350,
-        height: 350,
-        fit: BoxFit.cover,
+    return const Expanded(
+      child: Center(
+        child: AppImage(
+          'assets/images/search_results.png',
+          width: 250,
+          height: 250,
+        ),
       ),
     );
   }
