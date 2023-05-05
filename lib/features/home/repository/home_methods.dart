@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:news_app/common/common_providers.dart';
 
 import '../../../common/enums.dart';
 import '../providers/home_providers.dart';
@@ -82,6 +83,8 @@ class HomeMethods {
 
 
   void refreshHomeProviders() {
+    ref.invalidate(emptyStateDisableProvider);
+    ref.invalidate(disableFilterProvider);
     ref.invalidate(isStarredProvider);
     ref.invalidate(homeSortDirectionProvider);
     ref.invalidate(homeIsShowReadProvider);

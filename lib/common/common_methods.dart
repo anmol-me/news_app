@@ -26,13 +26,11 @@ class RefreshMethods {
     BuildContext context,
   ) async {
     final isDrawerOpened = ref.read(isHomeDrawerOpened);
-    final isDemoPref = ref.read(userPrefsProvider).getIsDemo() ?? false;
+    if (isDrawerOpened) Navigator.of(context).pop();
 
+    final isDemoPref = ref.read(userPrefsProvider).getIsDemo() ?? false;
     if (isDemoPref) {
-      if (isDrawerOpened) {
-        Navigator.of(context).pop();
-      }
-      ref.invalidate(isStarredProvider);
+      ref.read(homeMethodsProvider(context)).refreshHomeProviders();
       ref.refresh(homeFeedProvider.notifier).fetchDemoEntries(context);
       context.push('/home');
       return;
@@ -42,10 +40,6 @@ class RefreshMethods {
         ref.read(homePageLoadingProvider.notifier);
 
     final currentLocation = GoRouterState.of(context).name;
-
-    if (isDrawerOpened) {
-      Navigator.of(context).pop();
-    }
 
     isLoadingHomePageController.update((state) => true);
 

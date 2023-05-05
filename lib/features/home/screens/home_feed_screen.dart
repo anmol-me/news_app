@@ -67,11 +67,21 @@ class _HomeFeedScreenState extends ConsumerState<HomeFeedScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isStarred = ref.watch(isStarredProvider);
+
     ref.listen<List>(homeFeedProvider, (previous, next) {
-      if (next.isEmpty) {
-        ref.read(emptyStateDisableProvider.notifier).update((state) => true);
+      final emptyStateDisableController =
+          ref.read(emptyStateDisableProvider.notifier);
+      final disableFilterController = ref.read(disableFilterProvider.notifier);
+
+      if (next.isEmpty && !isStarred) {
+        emptyStateDisableController.update((state) => true);
+      } else if (next.isEmpty && isStarred) {
+        emptyStateDisableController.update((state) => false);
+        disableFilterController.update((state) => true);
       } else {
-        ref.read(emptyStateDisableProvider.notifier).update((state) => false);
+        emptyStateDisableController.update((state) => false);
+        disableFilterController.update((state) => false);
       }
     });
 
@@ -87,7 +97,6 @@ class _HomeFeedScreenState extends ConsumerState<HomeFeedScreen> {
     final newsNotifier = ref.watch(homeFeedProvider);
     final newsNotifierController = ref.watch(homeFeedProvider.notifier);
 
-    final isStarred = ref.watch(isStarredProvider);
     final sortAs = ref.watch(homeSortDirectionProvider);
     final isShowRead = ref.watch(homeIsShowReadProvider);
 
@@ -96,6 +105,7 @@ class _HomeFeedScreenState extends ConsumerState<HomeFeedScreen> {
 
     final homeMethods = ref.watch(homeMethodsProvider(context));
     final emptyStateDisable = ref.watch(emptyStateDisableProvider);
+    final disableFilter = ref.watch(disableFilterProvider);
 
     final isDemoUser = ref.watch(userPrefsProvider).getIsDemo() ?? false;
 
@@ -133,7 +143,7 @@ class _HomeFeedScreenState extends ConsumerState<HomeFeedScreen> {
               onPressed: () => context.pushNamed(SearchScreen.routeNamed),
               icon: const Icon(Icons.search),
             ),
-          emptyStateDisable
+          emptyStateDisable || disableFilter
               ? Padding(
                   padding: const EdgeInsets.only(right: 8.0),
                   child: Icon(Icons.filter_alt, color: colorDisabled),

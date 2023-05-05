@@ -71,10 +71,18 @@ class _HomeWebScreenState extends ConsumerState<HomeWebScreen> {
     final isStarred = ref.watch(isStarredProvider);
 
     ref.listen<List>(homeFeedProvider, (previous, next) {
+      final emptyStateDisableController =
+      ref.read(emptyStateDisableProvider.notifier);
+      final disableFilterController = ref.read(disableFilterProvider.notifier);
+
       if (next.isEmpty && !isStarred) {
-        ref.read(emptyStateDisableProvider.notifier).update((state) => true);
+        emptyStateDisableController.update((state) => true);
+      } else if (next.isEmpty && isStarred) {
+        emptyStateDisableController.update((state) => false);
+        disableFilterController.update((state) => true);
       } else {
-        ref.read(emptyStateDisableProvider.notifier).update((state) => false);
+        emptyStateDisableController.update((state) => false);
+        disableFilterController.update((state) => false);
       }
     });
 
