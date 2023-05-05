@@ -16,6 +16,7 @@ import 'package:go_router/go_router.dart';
 import 'package:news_app/features/search/screens/search_screen.dart';
 import '../../../common_widgets/common_widgets.dart';
 import '../../authentication/repository/user_preferences.dart';
+import '../../category/repository/category_repo.dart';
 import '../providers/home_providers.dart';
 
 import 'package:news_app/common/constants.dart';
@@ -74,14 +75,13 @@ class _HomeFeedScreenState extends ConsumerState<HomeFeedScreen> {
       }
     });
 
+    ref.listen<List>(categoryNotifierProvider, (previous, next) {
+      if (next.isNotEmpty) {
+        ref.read(emptyStateDisableProvider.notifier).update((state) => false);
+      }
+    });
+
     /// Providers ///
-    // log('${ref.read(categoryListNotifierFuture(context)).whenData((value) => value).value}');
-
-    // final catNames = ref.watch(categoryNamesProvider(context)).value;
-    // List<Tab>? categoryNames = catNames?.map((e) => e).toList() ?? [Tab(text: 'Wait')];
-
-    // log(categoryNames.toString());
-
     final isLoadingHomePage = ref.watch(homePageLoadingProvider);
 
     final newsNotifier = ref.watch(homeFeedProvider);

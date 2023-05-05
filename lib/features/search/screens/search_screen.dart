@@ -56,7 +56,8 @@ class SearchScreen extends HookConsumerWidget {
     final scrollController = useScrollController();
 
     return Scaffold(
-      appBar: AppBar(
+        resizeToAvoidBottomInset: false,
+        appBar: AppBar(
         title: const Text('Search Feeds'),
       ),
       body: Form(
