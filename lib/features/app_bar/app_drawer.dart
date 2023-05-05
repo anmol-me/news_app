@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
+import 'package:universal_platform/universal_platform.dart';
 
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:news_app/common/common_methods.dart';
@@ -187,12 +188,21 @@ class BuildHeader extends HookConsumerWidget {
 
     final size = MediaQuery.of(context).size;
 
+    final double height;
+    if (UniversalPlatform.isDesktop) {
+      height = size.height * 0.17;
+    } else if (UniversalPlatform.isWeb) {
+      height = size.height * 0.17;
+    } else {
+      height = size.height * 0.20;
+    }
+
     final userNameLoaded =
         ref.watch(userNotifierProvider)?.username.capitalize() ?? ' Loading...';
 
     return Material(
       child: Container(
-        height: size.height * 0.17,
+        height: height,
         padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top + 40),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
