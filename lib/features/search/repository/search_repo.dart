@@ -34,8 +34,8 @@ class SearchNotifier extends AutoDisposeNotifier<List<News>> {
   @override
   List<News> build() {
     userPrefs = ref.watch(userPrefsProvider);
-    baseUrl = userPrefs.getUrlData()!;
-    userPassEncoded = userPrefs.getAuthData()!;
+    baseUrl = userPrefs.getUrlData() ?? '';
+    userPassEncoded = userPrefs.getAuthData() ?? '';
 
     direction = ref.watch(homeSortDirectionProvider);
     offsetNumber = ref.watch(homeOffsetProvider);
