@@ -19,7 +19,7 @@ Widget buildTopBar(
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            isLoadingPage
+            isLoadingPage || !canGoToPreviousPage
                 ? const DisabledPreviousButton()
                 : InkWell(
                     onTap: () {
@@ -48,7 +48,7 @@ Widget buildTopBar(
                       ],
                     ),
                   ),
-            isLoadingPage
+            isLoadingPage || !canGoToNextPage
                 ? const DisabledMoreButton()
                 : InkWell(
                     onTap: () => canGoToNextPage ? next() : null,
