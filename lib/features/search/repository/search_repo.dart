@@ -12,6 +12,7 @@ import '../../../common/api_methods.dart';
 import '../../../common/error.dart';
 import '../../../models/news.dart';
 import '../../authentication/repository/user_preferences.dart';
+import '../../details/components/methods.dart';
 import '../../home/providers/home_providers.dart';
 import '../screens/search_screen.dart';
 
@@ -75,18 +76,22 @@ class SearchNotifier extends AutoDisposeNotifier<List<News>> {
           DateTime dateTime = getDateTime(info);
 
           String titleTextDecoded = utf8.decode(info['title'].runes.toList());
+          String categoryTitleTextDecoded =
+          utf8.decode(info['feed']['category']['title'].runes.toList());
+
+          final contentFormatted = getContent(info['content']);
 
           final createdNews = News(
             entryId: info['id'],
             feedId: info['feed_id'],
             catId: info['feed']['category']['id'],
-            categoryTitle: info['feed']['category']['title'],
+            categoryTitle: categoryTitleTextDecoded,
             titleText: titleTextDecoded,
             author: info['author'],
             readTime: info['reading_time'],
             isFav: info['starred'],
             link: info['url'],
-            content: info['content'],
+            content: contentFormatted,
             imageUrl: imageUrl,
             status: info['status'] == 'unread' ? Status.unread : Status.read,
             publishedTime: dateTime,
