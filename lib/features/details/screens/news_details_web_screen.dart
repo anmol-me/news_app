@@ -7,18 +7,23 @@ import 'package:news_app/common_widgets/common_widgets.dart';
 import '../../../common/constants.dart';
 import '../../../models/news.dart';
 import '../../home/providers/home_providers.dart';
+import '../../search/repository/search_repo.dart';
 import '../components/card_header_row.dart';
 import '../components/header_image.dart';
 import '../components/providers.dart';
+
+final fromSearchScreen = StateProvider((ref) => false);
 
 class NewsDetailsWebScreen extends ConsumerWidget {
   static const routeNamed = '/web-details';
 
   final News newsItem;
+  final String screenName;
 
   const NewsDetailsWebScreen({
     super.key,
     required this.newsItem,
+    required this.screenName,
   });
 
   @override
@@ -29,8 +34,17 @@ class NewsDetailsWebScreen extends ConsumerWidget {
     final newsNotifier = ref.watch(homeFeedProvider);
     final newsNotifierController = ref.watch(homeFeedProvider.notifier);
 
-    var isFav =
-        newsNotifier.firstWhere((e) => e.entryId == newsItem.entryId).isFav;
+    bool isFav = false;
+
+    if (screenName == 'search') {
+      isFav = ref
+          .watch(searchNotifierProvider)
+          .firstWhere((e) => e.entryId == newsItem.entryId)
+          .isFav;
+    } else {
+      isFav =
+          newsNotifier.firstWhere((e) => e.entryId == newsItem.entryId).isFav;
+    }
 
     final feedDate = DateFormat.yMMMMd().format(newsItem.publishedTime);
     final feedTime = DateFormat.jm().format(newsItem.publishedTime);
@@ -42,7 +56,10 @@ class NewsDetailsWebScreen extends ConsumerWidget {
             children: [
               OpenLinkButton(url: newsItem.link),
               const SizedBox(width: 10),
-              ReadButton(entryId: newsItem.entryId, screenName: 'home'),
+              ReadButton(
+                entryId: newsItem.entryId,
+                screenName: screenName,
+              ),
               const SizedBox(width: 10),
             ],
           ),
@@ -114,8 +131,16 @@ class NewsDetailsWebScreen extends ConsumerWidget {
           ? FloatingActionButton(
               backgroundColor: colorRed,
               onPressed: () {
-                newsNotifierController.toggleFavStatus(
-                    newsItem.entryId, context);
+                if (screenName == 'search') {
+                  ref
+                      .read(searchNotifierProvider.notifier)
+                      .toggleFavStatus(newsItem.entryId, context);
+                } else {
+                  newsNotifierController.toggleFavStatus(
+                    newsItem.entryId,
+                    context,
+                  );
+                }
               },
               child: Icon(isFav ? Icons.bookmark_added : Icons.bookmark_add),
             )

@@ -89,7 +89,6 @@ class NewsDetailsScreen extends ConsumerWidget {
             ],
           ),
         ),
-
         body: NotificationListener<UserScrollNotification>(
           onNotification: (notification) {
             if (notification.direction == ScrollDirection.forward) {
@@ -167,7 +166,9 @@ class NewsDetailsScreen extends ConsumerWidget {
                         .toggleFavStatus(newsItem.entryId, context);
                   } else {
                     newsNotifierController.toggleFavStatus(
-                        newsItem.entryId, context);
+                      newsItem.entryId,
+                      context,
+                    );
                   }
                 },
                 child: Icon(isFav ? Icons.bookmark_added : Icons.bookmark_add),

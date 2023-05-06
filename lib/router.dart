@@ -87,7 +87,10 @@ final goRouterProvider = Provider(
           name: NewsDetailsScreen.routeNamed,
           builder: (context, state) {
             if (UniversalPlatform.isDesktop || UniversalPlatform.isWeb) {
-              return NewsDetailsWebScreen(newsItem: state.extra as News);
+              return NewsDetailsWebScreen(
+                newsItem: state.extra as News,
+                screenName: state.queryParameters['screenName']!,
+              );
             } else {
               return NewsDetailsScreen(
                 newsItem: state.extra as News,
