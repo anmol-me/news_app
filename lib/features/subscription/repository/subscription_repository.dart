@@ -22,14 +22,10 @@ final subscriptionNotifierProvider =
 
 class SubscriptionNotifier extends Notifier<List<CategoryList>> {
   late UserPreferences userPrefs;
-  late String userPassEncoded;
-  late String baseUrl;
 
   @override
   List<CategoryList> build() {
     userPrefs = ref.watch(userPrefsProvider);
-    userPassEncoded = userPrefs.getAuthData() ?? '';
-    baseUrl = userPrefs.getUrlData() ?? '';
     return [];
   }
 
@@ -39,6 +35,9 @@ class SubscriptionNotifier extends Notifier<List<CategoryList>> {
     BuildContext context,
   ) async {
     try {
+      final userPassEncoded = userPrefs.getAuthData()!;
+      final baseUrl = userPrefs.getUrlData()!;
+
       Uri uri = Uri.https(baseUrl, 'v1/categories');
 
       final res = await getHttpResp(uri, userPassEncoded);
@@ -127,6 +126,9 @@ class SubscriptionNotifier extends Notifier<List<CategoryList>> {
     }
 
     try {
+      final userPassEncoded = userPrefs.getAuthData()!;
+      final baseUrl = userPrefs.getUrlData()!;
+
       final res = await postHttpResp(
         uri: null,
         userPassEncoded: userPassEncoded,
@@ -200,9 +202,11 @@ class SubscriptionNotifier extends Notifier<List<CategoryList>> {
         if (item.id != catId) item,
     ];
 
-    Uri uri = Uri.https(baseUrl, 'v1/categories/$catId');
-
     try {
+      final userPassEncoded = userPrefs.getAuthData()!;
+      final baseUrl = userPrefs.getUrlData()!;
+
+      Uri uri = Uri.https(baseUrl, 'v1/categories/$catId');
       final res = await http.delete(
         uri,
         headers: {
@@ -258,6 +262,9 @@ class SubscriptionNotifier extends Notifier<List<CategoryList>> {
     if (!isValid) return;
 
     try {
+      final userPassEncoded = userPrefs.getAuthData()!;
+      final baseUrl = userPrefs.getUrlData()!;
+
       final res = await putHttpResp(
           uri: null,
           url: 'https://$baseUrl/v1/categories/$id',

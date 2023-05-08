@@ -11,10 +11,9 @@ Widget buildTopBar(
   void Function() previous,
   bool canGoToNextPage,
   void Function() next,
+  bool isDemoPref,
   WidgetRef ref,
 ) {
-  final isDemoPref = ref.read(userPrefsProvider).getIsDemo() ?? false;
-
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [

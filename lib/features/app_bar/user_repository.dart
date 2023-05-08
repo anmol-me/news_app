@@ -24,23 +24,19 @@ final userNotifierProvider = NotifierProvider<UserNotifier, User?>(
 /// Notifier
 class UserNotifier extends Notifier<User?> {
   late UserPreferences userPrefs;
-  late String baseUrl;
-  late String userPassEncoded;
 
   @override
   User build() {
     userPrefs = ref.watch(userPrefsProvider);
-    baseUrl = userPrefs.getUrlData() ?? '';
-    userPassEncoded = userPrefs.getAuthData() ?? '';
     return User(username: '');
   }
 
   Future<User> fetchUserData(BuildContext context) async {
     try {
-      // Get username from server & save to cache
       String? username = ref.read(userPrefsProvider).getUsername();
 
       if (username == null || username.isEmpty) {
+        // Get username from server & save to cache
         final baseUrl = userPrefs.getUrlData() ?? '';
         final userPassEncoded = userPrefs.getAuthData() ?? '';
 
@@ -69,7 +65,7 @@ class UserNotifier extends Notifier<User?> {
     try {
       return state = User(username: 'Demo User');
     } catch (_) {
-      return User(username: '');
+      return User(username: 'Check');
     }
   }
 }

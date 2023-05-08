@@ -72,7 +72,7 @@ class _HomeWebScreenState extends ConsumerState<HomeWebScreen> {
 
     ref.listen<List>(homeFeedProvider, (previous, next) {
       final emptyStateDisableController =
-      ref.read(emptyStateDisableProvider.notifier);
+          ref.read(emptyStateDisableProvider.notifier);
       final disableFilterController = ref.read(disableFilterProvider.notifier);
 
       if (next.isEmpty && !isStarred) {
@@ -177,6 +177,7 @@ class _HomeWebScreenState extends ConsumerState<HomeWebScreen> {
                         homeMethods.previousFunction,
                         canGoToNextPage,
                         homeMethods.nextFunction,
+                        isDemoUser,
                         ref,
                       ),
                 if (isLoadingHomePage)

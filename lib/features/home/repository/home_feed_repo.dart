@@ -18,8 +18,6 @@ import '../providers/home_providers.dart';
 
 class HomeFeedNotifier extends Notifier<List<News>> {
   late UserPreferences userPrefs;
-  late String userPassEncoded;
-  late String url;
   late Sort direction;
   late int offsetNumber;
   late bool isStarred;
@@ -29,9 +27,6 @@ class HomeFeedNotifier extends Notifier<List<News>> {
   @override
   List<News> build() {
     userPrefs = ref.watch(userPrefsProvider);
-    userPassEncoded = ref.watch(userPrefsProvider).getAuthData() ?? '';
-    url = userPrefs.getUrlData() ?? '';
-
     orderBy = ref.watch(homeOrderProvider);
     direction = ref.watch(homeSortDirectionProvider);
     offsetNumber = ref.watch(homeOffsetProvider);
@@ -46,7 +41,10 @@ class HomeFeedNotifier extends Notifier<List<News>> {
   Future<void> fetchEntries(BuildContext context) async {
     clearHomeState();
 
-    Uri uri = Uri.https(url, 'v1/entries', {
+    final userPassEncoded = userPrefs.getAuthData()!;
+    final baseUrl = userPrefs.getUrlData()!;
+
+    Uri uri = Uri.https(baseUrl, 'v1/entries', {
       'order': orderBy.value,
       'direction': direction.value,
       if (offsetNumber > 0) 'offset': '$offsetNumber',
@@ -55,8 +53,6 @@ class HomeFeedNotifier extends Notifier<List<News>> {
     });
 
     try {
-      final userPassEncoded = ref.read(userPrefsProvider).getAuthData()!;
-
       final res = await getHttpResp(uri, userPassEncoded);
 
       if (res.statusCode >= 400 && res.statusCode <= 599) {
@@ -127,7 +123,6 @@ class HomeFeedNotifier extends Notifier<List<News>> {
     clearHomeState();
 
     try {
-      print('FETCHING for demo user');
       String data = await DefaultAssetBundle.of(context).loadString(
         'assets/demo_files/entries.json',
       );
@@ -209,8 +204,11 @@ class HomeFeedNotifier extends Notifier<List<News>> {
   Future<void> refreshAll(
     BuildContext context,
   ) async {
+    final userPassEncoded = userPrefs.getAuthData()!;
+    final baseUrl = userPrefs.getUrlData()!;
+
     try {
-      Uri uri = Uri.https(url, '/v1/feeds/refresh');
+      Uri uri = Uri.https(baseUrl, '/v1/feeds/refresh');
 
       final res = await putHttpResp(
         url: null,
@@ -239,6 +237,9 @@ class HomeFeedNotifier extends Notifier<List<News>> {
     int newsId,
     BuildContext context,
   ) async {
+    final userPassEncoded = userPrefs.getAuthData()!;
+    final baseUrl = userPrefs.getUrlData()!;
+
     try {
       state = [
         for (final news in state)
@@ -249,7 +250,7 @@ class HomeFeedNotifier extends Notifier<List<News>> {
       ];
 
       // Online
-      Uri uri = Uri.https(url, 'v1/entries/$newsId/bookmark');
+      Uri uri = Uri.https(baseUrl, 'v1/entries/$newsId/bookmark');
 
       final res = await putHttpResp(
         url: null,
@@ -279,6 +280,9 @@ class HomeFeedNotifier extends Notifier<List<News>> {
     Status stat,
     BuildContext context,
   ) async {
+    final userPassEncoded = userPrefs.getAuthData()!;
+    final baseUrl = userPrefs.getUrlData()!;
+
     try {
       state = [
         for (final news in state)
@@ -287,7 +291,7 @@ class HomeFeedNotifier extends Notifier<List<News>> {
 
       // Online
       final res = await putHttpResp(
-        url: 'https://$url/v1/entries',
+        url: 'https://$baseUrl/v1/entries',
         uri: null,
         bodyMap: {
           "entry_ids": [newsId],
@@ -313,7 +317,10 @@ class HomeFeedNotifier extends Notifier<List<News>> {
   }
 
   Future<int> totalPage() async {
-    Uri uri = Uri.https(url, 'v1/entries', {
+    final userPassEncoded = userPrefs.getAuthData()!;
+    final baseUrl = userPrefs.getUrlData()!;
+
+    Uri uri = Uri.https(baseUrl, 'v1/entries', {
       'order': 'published_at',
       'direction': direction.value,
       'offset': '$offsetNumber',

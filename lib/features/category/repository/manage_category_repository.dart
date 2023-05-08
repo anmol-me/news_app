@@ -22,14 +22,10 @@ final manageCateNotifierProvider =
 /// Notifier Class
 class ManageCategoryRepository extends Notifier<List<CategoryList>> {
   late UserPreferences userPrefs;
-  late String? userPassEncoded;
-  late String? baseUrl;
 
   @override
   List<CategoryList> build() {
     userPrefs = ref.watch(userPrefsProvider);
-    userPassEncoded = userPrefs.getAuthData();
-    baseUrl = userPrefs.getUrlData();
     return [];
   }
 
@@ -38,9 +34,12 @@ class ManageCategoryRepository extends Notifier<List<CategoryList>> {
     int categoryId,
   ) async {
     try {
-      Uri uri = Uri.https(baseUrl!, 'v1/categories/$categoryId/feeds');
+      final userPassEncoded = userPrefs.getAuthData()!;
+      final baseUrl = userPrefs.getUrlData()!;
 
-      final res = await getHttpResp(uri, userPassEncoded!);
+      Uri uri = Uri.https(baseUrl, 'v1/categories/$categoryId/feeds');
+
+      final res = await getHttpResp(uri, userPassEncoded);
 
       if (res.statusCode >= 400 && res.statusCode <= 599) {
         throw ServerErrorException(res);
@@ -95,14 +94,17 @@ class ManageCategoryRepository extends Notifier<List<CategoryList>> {
         if (item.id != itemId) item,
     ];
 
-    Uri uri = Uri.https(baseUrl!, 'v1/feeds/$itemId');
+    final userPassEncoded = userPrefs.getAuthData()!;
+    final baseUrl = userPrefs.getUrlData()!;
+
+    Uri uri = Uri.https(baseUrl, 'v1/feeds/$itemId');
 
     try {
       final res = await http.delete(
         uri,
         headers: {
           'Content-Type': 'application/json; charset=UTF-8',
-          'authorization': userPassEncoded!,
+          'authorization': userPassEncoded,
         },
       );
 
@@ -151,6 +153,9 @@ class ManageCategoryRepository extends Notifier<List<CategoryList>> {
     required String newFeedTitle,
   }) async {
     try {
+      final userPassEncoded = userPrefs.getAuthData()!;
+      final baseUrl = userPrefs.getUrlData()!;
+
       final res = await putHttpResp(
           uri: null,
           url: 'https://$baseUrl/v1/feeds/$feedId',

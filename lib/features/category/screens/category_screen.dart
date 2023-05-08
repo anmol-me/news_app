@@ -181,6 +181,7 @@ class CategoryScreen extends HookConsumerWidget {
             () => categoryNotifier.previous(catId, context),
             canGoToNextPage,
             () => categoryNotifier.next(catId, context),
+            isDemoUser,
             ref,
           ),
 

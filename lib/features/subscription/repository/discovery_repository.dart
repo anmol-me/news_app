@@ -21,14 +21,10 @@ final discoveryProvider =
 class DiscoveryNotifier
     extends AutoDisposeNotifier<List<DiscoverSubscription>> {
   late UserPreferences userPrefs;
-  late String userPassEncoded;
-  late String baseUrl;
 
   @override
   List<DiscoverSubscription> build() {
     userPrefs = ref.watch(userPrefsProvider);
-    userPassEncoded = userPrefs.getAuthData()!;
-    baseUrl = userPrefs.getUrlData()!;
     return [];
   }
 
@@ -37,6 +33,9 @@ class DiscoveryNotifier
     BuildContext context,
   ) async {
     try {
+      final userPassEncoded = userPrefs.getAuthData()!;
+      final baseUrl = userPrefs.getUrlData()!;
+
       final res = await postHttpResp(
         uri: null,
         url: Uri.parse('https://$baseUrl/v1/discover'),
@@ -104,6 +103,9 @@ class DiscoveryNotifier
     int catId,
   ) async {
     try {
+      final userPassEncoded = userPrefs.getAuthData()!;
+      final baseUrl = userPrefs.getUrlData()!;
+
       final res = await postHttpResp(
         url: Uri.parse('https://$baseUrl/v1/feeds'),
         bodyMap: {

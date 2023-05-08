@@ -171,6 +171,7 @@ class _HomeFeedScreenState extends ConsumerState<HomeFeedScreen> {
                   homeMethods.previousFunction,
                   canGoToNextPage,
                   homeMethods.nextFunction,
+                  isDemoUser,
                   ref,
                 ),
           if (isLoadingHomePage)

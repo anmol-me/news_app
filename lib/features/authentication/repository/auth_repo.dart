@@ -77,7 +77,7 @@ class AuthRepo {
       if (isTestUser) {
         // Test Mode
         await userPrefs.setUrlData(staticUrl);
-        // log('Login prefs test url : ${userPrefs.getUrlData()}');
+        log('Login prefs test url : ${userPrefs.getUrlData()}');
 
         userPassEncoded = 'Basic ${base64.encode(utf8.encode(
           '$staticUsername:$staticPassword',
@@ -161,6 +161,7 @@ class AuthRepo {
     userPrefs.clearPrefs();
 
     ref.invalidate(userNotifierProvider);
+    ref.invalidate(homePageLoadingProvider);
     ref.invalidate(homeFeedProvider);
     ref.invalidate(subscriptionNotifierProvider);
     ref.invalidate(categoryNotifierProvider);

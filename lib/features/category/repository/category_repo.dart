@@ -24,15 +24,13 @@ final categoryNotifierProvider =
 
 /// Notifier Class
 class CategoryNotifier extends Notifier<List<News>> {
-  late String url;
-  late String userPassEncoded;
+  late UserPreferences userPrefs;
   late Sort catSort;
   late StateController<bool> isCatLoadingController;
 
   @override
   List<News> build() {
-    url = ref.watch(userPrefsProvider).getUrlData() ?? '';
-    userPassEncoded = ref.watch(userPrefsProvider).getAuthData() ?? '';
+    userPrefs = ref.watch(userPrefsProvider);
     catSort = ref.watch(catSortProvider);
     isCatLoadingController = ref.watch(isCatLoadingProvider.notifier);
     return [];
@@ -44,10 +42,13 @@ class CategoryNotifier extends Notifier<List<News>> {
     int id,
     BuildContext context,
   ) async {
+    final userPassEncoded = userPrefs.getAuthData()!;
+    final baseUrl = userPrefs.getUrlData()!;
+
     final catOffset = ref.read(catOffsetProvider);
     final isShowReadCat = ref.read(isShowReadCatProvider);
 
-    Uri uri = Uri.https(url, 'v1/categories/$id/entries', {
+    Uri uri = Uri.https(baseUrl, 'v1/categories/$id/entries', {
       'order': 'published_at',
       'direction': catSort.value,
       if (catOffset > 0) 'offset': '$catOffset',
@@ -117,7 +118,8 @@ class CategoryNotifier extends Notifier<List<News>> {
     int id,
     BuildContext context,
   ) async {
-    state.clear();
+    clearCategoryState();
+
     try {
       String data = await DefaultAssetBundle.of(context).loadString(
         'assets/demo_files/entries.json',
@@ -168,7 +170,10 @@ class CategoryNotifier extends Notifier<List<News>> {
   }
 
   Future<int> catTotalPage(int id) async {
-    Uri uri = Uri.https(url, 'v1/categories/$id/entries', {
+    final userPassEncoded = userPrefs.getAuthData()!;
+    final baseUrl = userPrefs.getUrlData()!;
+
+    Uri uri = Uri.https(baseUrl, 'v1/categories/$id/entries', {
       'order': 'published_at',
     });
 

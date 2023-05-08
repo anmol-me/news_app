@@ -25,8 +25,6 @@ final searchNotifierProvider =
 /// Search Notifier
 class SearchNotifier extends AutoDisposeNotifier<List<News>> {
   late UserPreferences userPrefs;
-  late String baseUrl;
-  late String userPassEncoded;
   late Sort direction;
   late int offsetNumber;
   late bool isStarred;
@@ -35,8 +33,6 @@ class SearchNotifier extends AutoDisposeNotifier<List<News>> {
   @override
   List<News> build() {
     userPrefs = ref.watch(userPrefsProvider);
-    baseUrl = userPrefs.getUrlData() ?? '';
-    userPassEncoded = userPrefs.getAuthData() ?? '';
 
     direction = ref.watch(homeSortDirectionProvider);
     offsetNumber = ref.watch(homeOffsetProvider);
@@ -52,6 +48,9 @@ class SearchNotifier extends AutoDisposeNotifier<List<News>> {
     String searchText,
   ) async {
     try {
+      final userPassEncoded = userPrefs.getAuthData()!;
+      final baseUrl = userPrefs.getUrlData()!;
+
       Uri uri = Uri.https(baseUrl, 'v1/entries', {
         'order': 'published_at',
         'search': searchText,
@@ -77,7 +76,7 @@ class SearchNotifier extends AutoDisposeNotifier<List<News>> {
 
           String titleTextDecoded = utf8.decode(info['title'].runes.toList());
           String categoryTitleTextDecoded =
-          utf8.decode(info['feed']['category']['title'].runes.toList());
+              utf8.decode(info['feed']['category']['title'].runes.toList());
 
           final contentFormatted = getContent(info['content']);
 
@@ -125,6 +124,8 @@ class SearchNotifier extends AutoDisposeNotifier<List<News>> {
     BuildContext context,
   ) async {
     try {
+      final userPassEncoded = userPrefs.getAuthData()!;
+
       state = [
         for (final news in state)
           if (news.entryId == newsId)
@@ -172,9 +173,11 @@ class SearchNotifier extends AutoDisposeNotifier<List<News>> {
       ];
 
       // Online
-      final url = userPrefs.getUrlData();
+      final userPassEncoded = userPrefs.getAuthData()!;
+      final baseUrl = userPrefs.getUrlData()!;
+
       final res = await putHttpResp(
-        url: 'https://$url/v1/entries',
+        url: 'https://$baseUrl/v1/entries',
         uri: null,
         bodyMap: {
           "entry_ids": [newsId],
