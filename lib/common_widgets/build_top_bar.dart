@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:news_app/common/constants.dart';
 import 'package:news_app/common_widgets/disabled_button_widgets.dart';
 
+import '../features/authentication/repository/user_preferences.dart';
+
 Widget buildTopBar(
   bool isLoadingPage,
   bool canGoToPreviousPage,
@@ -11,6 +13,8 @@ Widget buildTopBar(
   void Function() next,
   WidgetRef ref,
 ) {
+  final isDemoPref = ref.read(userPrefsProvider).getIsDemo() ?? false;
+
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
@@ -19,7 +23,7 @@ Widget buildTopBar(
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            isLoadingPage || !canGoToPreviousPage
+            isLoadingPage || !canGoToPreviousPage || isDemoPref
                 ? const DisabledPreviousButton()
                 : InkWell(
                     onTap: () {
@@ -48,7 +52,7 @@ Widget buildTopBar(
                       ],
                     ),
                   ),
-            isLoadingPage || !canGoToNextPage
+            isLoadingPage || !canGoToNextPage || isDemoPref
                 ? const DisabledMoreButton()
                 : InkWell(
                     onTap: () => canGoToNextPage ? next() : null,
