@@ -31,9 +31,10 @@ class ErrorScreen extends HookConsumerWidget {
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             ElevatedButton(
-              onPressed: () => context.go('/home'),
+              onPressed: () => context.go('/'),
               child: const Text('Home'),
             ),
             const SizedBox(height: 10),
