@@ -93,7 +93,7 @@ Widget buildExpansionWidget(
                   context.pushNamed(
                     NewsDetailsScreen.routeNamed,
                     extra: newsItem,
-                    queryParameters: {'screenName': screenName},
+                    queryParameters: {'from': screenName},
                   );
                 },
                 child: Column(

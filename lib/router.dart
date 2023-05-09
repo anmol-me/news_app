@@ -31,7 +31,7 @@ final goRouterProvider = Provider(
 
     return GoRouter(
       debugLogDiagnostics: true,
-      initialLocation: AuthScreen.routeNamed,
+      initialLocation: '/',
       navigatorKey: rootNavigatorKey,
       errorBuilder: (context, state) => ErrorScreen(
         message: state.error.toString(),
@@ -45,14 +45,14 @@ final goRouterProvider = Provider(
           ),
         ),
         GoRoute(
-          path: '/auth-screen',
+          path: '/',
           name: AuthScreen.routeNamed,
+          builder: (context, state) => const AuthScreen(),
           redirect: (BuildContext context, state) {
             log('AUTH-> isAuth: ${authRepo.isAuthenticated}');
 
-            return authRepo.isAuthenticated ? '/home' : AuthScreen.routeNamed;
+            return authRepo.isAuthenticated ? '/home' : '/';
           },
-          builder: (context, state) => const AuthScreen(),
         ),
         GoRoute(
           path: '/home',
@@ -63,13 +63,6 @@ final goRouterProvider = Provider(
             } else {
               return const HomeFeedScreen();
             }
-          },
-        ),
-        GoRoute(
-          path: '/home-web-screen',
-          name: HomeWebScreen.routeNamed,
-          builder: (context, state) {
-            return const HomeWebScreen();
           },
         ),
         GoRoute(
@@ -89,12 +82,12 @@ final goRouterProvider = Provider(
             if (UniversalPlatform.isDesktop || UniversalPlatform.isWeb) {
               return NewsDetailsWebScreen(
                 newsItem: state.extra as News,
-                screenName: state.queryParameters['screenName']!,
+                screenName: state.queryParameters['from']!,
               );
             } else {
               return NewsDetailsScreen(
                 newsItem: state.extra as News,
-                screenName: state.queryParameters['screenName']!,
+                screenName: state.queryParameters['from']!,
               );
             }
           },
@@ -103,6 +96,13 @@ final goRouterProvider = Provider(
           path: '/select-subs',
           name: SelectSubscriptionScreen.routeNamed,
           builder: (context, state) => const SelectSubscriptionScreen(),
+          routes: [
+            GoRoute(
+              path: 'add-category',
+              name: AddSubscription.routeNamed,
+              builder: (context, state) => const AddSubscription(),
+            ),
+          ],
         ),
         GoRoute(
           path: '/category-screen',
@@ -112,7 +112,7 @@ final goRouterProvider = Provider(
               catId: int.parse(state.queryParameters['id']!),
               catTitle: state.queryParameters['catTitle']!,
               isBackButton: state.queryParameters['isBackButton']! != 'false',
-              // Will not have button button
+              // Will not have back button
             );
           },
         ),
@@ -146,11 +146,7 @@ final goRouterProvider = Provider(
             listContext: state.extra! as BuildContext,
           ),
         ),
-        GoRoute(
-          path: '/add-category',
-          name: AddSubscription.routeNamed,
-          builder: (context, state) => const AddSubscription(),
-        ),
+
       ],
     );
   },
