@@ -22,7 +22,7 @@ class CheckAgainWidget extends HookConsumerWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           const AppImage(
-            'assets/images/items_not_found.png',
+            'assets/images/no_bookmarks.png',
             height: 250,
             width: 250,
           ),
