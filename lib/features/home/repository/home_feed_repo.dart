@@ -18,7 +18,6 @@ import '../providers/home_providers.dart';
 
 class HomeFeedNotifier extends Notifier<List<News>> {
   late UserPreferences userPrefs;
-  late Sort direction;
   late int offsetNumber;
   late bool isStarred;
   late bool isRead;
@@ -28,7 +27,6 @@ class HomeFeedNotifier extends Notifier<List<News>> {
   List<News> build() {
     userPrefs = ref.watch(userPrefsProvider);
     orderBy = ref.watch(homeOrderProvider);
-    direction = ref.watch(homeSortDirectionProvider);
     offsetNumber = ref.watch(homeOffsetProvider);
 
     isStarred = ref.watch(isStarredProvider);
@@ -43,6 +41,7 @@ class HomeFeedNotifier extends Notifier<List<News>> {
 
     final userPassEncoded = userPrefs.getAuthData()!;
     final baseUrl = userPrefs.getUrlData()!;
+    final direction = ref.read(homeSortDirectionProvider);
 
     Uri uri = Uri.https(baseUrl, 'v1/entries', {
       'order': orderBy.value,
@@ -120,8 +119,6 @@ class HomeFeedNotifier extends Notifier<List<News>> {
   Future<void> fetchDemoEntries(BuildContext context) async {
     final isStarred = ref.read(isStarredProvider);
 
-    clearHomeState();
-
     try {
       String data = await DefaultAssetBundle.of(context).loadString(
         'assets/demo_files/entries.json',
@@ -193,11 +190,25 @@ class HomeFeedNotifier extends Notifier<List<News>> {
         }
       }
 
-      state = fetchedNewsList;
+      state = fetchedNewsList.reversed.toList();
     } catch (_) {
       if (context.mounted) {
         showErrorDialogue(context, ref, ErrorString.somethingWrongAdmin.value);
       }
+    }
+  }
+
+  void sortEntries() {
+    final sortAs = ref.read(homeSortDirectionProvider);
+    final sortDirectionController =
+        ref.read(homeSortDirectionProvider.notifier);
+
+    if (sortAs == Sort.descending) {
+      state.sort((a, b) => a.publishedTime.compareTo(b.publishedTime));
+      sortDirectionController.update((state) => state = Sort.ascending);
+    } else {
+      state.sort((a, b) => b.publishedTime.compareTo(a.publishedTime));
+      sortDirectionController.update((state) => state = Sort.descending);
     }
   }
 
@@ -319,6 +330,8 @@ class HomeFeedNotifier extends Notifier<List<News>> {
   Future<int> totalPage() async {
     final userPassEncoded = userPrefs.getAuthData()!;
     final baseUrl = userPrefs.getUrlData()!;
+
+    final direction = ref.read(homeSortDirectionProvider);
 
     Uri uri = Uri.https(baseUrl, 'v1/entries', {
       'order': 'published_at',

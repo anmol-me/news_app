@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:news_app/common/common_providers.dart';
 
 import '../../../common/enums.dart';
+import '../../authentication/repository/user_preferences.dart';
 import '../providers/home_providers.dart';
 
 final homeMethodsProvider = Provider.family<HomeMethods, BuildContext>(
@@ -51,36 +52,50 @@ class HomeMethods {
   }
 
   void sortFunction() {
-    isLoadingHomePageController.update((state) => true);
-    ref.refresh(homeOffsetProvider.notifier).update((state) => 0);
-
     final sortAs = ref.read(homeSortDirectionProvider);
     final sortDirectionController =
         ref.read(homeSortDirectionProvider.notifier);
 
-    if (sortAs == Sort.ascending) {
-      sortDirectionController.update((state) => state = Sort.descending);
-    } else if (sortAs == Sort.descending) {
-      sortDirectionController.update((state) => state = Sort.ascending);
-    } else {
-      sortDirectionController.update((state) => state = Sort.descending);
-    }
+    final isDemoPref = ref.read(userPrefsProvider).getIsDemo() ?? false;
+    if (!isDemoPref) {
+      isLoadingHomePageController.update((state) => true);
+      ref.refresh(homeOffsetProvider.notifier).update((state) => 0);
 
-    ref.refresh(homeFeedProvider.notifier).fetchEntries(context).then(
-          (_) => isLoadingHomePageController.update((state) => false),
-        );
+      if (sortAs == Sort.ascending) {
+        sortDirectionController.update((state) => state = Sort.descending);
+      } else if (sortAs == Sort.descending) {
+        sortDirectionController.update((state) => state = Sort.ascending);
+      } else {
+        sortDirectionController.update((state) => state = Sort.descending);
+      }
+
+      ref.refresh(homeFeedProvider.notifier).fetchEntries(context).then(
+            (_) => isLoadingHomePageController.update((state) => false),
+          );
+    } else {
+      // Demo
+      ref.read(homeFeedProvider.notifier).sortEntries();
+    }
   }
 
   void readFunction() {
-    isLoadingHomePageController.update((state) => true);
+    final isDemoPref = ref.read(userPrefsProvider).getIsDemo() ?? false;
+    if (!isDemoPref) {
+      isLoadingHomePageController.update((state) => true);
 
-    ref.read(homeIsShowReadProvider.notifier).update((state) => state = !state);
+      ref
+          .read(homeIsShowReadProvider.notifier)
+          .update((state) => state = !state);
 
-    ref.refresh(homeFeedProvider.notifier).fetchEntries(context).then(
-          (_) => isLoadingHomePageController.update((state) => false),
-        );
+      ref.refresh(homeFeedProvider.notifier).fetchEntries(context).then(
+            (_) => isLoadingHomePageController.update((state) => false),
+          );
+    } else {
+      // Demo
+      ref.read(homeFeedProvider.notifier).fetchDemoEntries(context);
+      ref.read(homeFeedProvider).where((e) => e.status == Status.read);
+    }
   }
-
 
   void refreshHomeProviders() {
     ref.invalidate(emptyStateDisableProvider);

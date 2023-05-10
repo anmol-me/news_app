@@ -13,7 +13,6 @@ import '../../../common_widgets/build_popup_menu_button.dart';
 import '../../../common_widgets/build_top_bar.dart';
 import '../../../components/app_back_button.dart';
 import '../../authentication/repository/user_preferences.dart';
-import '../../home/providers/home_providers.dart';
 import '../../home/screens/home_feed_screen.dart';
 import '../../search/screens/search_screen.dart';
 

@@ -84,12 +84,6 @@ class BuildPopupMenuButton extends ConsumerWidget {
         ),
       ],
       onSelected: (selected) {
-        final isDemoPref = ref.read(userPrefsProvider).getIsDemo() ?? false;
-        if (isDemoPref) {
-          showErrorSnackBar(context: context, text: ErrorString.demoDisabled.value);
-          return;
-        }
-
         if (isCatLoading || isHomeLoading || isHomeLoadingPage) {
           null;
         } else if (selected == DropItems.sort) {
