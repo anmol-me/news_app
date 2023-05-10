@@ -6,6 +6,8 @@ import 'package:intl/intl.dart';
 import 'package:news_app/common_widgets/common_widgets.dart';
 import '../../../common/constants.dart';
 import '../../../models/news.dart';
+import '../../authentication/repository/user_preferences.dart';
+import '../../category/repository/category_repo.dart';
 import '../../home/providers/home_providers.dart';
 import '../../search/repository/search_repo.dart';
 import '../components/card_header_row.dart';
@@ -32,18 +34,31 @@ class NewsDetailsWebScreen extends ConsumerWidget {
     final isFabButtonController = ref.watch(isFabButtonProvider.notifier);
 
     final newsNotifier = ref.watch(homeFeedProvider);
-    final newsNotifierController = ref.watch(homeFeedProvider.notifier);
+    final categoryNotifier = ref.watch(categoryNotifierProvider);
+    final searchNotifier = ref.watch(searchNotifierProvider);
+
+    final newsController = ref.watch(homeFeedProvider.notifier);
+    final categoryController = ref.watch(categoryNotifierProvider.notifier);
+    final searchController = ref.watch(searchNotifierProvider.notifier);
 
     bool isFav = false;
 
     if (screenName == 'search') {
-      isFav = ref
-          .watch(searchNotifierProvider)
+      isFav = searchNotifier
+          .firstWhere(
+            (e) => e.entryId == newsItem.entryId,
+          )
+          .isFav;
+    } else if (screenName == 'category') {
+      isFav = categoryNotifier
           .firstWhere((e) => e.entryId == newsItem.entryId)
           .isFav;
     } else {
-      isFav =
-          newsNotifier.firstWhere((e) => e.entryId == newsItem.entryId).isFav;
+      isFav = newsNotifier
+          .firstWhere(
+            (e) => e.entryId == newsItem.entryId,
+          )
+          .isFav;
     }
 
     final feedDate = DateFormat.yMMMMd().format(newsItem.publishedTime);
@@ -131,15 +146,25 @@ class NewsDetailsWebScreen extends ConsumerWidget {
           ? FloatingActionButton(
               backgroundColor: colorRed,
               onPressed: () {
-                if (screenName == 'search') {
-                  ref
-                      .read(searchNotifierProvider.notifier)
-                      .toggleFavStatus(newsItem.entryId, context);
-                } else {
-                  newsNotifierController.toggleFavStatus(
-                    newsItem.entryId,
-                    context,
-                  );
+                final isDemoPref =
+                    ref.read(userPrefsProvider).getIsDemo() ?? false;
+                if (!isDemoPref) {
+                  if (screenName == 'search') {
+                    searchController.toggleFavStatus(
+                      newsItem.entryId,
+                      context,
+                    );
+                  } else if (screenName == 'category') {
+                    categoryController.toggleFavStatus(
+                      newsItem.entryId,
+                      context,
+                    );
+                  } else {
+                    newsController.toggleFavStatus(
+                      newsItem.entryId,
+                      context,
+                    );
+                  }
                 }
               },
               child: Icon(isFav ? Icons.bookmark_added : Icons.bookmark_add),

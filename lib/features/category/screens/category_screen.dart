@@ -95,8 +95,6 @@ class CategoryScreen extends HookConsumerWidget {
     );
 
     // For Fav and Read Buttons
-    final newsNotifierController = ref.watch(homeFeedProvider.notifier);
-
     final catNewsNotifier = ref.watch(categoryNotifierProvider);
 
     final canGoToNextPage = ref.watch(catIsNextProvider(catId));
@@ -222,7 +220,6 @@ class CategoryScreen extends HookConsumerWidget {
                         'category',
                         newsItem,
                         context,
-                        newsNotifierController,
                         ref,
                       );
                     },

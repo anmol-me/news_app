@@ -3,6 +3,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:news_app/models/news.dart';
 
 import '../features/authentication/repository/user_preferences.dart';
+import '../features/category/repository/category_repo.dart';
 import '../features/details/components/providers.dart';
 import '../features/home/providers/home_providers.dart';
 import '../features/search/repository/search_repo.dart';
@@ -102,18 +103,28 @@ class ReadButton extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final newsNotifierController = ref.watch(homeFeedProvider.notifier);
-    final searchNotifierController = ref.watch(searchNotifierProvider.notifier);
+    final newsNotifier = ref.watch(homeFeedProvider);
+    final categoryNotifier = ref.watch(categoryNotifierProvider);
+    final searchNotifier = ref.watch(searchNotifierProvider);
+
+    final newsController = ref.watch(homeFeedProvider.notifier);
+    final categoryController = ref.watch(categoryNotifierProvider.notifier);
+    final searchController = ref.watch(searchNotifierProvider.notifier);
 
     News newsItem;
 
     if (screenName == 'search') {
-      newsItem = ref
-          .watch(searchNotifierProvider)
-          .firstWhere((e) => e.entryId == entryId);
+      newsItem = searchNotifier.firstWhere(
+        (e) => e.entryId == entryId,
+      );
+    } else if (screenName == 'category') {
+      newsItem = categoryNotifier.firstWhere(
+        (e) => e.entryId == entryId,
+      );
     } else {
-      newsItem =
-          ref.watch(homeFeedProvider).firstWhere((e) => e.entryId == entryId);
+      newsItem = newsNotifier.firstWhere(
+        (e) => e.entryId == entryId,
+      );
     }
 
     return InkWell(
@@ -130,13 +141,19 @@ class ReadButton extends ConsumerWidget {
             : stat = Status.read;
 
         if (screenName == 'search') {
-          searchNotifierController.toggleRead(
+          searchController.toggleRead(
+            entryId,
+            stat,
+            context,
+          );
+        } else if (screenName == 'category') {
+          categoryController.toggleRead(
             entryId,
             stat,
             context,
           );
         } else {
-          newsNotifierController.toggleRead(
+          newsController.toggleRead(
             entryId,
             stat,
             context,
@@ -175,18 +192,28 @@ class StarredButton extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final newsNotifierController = ref.watch(homeFeedProvider.notifier);
-    final searchNotifierController = ref.watch(searchNotifierProvider.notifier);
+    final newsNotifier = ref.watch(homeFeedProvider);
+    final categoryNotifier = ref.watch(categoryNotifierProvider);
+    final searchNotifier = ref.watch(searchNotifierProvider);
+
+    final newsController = ref.watch(homeFeedProvider.notifier);
+    final categoryController = ref.watch(categoryNotifierProvider.notifier);
+    final searchController = ref.watch(searchNotifierProvider.notifier);
 
     News newsItem;
 
     if (screenName == 'search') {
-      newsItem = ref
-          .watch(searchNotifierProvider)
-          .firstWhere((e) => e.entryId == entryId);
+      newsItem = searchNotifier.firstWhere(
+        (e) => e.entryId == entryId,
+      );
+    } else if (screenName == 'category') {
+      newsItem = categoryNotifier.firstWhere(
+        (e) => e.entryId == entryId,
+      );
     } else {
-      newsItem =
-          ref.watch(homeFeedProvider).firstWhere((e) => e.entryId == entryId);
+      newsItem = newsNotifier.firstWhere(
+        (e) => e.entryId == entryId,
+      );
     }
 
     return InkWell(
@@ -197,12 +224,17 @@ class StarredButton extends ConsumerWidget {
         }
 
         if (screenName == 'search') {
-          searchNotifierController.toggleFavStatus(
+          searchController.toggleFavStatus(
+            newsItem.entryId,
+            context,
+          );
+        } else if (screenName == 'category') {
+          categoryController.toggleFavStatus(
             newsItem.entryId,
             context,
           );
         } else {
-          newsNotifierController.toggleFavStatus(
+          newsController.toggleFavStatus(
             newsItem.entryId,
             context,
           );

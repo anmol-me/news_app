@@ -286,4 +286,87 @@ class CategoryNotifier extends Notifier<List<News>> {
           (_) => isCatLoadingController.update((state) => false),
         );
   }
+
+  void toggleFavStatus(
+      int newsId,
+      BuildContext context,
+      ) async {
+    try {
+      final userPassEncoded = userPrefs.getAuthData()!;
+
+      state = [
+        for (final news in state)
+          if (news.entryId == newsId)
+            news.copyWith(isFav: !news.isFav)
+          else
+            news,
+      ];
+
+      // Online
+      final url = userPrefs.getUrlData();
+      Uri uri = Uri.https(url!, 'v1/entries/$newsId/bookmark');
+
+      final res = await putHttpResp(
+        url: null,
+        uri: uri,
+        bodyMap: null,
+        userPassEncoded: userPassEncoded,
+      );
+
+      if (res.statusCode >= 400 && res.statusCode <= 599) {
+        throw ServerErrorException(res);
+      }
+    } on SocketException catch (_) {
+      showErrorSnackBar(
+          context: context, text: ErrorString.checkInternet.value);
+    } on TimeoutException catch (_) {
+      showErrorSnackBar(
+          context: context, text: ErrorString.requestTimeout.value);
+    } on ServerErrorException catch (e) {
+      showErrorSnackBar(context: context, text: '$e');
+    } catch (e) {
+      showErrorSnackBar(context: context, text: ErrorString.generalError.value);
+    }
+  }
+
+  void toggleRead(
+      int newsId,
+      Status stat,
+      BuildContext context,
+      ) async {
+    try {
+      state = [
+        for (final news in state)
+          if (news.entryId == newsId) news.copyWith(status: stat) else news,
+      ];
+
+      // Online
+      final userPassEncoded = userPrefs.getAuthData()!;
+      final baseUrl = userPrefs.getUrlData()!;
+
+      final res = await putHttpResp(
+        url: 'https://$baseUrl/v1/entries',
+        uri: null,
+        bodyMap: {
+          "entry_ids": [newsId],
+          "status": stat.value,
+        },
+        userPassEncoded: userPassEncoded,
+      );
+
+      if (res.statusCode >= 400 && res.statusCode <= 599) {
+        throw ServerErrorException(res);
+      }
+    } on SocketException catch (_) {
+      showErrorSnackBar(
+          context: context, text: ErrorString.checkInternet.value);
+    } on TimeoutException catch (_) {
+      showErrorSnackBar(
+          context: context, text: ErrorString.requestTimeout.value);
+    } on ServerErrorException catch (e) {
+      showErrorSnackBar(context: context, text: '$e');
+    } catch (e) {
+      showErrorSnackBar(context: context, text: ErrorString.generalError.value);
+    }
+  }
 }

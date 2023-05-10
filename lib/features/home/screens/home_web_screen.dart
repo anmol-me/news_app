@@ -98,7 +98,6 @@ class _HomeWebScreenState extends ConsumerState<HomeWebScreen> {
     final isLoadingHomePage = ref.watch(homePageLoadingProvider);
 
     final newsNotifier = ref.watch(homeFeedProvider);
-    final newsNotifierController = ref.watch(homeFeedProvider.notifier);
 
     final sortAs = ref.watch(homeSortDirectionProvider);
     final isShowRead = ref.watch(homeIsShowReadProvider);
@@ -208,7 +207,6 @@ class _HomeWebScreenState extends ConsumerState<HomeWebScreen> {
                                         'home',
                                         newsItem,
                                         context,
-                                        newsNotifierController,
                                         ref,
                                       );
                                     },

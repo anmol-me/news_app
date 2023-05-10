@@ -51,8 +51,6 @@ class SearchScreen extends HookConsumerWidget {
 
     final searchNotifier = ref.watch(searchNotifierProvider);
 
-    final newsNotifierController = ref.watch(homeFeedProvider.notifier);
-
     final scrollController = useScrollController();
 
     return Scaffold(
@@ -92,7 +90,6 @@ class SearchScreen extends HookConsumerWidget {
                                       'search',
                                       newsItem,
                                       context,
-                                      newsNotifierController,
                                       ref,
                                     );
                                   },

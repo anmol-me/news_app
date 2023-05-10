@@ -3,15 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:news_app/common_widgets/top_section_row.dart';
+import 'package:news_app/features/category/repository/category_repo.dart';
 
 import '../common/common_methods.dart';
 import '../features/authentication/repository/user_preferences.dart';
+import '../features/home/providers/home_providers.dart';
 import 'common_widgets.dart';
 import '../common/constants.dart';
 import '../common/enums.dart';
 import '../features/search/repository/search_repo.dart';
 import '../models/news.dart';
-import '../features/home/repository/home_feed_repo.dart';
 import 'expansion_widget.dart';
 import 'package:news_app/features/details/screens/news_details_screen.dart';
 
@@ -19,10 +20,13 @@ Widget buildExpansionWidget(
   String screenName,
   News newsItem,
   BuildContext context,
-  HomeFeedNotifier newsNotifierController,
   WidgetRef ref,
 ) {
   final dateTime = getDate(newsItem);
+
+  final newsController = ref.read(homeFeedProvider.notifier);
+  final categoryController = ref.read(categoryNotifierProvider.notifier);
+  final searchController = ref.read(searchNotifierProvider.notifier);
 
   return Padding(
     padding: const EdgeInsets.only(
@@ -76,13 +80,19 @@ Widget buildExpansionWidget(
 
                   if (!isDemoPref) {
                     if (screenName == 'search') {
-                      ref.read(searchNotifierProvider.notifier).toggleRead(
-                            newsItem.entryId,
-                            Status.read,
-                            context,
-                          );
+                      searchController.toggleRead(
+                        newsItem.entryId,
+                        Status.read,
+                        context,
+                      );
+                    } else if (screenName == 'category') {
+                      categoryController.toggleRead(
+                        newsItem.entryId,
+                        Status.read,
+                        context,
+                      );
                     } else {
-                      newsNotifierController.toggleRead(
+                      newsController.toggleRead(
                         newsItem.entryId,
                         Status.read,
                         context,
