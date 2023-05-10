@@ -46,66 +46,65 @@ Widget buildExpansionWidget(
         padding: const EdgeInsets.only(
           top: 8.0,
         ),
-        child: Row(
-          children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(2),
-              child: CachedNetworkImage(
-                imageUrl: newsItem.imageUrl,
-                height: 90,
-                width: 120,
-                fit: BoxFit.cover,
-                placeholder: (context, url) => const Center(
-                  child: CircularLoadingImage(),
-                ),
-                errorWidget: (
+        child: GestureDetector(
+          onTap: () async {
+            final isDemoPref = ref.read(userPrefsProvider).getIsDemo() ?? false;
+
+            if (!isDemoPref) {
+              if (screenName == 'search') {
+                searchController.toggleRead(
+                  newsItem.entryId,
+                  Status.read,
                   context,
-                  url,
-                  error,
-                ) =>
-                    Image.asset(
-                  Constants.imageNotFoundUrl.value,
+                );
+              } else if (screenName == 'category') {
+                categoryController.toggleRead(
+                  newsItem.entryId,
+                  Status.read,
+                  context,
+                );
+              } else {
+                newsController.toggleRead(
+                  newsItem.entryId,
+                  Status.read,
+                  context,
+                );
+              }
+            }
+
+            context.pushNamed(
+              NewsDetailsScreen.routeNamed,
+              extra: newsItem,
+              queryParameters: {'from': screenName},
+            );
+          },
+          child: Row(
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(2),
+                child: CachedNetworkImage(
+                  imageUrl: newsItem.imageUrl,
                   height: 90,
                   width: 120,
                   fit: BoxFit.cover,
+                  placeholder: (context, url) => const Center(
+                    child: CircularLoadingImage(),
+                  ),
+                  errorWidget: (
+                    context,
+                    url,
+                    error,
+                  ) =>
+                      Image.asset(
+                    Constants.imageNotFoundUrl.value,
+                    height: 90,
+                    width: 120,
+                    fit: BoxFit.cover,
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(width: 10),
-            Expanded(
-              child: GestureDetector(
-                onTap: () async {
-                  final isDemoPref =
-                      ref.read(userPrefsProvider).getIsDemo() ?? false;
-
-                  if (!isDemoPref) {
-                    if (screenName == 'search') {
-                      searchController.toggleRead(
-                        newsItem.entryId,
-                        Status.read,
-                        context,
-                      );
-                    } else if (screenName == 'category') {
-                      categoryController.toggleRead(
-                        newsItem.entryId,
-                        Status.read,
-                        context,
-                      );
-                    } else {
-                      newsController.toggleRead(
-                        newsItem.entryId,
-                        Status.read,
-                        context,
-                      );
-                    }
-                  }
-
-                  context.pushNamed(
-                    NewsDetailsScreen.routeNamed,
-                    extra: newsItem,
-                    queryParameters: {'from': screenName},
-                  );
-                },
+              const SizedBox(width: 10),
+              Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -131,8 +130,8 @@ Widget buildExpansionWidget(
                   ],
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
       onExpanded: Padding(
