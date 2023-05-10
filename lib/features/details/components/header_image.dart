@@ -16,21 +16,34 @@ class HeaderImage extends StatelessWidget {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
+    double height;
+    double width;
+
+    if (size.width > 600) {
+      height = size.height * 0.40;
+      width = size.width * 0.70;
+    } else {
+      height = size.height * 0.30;
+      width = size.width * 0.90;
+    }
+
     return ClipRRect(
       borderRadius: BorderRadius.circular(2),
-      child: CachedNetworkImage(
-        imageUrl: imageUrl!,
-        height: size.height * 0.30,
-        width: size.width * 0.90,
-        fit: BoxFit.cover,
-        placeholder: (context, url) => const Center(
-          child: CircularLoadingImage(),
-        ),
-        errorWidget: (context, url, error) => Image.asset(
-          Constants.imageNotFoundUrl.value,
-          height: 90,
-          width: 120,
-          fit: BoxFit.cover,
+      child: Center(
+        child: CachedNetworkImage(
+          imageUrl: imageUrl!,
+          height: height,
+          width: width,
+          fit: BoxFit.contain,
+          placeholder: (context, url) => const Center(
+            child: CircularLoadingImage(),
+          ),
+          errorWidget: (context, url, error) => Image.asset(
+            Constants.imageNotFoundUrl.value,
+            height: 90,
+            width: 120,
+            fit: BoxFit.cover,
+          ),
         ),
       ),
     );
