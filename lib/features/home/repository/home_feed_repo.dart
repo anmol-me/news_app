@@ -20,7 +20,8 @@ class HomeFeedNotifier extends Notifier<List<News>> {
   late UserPreferences userPrefs;
   late int offsetNumber;
   late bool isStarred;
-  late bool isRead;
+
+  // late bool isRead;
   late OrderBy orderBy;
 
   @override
@@ -30,7 +31,7 @@ class HomeFeedNotifier extends Notifier<List<News>> {
     offsetNumber = ref.watch(homeOffsetProvider);
 
     isStarred = ref.watch(isStarredProvider);
-    isRead = ref.watch(homeIsShowReadProvider);
+    // isRead = ref.watch(homeIsShowReadProvider);
     return [];
   }
 
@@ -42,6 +43,7 @@ class HomeFeedNotifier extends Notifier<List<News>> {
     final userPassEncoded = userPrefs.getAuthData()!;
     final baseUrl = userPrefs.getUrlData()!;
     final direction = ref.read(homeSortDirectionProvider);
+    final isRead = ref.read(homeIsShowReadProvider);
 
     Uri uri = Uri.https(baseUrl, 'v1/entries', {
       'order': orderBy.value,
@@ -212,6 +214,10 @@ class HomeFeedNotifier extends Notifier<List<News>> {
     }
   }
 
+  void readEntries() {
+    state = state.where((e) => e.status == Status.read).toList();
+  }
+
   Future<void> refreshAll(
     BuildContext context,
   ) async {
@@ -332,6 +338,7 @@ class HomeFeedNotifier extends Notifier<List<News>> {
     final baseUrl = userPrefs.getUrlData()!;
 
     final direction = ref.read(homeSortDirectionProvider);
+    final isRead = ref.read(homeIsShowReadProvider);
 
     Uri uri = Uri.https(baseUrl, 'v1/entries', {
       'order': 'published_at',

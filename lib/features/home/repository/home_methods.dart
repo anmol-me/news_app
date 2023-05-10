@@ -92,8 +92,17 @@ class HomeMethods {
           );
     } else {
       // Demo
-      ref.read(homeFeedProvider.notifier).fetchDemoEntries(context);
-      ref.read(homeFeedProvider).where((e) => e.status == Status.read);
+      ref
+          .read(homeIsShowReadProvider.notifier)
+          .update((state) => state = !state);
+
+      final readStatus = ref.read(homeIsShowReadProvider);
+
+      if (readStatus) {
+        ref.read(homeFeedProvider.notifier).readEntries();
+      } else {
+        ref.refresh(homeFeedProvider.notifier).fetchDemoEntries(context);
+      }
     }
   }
 
