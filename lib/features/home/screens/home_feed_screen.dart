@@ -113,19 +113,17 @@ class _HomeFeedScreenState extends ConsumerState<HomeFeedScreen> {
         title: Text(isStarred ? 'Starred' : 'Feeds'),
         actions: [
           isDemoUser
-              ? TextButton(
-                  onPressed: () => ref.refresh(homeFeedProvider),
-                  child: Text(
-                    'Clear',
-                    style: TextStyle(
-                      color: colorRed,
-                    ),
-                  ),
-                )
+              ? newsNotifier.isNotEmpty ? TextButton(
+            onPressed: () => ref.refresh(homeFeedProvider),
+            child: Text(
+              'Clear',
+              style: TextStyle(
+                color: colorRed,
+              ),
+            ),
+          ) : const SizedBox.shrink()
               : const SizedBox.shrink(),
-          if (emptyStateDisable && isLoadingHomePage)
-            const SizedBox.shrink()
-          else if (emptyStateDisable && !isStarred)
+          if (emptyStateDisable && !isStarred)
             const HomeRefreshButton()
           else
             const SizedBox.shrink(),

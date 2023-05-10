@@ -115,7 +115,7 @@ class _HomeWebScreenState extends ConsumerState<HomeWebScreen> {
         title: Text(isStarred ? 'Starred' : 'Feeds'),
         actions: [
           isDemoUser
-              ? TextButton(
+              ? newsNotifier.isNotEmpty ? TextButton(
                   onPressed: () => ref.refresh(homeFeedProvider),
                   child: Text(
                     'Clear',
@@ -123,11 +123,9 @@ class _HomeWebScreenState extends ConsumerState<HomeWebScreen> {
                       color: colorRed,
                     ),
                   ),
-                )
+                ) : const SizedBox.shrink()
               : const SizedBox.shrink(),
-          if (emptyStateDisable && isLoadingHomePage)
-            const SizedBox.shrink()
-          else if (emptyStateDisable && !isStarred)
+          if (emptyStateDisable && !isStarred)
             const HomeRefreshButton()
           else
             const SizedBox.shrink(),
