@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -103,7 +104,10 @@ String getImageUrl(info) {
       html_parser.parse(info['content']).getElementsByTagName('img');
 
   if (imageUrl.isNotEmpty) {
-    return imageUrl[0].attributes['src'] ?? '';
+    final url = imageUrl[0].attributes['src'] ?? '';
+    final proxyImageUrl = 'https://corsproxy.io/?$url';
+    if (kIsWeb) return proxyImageUrl;
+    return url;
   } else {
     return '';
   }
