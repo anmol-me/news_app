@@ -19,9 +19,6 @@ import '../providers/home_providers.dart';
 class HomeFeedNotifier extends Notifier<List<News>> {
   late UserPreferences userPrefs;
   late int offsetNumber;
-  late bool isStarred;
-
-  // late bool isRead;
   late OrderBy orderBy;
 
   @override
@@ -29,9 +26,6 @@ class HomeFeedNotifier extends Notifier<List<News>> {
     userPrefs = ref.watch(userPrefsProvider);
     orderBy = ref.watch(homeOrderProvider);
     offsetNumber = ref.watch(homeOffsetProvider);
-
-    isStarred = ref.watch(isStarredProvider);
-    // isRead = ref.watch(homeIsShowReadProvider);
     return [];
   }
 
@@ -42,8 +36,10 @@ class HomeFeedNotifier extends Notifier<List<News>> {
 
     final userPassEncoded = userPrefs.getAuthData()!;
     final baseUrl = userPrefs.getUrlData()!;
+
     final direction = ref.read(homeSortDirectionProvider);
     final isRead = ref.read(homeIsShowReadProvider);
+    final isStarred = ref.read(isStarredProvider);
 
     Uri uri = Uri.https(baseUrl, 'v1/entries', {
       'order': orderBy.value,
@@ -119,8 +115,6 @@ class HomeFeedNotifier extends Notifier<List<News>> {
   }
 
   Future<void> fetchDemoEntries(BuildContext context) async {
-    final isStarred = ref.read(isStarredProvider);
-
     try {
       String data = await DefaultAssetBundle.of(context).loadString(
         'assets/demo_files/entries.json',
@@ -133,63 +127,32 @@ class HomeFeedNotifier extends Notifier<List<News>> {
       for (var i = 0; i < decodedData['entries'].length; i++) {
         final info = decodedData['entries'][i];
 
-        if (!isStarred) {
-          String imageUrl = getImageUrl(info);
+        String imageUrl = getImageUrl(info);
 
-          DateTime dateTime = getDateTime(info);
+        DateTime dateTime = getDateTime(info);
 
-          final contentFormatted = getContentJson(info['content']);
+        final contentFormatted = getContentJson(info['content']);
 
-          Status status =
-              info['status'] == 'unread' ? Status.unread : Status.read;
+        Status status =
+            info['status'] == 'unread' ? Status.unread : Status.read;
 
-          final createdNews = News(
-            entryId: info['id'],
-            feedId: info['feed_id'],
-            catId: info['feed']['category']['id'],
-            categoryTitle: info['feed']['category']['title'],
-            titleText: info['title'],
-            author: info['author'],
-            readTime: info['reading_time'],
-            isFav: info['starred'],
-            link: info['url'],
-            content: contentFormatted,
-            imageUrl: imageUrl,
-            status: status,
-            publishedTime: dateTime,
-          );
+        final createdNews = News(
+          entryId: info['id'],
+          feedId: info['feed_id'],
+          catId: info['feed']['category']['id'],
+          categoryTitle: info['feed']['category']['title'],
+          titleText: info['title'],
+          author: info['author'],
+          readTime: info['reading_time'],
+          isFav: info['starred'],
+          link: info['url'],
+          content: contentFormatted,
+          imageUrl: imageUrl,
+          status: status,
+          publishedTime: dateTime,
+        );
 
-          fetchedNewsList.add(createdNews);
-        } else {
-          if (info['starred'] == true) {
-            String imageUrl = getImageUrl(info);
-
-            DateTime dateTime = getDateTime(info);
-
-            final contentFormatted = getContentJson(info['content']);
-
-            Status status =
-                info['status'] == 'unread' ? Status.unread : Status.read;
-
-            final createdNews = News(
-              entryId: info['id'],
-              feedId: info['feed_id'],
-              catId: info['feed']['category']['id'],
-              categoryTitle: info['feed']['category']['title'],
-              titleText: info['title'],
-              author: info['author'],
-              readTime: info['reading_time'],
-              isFav: info['starred'],
-              link: info['url'],
-              content: contentFormatted,
-              imageUrl: imageUrl,
-              status: status,
-              publishedTime: dateTime,
-            );
-
-            fetchedNewsList.add(createdNews);
-          }
-        }
+        fetchedNewsList.add(createdNews);
       }
 
       state = fetchedNewsList.reversed.toList();
@@ -200,7 +163,7 @@ class HomeFeedNotifier extends Notifier<List<News>> {
     }
   }
 
-  void sortEntries() {
+  void sortDemoEntries() {
     final sortAs = ref.read(homeSortDirectionProvider);
     final sortDirectionController =
         ref.read(homeSortDirectionProvider.notifier);
@@ -214,8 +177,12 @@ class HomeFeedNotifier extends Notifier<List<News>> {
     }
   }
 
-  void readEntries() {
+  void readDemoEntries() {
     state = state.where((e) => e.status == Status.read).toList();
+  }
+
+  void starredDemoEntries() {
+    state = state.where((e) => e.isFav == true).toList();
   }
 
   Future<void> refreshAll(
@@ -339,6 +306,7 @@ class HomeFeedNotifier extends Notifier<List<News>> {
 
     final direction = ref.read(homeSortDirectionProvider);
     final isRead = ref.read(homeIsShowReadProvider);
+    final isStarred = ref.read(isStarredProvider);
 
     Uri uri = Uri.https(baseUrl, 'v1/entries', {
       'order': 'published_at',

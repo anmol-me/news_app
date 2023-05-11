@@ -62,11 +62,14 @@ class AppBarRepository {
     Navigator.of(context).pop();
 
     ref.read(isStarredProvider.notifier).update((state) => !state);
+    final isStarred = ref.read(isStarredProvider);
 
-    if (GoRouterState.of(context).location == '/home') {
-      ref.refresh(homeFeedProvider.notifier).fetchDemoEntries(context);
-    } else {
+    if (GoRouterState.of(context).location != '/home') {
       context.goNamed(HomeFeedScreen.routeNamed);
+    }
+    if (isStarred) {
+      ref.read(homeFeedProvider.notifier).starredDemoEntries();
+    } else {
       ref.refresh(homeFeedProvider.notifier).fetchDemoEntries(context);
     }
   }

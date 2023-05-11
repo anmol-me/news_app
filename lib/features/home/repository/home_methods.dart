@@ -74,7 +74,7 @@ class HomeMethods {
           );
     } else {
       // Demo
-      ref.read(homeFeedProvider.notifier).sortEntries();
+      ref.read(homeFeedProvider.notifier).sortDemoEntries();
     }
   }
 
@@ -99,7 +99,7 @@ class HomeMethods {
       final readStatus = ref.read(homeIsShowReadProvider);
 
       if (readStatus) {
-        ref.read(homeFeedProvider.notifier).readEntries();
+        ref.read(homeFeedProvider.notifier).readDemoEntries();
       } else {
         ref.refresh(homeFeedProvider.notifier).fetchDemoEntries(context);
       }
