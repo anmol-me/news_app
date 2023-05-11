@@ -114,76 +114,6 @@ class HomeFeedNotifier extends Notifier<List<News>> {
     }
   }
 
-  Future<void> fetchDemoEntries(BuildContext context) async {
-    try {
-      String data = await DefaultAssetBundle.of(context).loadString(
-        'assets/demo_files/entries.json',
-      );
-
-      Map<String, dynamic> decodedData = jsonDecode(data);
-
-      final List<News> fetchedNewsList = [];
-
-      for (var i = 0; i < decodedData['entries'].length; i++) {
-        final info = decodedData['entries'][i];
-
-        String imageUrl = getImageUrl(info);
-
-        DateTime dateTime = getDateTime(info);
-
-        final contentFormatted = getContentJson(info['content']);
-
-        Status status =
-            info['status'] == 'unread' ? Status.unread : Status.read;
-
-        final createdNews = News(
-          entryId: info['id'],
-          feedId: info['feed_id'],
-          catId: info['feed']['category']['id'],
-          categoryTitle: info['feed']['category']['title'],
-          titleText: info['title'],
-          author: info['author'],
-          readTime: info['reading_time'],
-          isFav: info['starred'],
-          link: info['url'],
-          content: contentFormatted,
-          imageUrl: imageUrl,
-          status: status,
-          publishedTime: dateTime,
-        );
-
-        fetchedNewsList.add(createdNews);
-      }
-
-      state = fetchedNewsList.reversed.toList();
-    } catch (_) {
-      if (context.mounted) {
-        showErrorDialogue(context, ref, ErrorString.somethingWrongAdmin.value);
-      }
-    }
-  }
-
-  void sortDemoEntries() {
-    final sortAs = ref.read(homeSortDirectionProvider);
-    final sortDirectionController =
-        ref.read(homeSortDirectionProvider.notifier);
-
-    if (sortAs == Sort.descending) {
-      state.sort((a, b) => a.publishedTime.compareTo(b.publishedTime));
-      sortDirectionController.update((state) => state = Sort.ascending);
-    } else {
-      state.sort((a, b) => b.publishedTime.compareTo(a.publishedTime));
-      sortDirectionController.update((state) => state = Sort.descending);
-    }
-  }
-
-  void readDemoEntries() {
-    state = state.where((e) => e.status == Status.read).toList();
-  }
-
-  void starredDemoEntries() {
-    state = state.where((e) => e.isFav == true).toList();
-  }
 
   Future<void> refreshAll(
     BuildContext context,
@@ -331,5 +261,77 @@ class HomeFeedNotifier extends Notifier<List<News>> {
     } catch (e) {
       return 1;
     }
+  }
+
+  /// Demo
+  Future<void> fetchDemoEntries(BuildContext context) async {
+    try {
+      String data = await DefaultAssetBundle.of(context).loadString(
+        'assets/demo_files/entries.json',
+      );
+
+      Map<String, dynamic> decodedData = jsonDecode(data);
+
+      final List<News> fetchedNewsList = [];
+
+      for (var i = 0; i < decodedData['entries'].length; i++) {
+        final info = decodedData['entries'][i];
+
+        String imageUrl = getImageUrl(info);
+
+        DateTime dateTime = getDateTime(info);
+
+        final contentFormatted = getContentJson(info['content']);
+
+        Status status =
+        info['status'] == 'unread' ? Status.unread : Status.read;
+
+        final createdNews = News(
+          entryId: info['id'],
+          feedId: info['feed_id'],
+          catId: info['feed']['category']['id'],
+          categoryTitle: info['feed']['category']['title'],
+          titleText: info['title'],
+          author: info['author'],
+          readTime: info['reading_time'],
+          isFav: info['starred'],
+          link: info['url'],
+          content: contentFormatted,
+          imageUrl: imageUrl,
+          status: status,
+          publishedTime: dateTime,
+        );
+
+        fetchedNewsList.add(createdNews);
+      }
+
+      state = fetchedNewsList.reversed.toList();
+    } catch (_) {
+      if (context.mounted) {
+        showErrorDialogue(context, ref, ErrorString.somethingWrongAdmin.value);
+      }
+    }
+  }
+
+  void sortDemoEntries() {
+    final sortAs = ref.read(homeSortDirectionProvider);
+    final sortDirectionController =
+    ref.read(homeSortDirectionProvider.notifier);
+
+    if (sortAs == Sort.descending) {
+      state.sort((a, b) => a.publishedTime.compareTo(b.publishedTime));
+      sortDirectionController.update((state) => state = Sort.ascending);
+    } else {
+      state.sort((a, b) => b.publishedTime.compareTo(a.publishedTime));
+      sortDirectionController.update((state) => state = Sort.descending);
+    }
+  }
+
+  void readDemoEntries() {
+    state = state.where((e) => e.status == Status.read).toList();
+  }
+
+  void starredDemoEntries() {
+    state = state.where((e) => e.isFav == true).toList();
   }
 }

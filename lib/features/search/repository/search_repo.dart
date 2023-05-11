@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:news_app/common/enums.dart';
+import 'package:news_app/features/app_bar/app_drawer.dart';
 
 import '../../../common/common_methods.dart';
 import '../../../common_widgets/common_widgets.dart';
@@ -211,17 +212,30 @@ class SearchNotifier extends AutoDisposeNotifier<List<News>> {
 
     if (!isValid) return;
 
-    final isDemoPref = ref.read(userPrefsProvider).getIsDemo() ?? false;
-    if (isDemoPref) {
-      showErrorSnackBar(context: context, text: ErrorString.demoSearch.value);
-      return;
-    }
-
     ref.read(showFirstSearchProvider.notifier).update((state) => false);
 
     FocusManager.instance.primaryFocus?.unfocus();
 
     final showNoResultsController = ref.read(showNoResultsProvider.notifier);
+
+    final isDemoPref = ref.read(userPrefsProvider).getIsDemo() ?? false;
+    if (isDemoPref) {
+      ref
+          .read(searchNotifierProvider.notifier)
+          .fetchDemoSearchResults(
+            searchTextController.text,
+            context,
+          )
+          .then((value) {
+        if (value.isEmpty) {
+          showNoResultsController.update((state) => true);
+        } else {
+          showNoResultsController.update((state) => false);
+        }
+      });
+
+      return;
+    }
 
     final showSearchLoaderController =
         ref.read(showSearchLoaderProvider.notifier);
@@ -243,5 +257,60 @@ class SearchNotifier extends AutoDisposeNotifier<List<News>> {
 
       showSearchLoaderController.update((state) => false);
     });
+  }
+
+  /// Demo
+  Future<List<News>> fetchDemoSearchResults(
+    String searchText,
+    BuildContext context,
+  ) async {
+    String data = await DefaultAssetBundle.of(context).loadString(
+      'assets/demo_files/entries.json',
+    );
+
+    Map<String, dynamic> decodedData = jsonDecode(data);
+
+    final List<News> fetchedNewsList = [];
+
+    for (var i = 0; i < decodedData['entries'].length; i++) {
+      final info = decodedData['entries'][i];
+      final titleText = info['title'].toString();
+
+      if (titleText.containsIgnoreCase(searchText)) {
+        String imageUrl = getImageUrl(info);
+
+        DateTime dateTime = getDateTime(info);
+
+        final contentFormatted = getContentJson(info['content']);
+
+        Status status =
+            info['status'] == 'unread' ? Status.unread : Status.read;
+
+        final createdNews = News(
+          entryId: info['id'],
+          feedId: info['feed_id'],
+          catId: info['feed']['category']['id'],
+          categoryTitle: info['feed']['category']['title'],
+          titleText: info['title'],
+          author: info['author'],
+          readTime: info['reading_time'],
+          isFav: info['starred'],
+          link: info['url'],
+          content: contentFormatted,
+          imageUrl: imageUrl,
+          status: status,
+          publishedTime: dateTime,
+        );
+
+        fetchedNewsList.add(createdNews);
+      }
+    }
+    return state = fetchedNewsList.reversed.toList();
+  }
+}
+
+extension SearchString on String {
+  bool containsIgnoreCase(String secondString) {
+    return toLowerCase().contains(secondString.toLowerCase());
   }
 }
