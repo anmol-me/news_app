@@ -34,14 +34,14 @@ Future showModelSheet({
                 onTap: () {
                   Navigator.of(context).pop();
 
-                  final isDemoPref =
-                      ref.read(userPrefsProvider).getIsDemo() ?? false;
-                  if (isDemoPref) {
-                    showErrorSnackBar(
-                        context: context,
-                        text: ErrorString.demoEditCategory.value);
-                    return;
-                  }
+                  // final isDemoPref =
+                  //     ref.read(userPrefsProvider).getIsDemo() ?? false;
+                  // if (isDemoPref) {
+                  //   showErrorSnackBar(
+                  //       context: context,
+                  //       text: ErrorString.demoEditCategory.value);
+                  //   return;
+                  // }
 
                   context.pushNamed(
                     EditSubscriptionScreen.routeNamed,
@@ -59,9 +59,12 @@ Future showModelSheet({
                 onTap: () {
                   Navigator.of(context).pop();
 
-                  final isDemoPref = ref.read(userPrefsProvider).getIsDemo() ?? false;
+                  final isDemoPref =
+                      ref.read(userPrefsProvider).getIsDemo() ?? false;
                   if (isDemoPref) {
-                    showErrorSnackBar(context: context, text: ErrorString.demoManageCategory.value);
+                    showErrorSnackBar(
+                        context: context,
+                        text: ErrorString.demoManageCategory.value);
                     return;
                   }
 
@@ -81,28 +84,35 @@ Future showModelSheet({
                 onTap: () {
                   Navigator.of(context).pop();
 
-                  final isDemoPref = ref.read(userPrefsProvider).getIsDemo() ?? false;
-                  if (isDemoPref) {
-                    showErrorSnackBar(context: context, text: ErrorString.demoDeleteCategory.value);
-                    return;
+                  final isDemoPref =
+                      ref.read(userPrefsProvider).getIsDemo() ?? false;
+                  if (!isDemoPref) {
+                    ref
+                        .read(isDeletingCatProvider.notifier)
+                        .update((state) => true);
+
+                    ref
+                        .read(subscriptionNotifierProvider.notifier)
+                        .deleteCategory(
+                          listContext,
+                          listItem.id,
+                          listItem.title,
+                        )
+                        .then(
+                          (_) => ref
+                              .read(isDeletingCatProvider.notifier)
+                              .update((state) => false),
+                        );
+                  } else {
+                    // Demo
+                    ref
+                        .read(subscriptionNotifierProvider.notifier)
+                        .deleteDemoCategory(
+                          listItem.id,
+                          listItem.title,
+                          context,
+                        );
                   }
-
-                  ref
-                      .read(isDeletingCatProvider.notifier)
-                      .update((state) => true);
-
-                  ref
-                      .read(subscriptionNotifierProvider.notifier)
-                      .deleteCategory(
-                        listContext,
-                        listItem.id,
-                        listItem.title,
-                      )
-                      .then(
-                        (_) => ref
-                            .read(isDeletingCatProvider.notifier)
-                            .update((state) => false),
-                      );
                 },
                 text: 'Delete',
                 fontSize: 18,

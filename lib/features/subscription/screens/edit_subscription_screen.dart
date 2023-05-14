@@ -7,6 +7,7 @@ import '../../../common_widgets/common_widgets.dart';
 import '../../../common/sizer.dart';
 import '../../../components/app_back_button.dart';
 import '../../../components/app_text_form_field.dart';
+import '../../authentication/repository/user_preferences.dart';
 import '../repository/subscription_repository.dart';
 
 /// Providers
@@ -80,20 +81,34 @@ class EditSubscriptionScreen extends HookConsumerWidget {
             onPressed: isTitleUpdating
                 ? null
                 : () {
-                    isTitleUpdatingController.update((state) => true);
+                    final isDemoPref =
+                        ref.read(userPrefsProvider).getIsDemo() ?? false;
 
-                    ref
-                        .read(subscriptionNotifierProvider.notifier)
-                        .updateCategoryName(
-                          context,
-                          formKey,
-                          listItemId,
-                          newTitleController.text,
-                        )
-                        .then(
-                          (_) => isTitleUpdatingController
-                              .update((state) => false),
-                        );
+                    if (!isDemoPref) {
+                      isTitleUpdatingController.update((state) => true);
+
+                      ref
+                          .read(subscriptionNotifierProvider.notifier)
+                          .updateCategoryName(
+                            context,
+                            formKey,
+                            listItemId,
+                            newTitleController.text,
+                          )
+                          .then(
+                            (_) => isTitleUpdatingController
+                                .update((state) => false),
+                          );
+                    } else {
+                      ref
+                          .read(subscriptionNotifierProvider.notifier)
+                          .updateDemoCategoryName(
+                            context,
+                            formKey,
+                            newTitleController.text,
+                            oldTitle,
+                          );
+                    }
                   },
             child: const Text('Update'),
           ),

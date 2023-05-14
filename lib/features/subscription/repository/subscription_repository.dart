@@ -1,12 +1,14 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
-import 'package:news_app/common/api_methods.dart';
 
+import 'package:news_app/common/api_methods.dart';
+import '../../../common/file_repository.dart';
 import '../../../common_widgets/common_widgets.dart';
 import '../../../common/enums.dart';
 import '../../../common/error.dart';
@@ -93,17 +95,22 @@ class SubscriptionNotifier extends Notifier<List<CategoryList>> {
     AssetBundle bundle,
   ) async {
     try {
-      String data = await bundle.loadString(
-        'assets/demo_files/categories.json',
+      final fileRepository = ref.read(fileRepositoryProvider);
+
+      final cacheData = await fileRepository.readFile(
+        AssetFileName.categories.value,
       );
 
-      List<dynamic> decodedData = jsonDecode(data);
+      List<dynamic> decodedData = jsonDecode(cacheData);
 
-      final fetchedCategories =
+      List<CategoryList> fetchedCategories =
           decodedData.map((e) => CategoryList.fromJson(e)).toList();
 
       return state = fetchedCategories;
-    } catch (_) {
+    } catch (e, s) {
+      print(e);
+      print(s);
+
       showErrorSnackBar(
         context: context,
         text: ErrorString.generalError.value,
@@ -189,6 +196,37 @@ class SubscriptionNotifier extends Notifier<List<CategoryList>> {
     }
   }
 
+  Future<void> createDemoCategory(
+    String categoryTitle,
+    BuildContext context,
+  ) async {
+    try {
+      final fileRepository = ref.read(fileRepositoryProvider);
+
+      final item = CategoryList(
+        id: Random().nextInt(1000),
+        title: categoryTitle,
+      );
+
+      await fileRepository.writeToFile(
+        data: json.encode([...state, item]),
+        assetName: AssetFileName.categories.value,
+      );
+
+      if (context.mounted) {
+        Navigator.of(context).pop();
+        showSnackBar(context: context, text: Message.catCreated.value);
+      }
+
+      state = [...state, item];
+    } catch (e) {
+      if (context.mounted) {
+        showErrorSnackBar(
+            context: context, text: ErrorString.generalError.value);
+      }
+    }
+  }
+
   Future<void> deleteCategory(
     BuildContext listContext,
     int catId,
@@ -252,6 +290,35 @@ class SubscriptionNotifier extends Notifier<List<CategoryList>> {
     }
   }
 
+  Future<void> deleteDemoCategory(
+    int catId,
+    String catTitle,
+    BuildContext context,
+  ) async {
+    try {
+      final fileRepository = ref.read(fileRepositoryProvider);
+
+      state = [
+        for (final item in state)
+          if (item.id != catId) item,
+      ];
+
+      await fileRepository.writeToFile(
+        data: json.encode(state),
+        assetName: AssetFileName.categories.value,
+      );
+
+      if (context.mounted) {
+        showSnackBar(
+          context: context,
+          text: 'Successfully deleted $catTitle',
+        );
+      }
+    } catch (e) {
+      showErrorSnackBar(context: context, text: ErrorString.generalError.value);
+    }
+  }
+
   Future<void> updateCategoryName(
     BuildContext context,
     GlobalKey<FormState> formKey,
@@ -303,6 +370,43 @@ class SubscriptionNotifier extends Notifier<List<CategoryList>> {
           context: context, text: ErrorString.requestTimeout.value);
     } on ServerErrorException catch (e) {
       showErrorSnackBar(context: context, text: '$e');
+    } catch (e) {
+      showErrorSnackBar(context: context, text: ErrorString.generalError.value);
+    }
+  }
+
+  Future<void> updateDemoCategoryName(
+    BuildContext context,
+    GlobalKey<FormState> formKey,
+    String newCategoryTitle,
+    String oldTitle,
+  ) async {
+    final isValid = formKey.currentState!.validate();
+    if (!isValid) return;
+
+    try {
+      final fileRepository = ref.read(fileRepositoryProvider);
+
+      state = [
+        for (final item in state)
+          if (item.title == oldTitle)
+            item.copyWith(title: newCategoryTitle)
+          else
+            item,
+      ];
+
+      await fileRepository.writeToFile(
+        data: json.encode(state),
+        assetName: AssetFileName.categories.value,
+      );
+
+      if (context.mounted) {
+        Navigator.of(context).pop();
+        showSnackBar(
+          context: context,
+          text: 'Name changed to $newCategoryTitle',
+        );
+      }
     } catch (e) {
       showErrorSnackBar(context: context, text: ErrorString.generalError.value);
     }

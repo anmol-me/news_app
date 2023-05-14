@@ -1,3 +1,5 @@
+import 'dart:math';
+
 class CategoryList {
   final int id;
   final String title;
@@ -22,6 +24,15 @@ class CategoryList {
       id: data['id'] as int,
       title: data['title'] as String,
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      "id": id,
+      "title": title,
+      "user_id": 7,
+      "hide_globally": false
+    };
   }
 }
 

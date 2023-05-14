@@ -23,30 +23,39 @@ class AddCatSheetButton extends ConsumerWidget {
     final mediaQuery = MediaQuery.of(context);
 
     void createCategory(StateSetter setState) {
-      final isDemoPref = ref.read(userPrefsProvider).getIsDemo() ?? false;
-      if (isDemoPref) {
-        Navigator.of(context).pop();
-        showErrorSnackBar(
-          context: context,
-          text: ErrorString.demoAddCategory.value,
-        );
-        return;
-      }
-
       final categoryListController =
           ref.read(subscriptionNotifierProvider.notifier);
 
-      setState(() => isLoading = true);
+      final isDemoPref = ref.read(userPrefsProvider).getIsDemo() ?? false;
+      if (!isDemoPref) {
+        setState(() => isLoading = true);
 
-      categoryListController
-          .createCategory(
-        catNameController.text,
-        context,
-      )
-          .then((_) {
-        setState(() => isLoading = false);
-        catNameController.clear();
-      });
+        categoryListController
+            .createCategory(
+          catNameController.text,
+          context,
+        )
+            .then((_) {
+          setState(() => isLoading = false);
+          catNameController.clear();
+        });
+      } else {
+        // Navigator.of(context).pop();
+        // showErrorSnackBar(
+        //   context: context,
+        //   text: ErrorString.demoAddCategory.value,
+        // );
+        // return;
+
+        categoryListController
+            .createDemoCategory(
+          catNameController.text,
+          context,
+        )
+            .then((_) {
+          catNameController.clear();
+        });
+      }
     }
 
     return IconButton(
