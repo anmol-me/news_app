@@ -41,8 +41,11 @@ class CheckAgainWidget extends HookConsumerWidget {
                   ref.read(userPrefsProvider).getIsDemo() ?? false;
               if (isDemoUser) {
                 ref
-                    .refresh(homeFeedProvider.notifier)
-                    .fetchDemoEntries(context);
+                    .read(homeFeedProvider.notifier)
+                    .fetchDemoEntries(context)
+                    .then((_) {
+                  ref.read(homeFeedProvider.notifier).starredDemoEntries();
+                });
               } else {
                 isLoading.value = true;
 
