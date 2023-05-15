@@ -55,17 +55,13 @@ class AuthRepo {
     required TextEditingController passwordController,
     required TextEditingController urlController,
   }) async {
+    final isValid = formKey.currentState!.validate();
+    if (!isValid) return;
+
     final isLoadingLoginController = ref.read(isLoadingLoginProvider.notifier);
     isLoadingLoginController.update((state) => true);
 
-    final isValid = formKey.currentState!.validate();
-
     final mode = ref.read(modeProvider);
-
-    if (!isValid) {
-      isLoadingLoginController.update((state) => false);
-      return;
-    }
 
     try {
       String userPassEncoded;
@@ -141,17 +137,21 @@ class AuthRepo {
       }
       isLoadingLoginController.update((state) => false);
     } on SocketException catch (_) {
+      isLoadingLoginController.update((state) => false);
       userPrefs.clearPrefs();
       showErrorSnackBar(
           context: context, text: ErrorString.checkInternet.value);
     } on TimeoutException catch (_) {
+      isLoadingLoginController.update((state) => false);
       userPrefs.clearPrefs();
       showErrorSnackBar(
           context: context, text: ErrorString.requestTimeout.value);
     } on ServerErrorException catch (e) {
+      isLoadingLoginController.update((state) => false);
       userPrefs.clearPrefs();
       showErrorSnackBar(context: context, text: '$e');
     } catch (e) {
+      isLoadingLoginController.update((state) => false);
       userPrefs.clearPrefs();
       showErrorSnackBar(context: context, text: ErrorString.generalError.value);
     }
