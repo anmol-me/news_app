@@ -40,13 +40,6 @@ class AddCatSheetButton extends ConsumerWidget {
           catNameController.clear();
         });
       } else {
-        // Navigator.of(context).pop();
-        // showErrorSnackBar(
-        //   context: context,
-        //   text: ErrorString.demoAddCategory.value,
-        // );
-        // return;
-
         categoryListController
             .createDemoCategory(
           catNameController.text,

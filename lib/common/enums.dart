@@ -28,14 +28,15 @@ enum ErrorString {
   listEmpty('List is empty'),
   demoDiscover('Cannot discover in demo mode'),
   demoAddCategory('Cannot add category in demo mode'),
-  demoManageCategory('Cannot manage category in demo mode'),
+  demoManageCategory('Limited support in demo mode'),
   demoEditCategory('Cannot edit category in demo mode'),
   demoDeleteCategory('Cannot delete category in demo mode'),
   demoRefreshSettings('Cannot refresh in demo mode'),
   demoSearch('Search disabled in demo mode'),
   demoDisabled('Feature disabled in demo mode'),
   generalError('An Error Occurred. Please retry'),
-  notOpenLink('Could not open link');
+  notOpenLink('Could not open link'),
+  limitedDemoWebSupport('Limited web support in demo mode');
 
   final String value;
 

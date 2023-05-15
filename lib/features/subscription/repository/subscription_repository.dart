@@ -8,6 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 
 import 'package:news_app/common/api_methods.dart';
+import 'package:universal_platform/universal_platform.dart';
 import '../../../common/file_repository.dart';
 import '../../../common_widgets/common_widgets.dart';
 import '../../../common/enums.dart';
@@ -107,10 +108,7 @@ class SubscriptionNotifier extends Notifier<List<CategoryList>> {
           decodedData.map((e) => CategoryList.fromJson(e)).toList();
 
       return state = fetchedCategories;
-    } catch (e, s) {
-      print(e);
-      print(s);
-
+    } catch (_) {
       showErrorSnackBar(
         context: context,
         text: ErrorString.generalError.value,
@@ -200,6 +198,15 @@ class SubscriptionNotifier extends Notifier<List<CategoryList>> {
     String categoryTitle,
     BuildContext context,
   ) async {
+    if (UniversalPlatform.isWeb) {
+      Navigator.of(context).pop();
+      showErrorSnackBar(
+        context: context,
+        text: ErrorString.limitedDemoWebSupport.value,
+      );
+      return;
+    }
+
     try {
       final fileRepository = ref.read(fileRepositoryProvider);
 
@@ -295,6 +302,14 @@ class SubscriptionNotifier extends Notifier<List<CategoryList>> {
     String catTitle,
     BuildContext context,
   ) async {
+    if (UniversalPlatform.isWeb) {
+      showErrorSnackBar(
+        context: context,
+        text: ErrorString.limitedDemoWebSupport.value,
+      );
+      return;
+    }
+
     try {
       final fileRepository = ref.read(fileRepositoryProvider);
 
@@ -381,6 +396,15 @@ class SubscriptionNotifier extends Notifier<List<CategoryList>> {
     String newCategoryTitle,
     String oldTitle,
   ) async {
+    if (UniversalPlatform.isWeb) {
+      Navigator.of(context).pop();
+      showErrorSnackBar(
+        context: context,
+        text: ErrorString.limitedDemoWebSupport.value,
+      );
+      return;
+    }
+
     final isValid = formKey.currentState!.validate();
     if (!isValid) return;
 
