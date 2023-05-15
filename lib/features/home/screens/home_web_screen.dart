@@ -125,7 +125,7 @@ class _HomeWebScreenState extends ConsumerState<HomeWebScreen> {
                   ),
                 ) : const SizedBox.shrink()
               : const SizedBox.shrink(),
-          if (emptyStateDisable && !isStarred)
+          if (emptyStateDisable && !isStarred && !isLoadingHomePage)
             const HomeRefreshButton()
           else
             const SizedBox.shrink(),
