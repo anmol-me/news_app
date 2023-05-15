@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:news_app/features/subscription/widgets/subscription_refresh_button.dart';
 import 'package:universal_platform/universal_platform.dart';
 
 import 'package:news_app/common_widgets/common_widgets.dart';
@@ -30,7 +31,6 @@ class SelectSubscriptionScreen extends HookConsumerWidget {
     final isLoadingSubsController = ref.watch(isLoadingSubsProvider.notifier);
 
     final isDeletingCat = ref.watch(isDeletingCatProvider);
-    final bundle = DefaultAssetBundle.of(context);
 
     // Using useEffect() instead of initState()
     useEffect(
@@ -39,7 +39,7 @@ class SelectSubscriptionScreen extends HookConsumerWidget {
         if (isDemoPref) {
           ref
               .read(subscriptionNotifierProvider.notifier)
-              .fetchDemoCategories(context, bundle);
+              .fetchDemoCategories(context);
           return;
         }
 
@@ -85,17 +85,19 @@ class SelectSubscriptionScreen extends HookConsumerWidget {
         title: const Text('Select Subscription'),
         actions: [
           isDemoPref
-              ? TextButton(
-                  onPressed: () => ref
-                      .refresh(subscriptionNotifierProvider.notifier)
-                      .clearState(),
-                  child: Text(
-                    'Clear',
-                    style: TextStyle(
-                      color: colorRed,
-                    ),
-                  ),
-                )
+              ? categoryListNotifier.isNotEmpty
+                  ? TextButton(
+                      onPressed: () => ref
+                          .refresh(subscriptionNotifierProvider.notifier)
+                          .clearState(),
+                      child: Text(
+                        'Clear',
+                        style: TextStyle(
+                          color: colorRed,
+                        ),
+                      ),
+                    )
+                  : const SubscriptionRefreshButton()
               : const SizedBox.shrink(),
           IconButton(
             onPressed: () => !isLoadingSubs

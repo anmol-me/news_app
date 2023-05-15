@@ -93,7 +93,6 @@ class SubscriptionNotifier extends Notifier<List<CategoryList>> {
 
   Future<List<CategoryList>> fetchDemoCategories(
     BuildContext context,
-    AssetBundle bundle,
   ) async {
     try {
       final fileRepository = ref.read(fileRepositoryProvider);
