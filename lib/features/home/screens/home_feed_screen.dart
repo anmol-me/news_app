@@ -67,6 +67,7 @@ class _HomeFeedScreenState extends ConsumerState<HomeFeedScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isLoadingHomePage = ref.watch(homePageLoadingProvider);
     final isStarred = ref.watch(isStarredProvider);
 
     ref.listen<List>(homeFeedProvider, (previous, next) {
@@ -74,7 +75,7 @@ class _HomeFeedScreenState extends ConsumerState<HomeFeedScreen> {
           ref.read(emptyStateDisableProvider.notifier);
       final disableFilterController = ref.read(disableFilterProvider.notifier);
 
-      if (next.isEmpty && !isStarred) {
+      if (next.isEmpty && !isStarred && isLoadingHomePage) {
         emptyStateDisableController.update((state) => true);
       } else if (next.isEmpty && isStarred) {
         emptyStateDisableController.update((state) => false);
@@ -92,7 +93,6 @@ class _HomeFeedScreenState extends ConsumerState<HomeFeedScreen> {
     });
 
     /// Providers ///
-    final isLoadingHomePage = ref.watch(homePageLoadingProvider);
 
     final newsNotifier = ref.watch(homeFeedProvider);
 
@@ -125,7 +125,7 @@ class _HomeFeedScreenState extends ConsumerState<HomeFeedScreen> {
                     )
                   : const SizedBox.shrink()
               : const SizedBox.shrink(),
-          if (emptyStateDisable && !isStarred && !isLoadingHomePage)
+          if (emptyStateDisable)
             const HomeRefreshButton()
           else
             const SizedBox.shrink(),

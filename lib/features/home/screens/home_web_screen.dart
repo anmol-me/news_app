@@ -68,14 +68,16 @@ class _HomeWebScreenState extends ConsumerState<HomeWebScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isLoadingHomePage = ref.watch(homePageLoadingProvider);
     final isStarred = ref.watch(isStarredProvider);
 
     ref.listen<List>(homeFeedProvider, (previous, next) {
       final emptyStateDisableController =
           ref.read(emptyStateDisableProvider.notifier);
+
       final disableFilterController = ref.read(disableFilterProvider.notifier);
 
-      if (next.isEmpty && !isStarred) {
+      if (next.isEmpty && !isStarred && isLoadingHomePage) {
         emptyStateDisableController.update((state) => true);
       } else if (next.isEmpty && isStarred) {
         emptyStateDisableController.update((state) => false);
@@ -95,7 +97,6 @@ class _HomeWebScreenState extends ConsumerState<HomeWebScreen> {
     final currentWidth = MediaQuery.of(context).size.width;
 
     /// Providers ///
-    final isLoadingHomePage = ref.watch(homePageLoadingProvider);
 
     final newsNotifier = ref.watch(homeFeedProvider);
 
@@ -115,17 +116,19 @@ class _HomeWebScreenState extends ConsumerState<HomeWebScreen> {
         title: Text(isStarred ? 'Starred' : 'Feeds'),
         actions: [
           isDemoUser
-              ? newsNotifier.isNotEmpty ? TextButton(
-                  onPressed: () => ref.refresh(homeFeedProvider),
-                  child: Text(
-                    'Clear',
-                    style: TextStyle(
-                      color: colorRed,
-                    ),
-                  ),
-                ) : const SizedBox.shrink()
+              ? newsNotifier.isNotEmpty
+                  ? TextButton(
+                      onPressed: () => ref.refresh(homeFeedProvider),
+                      child: Text(
+                        'Clear',
+                        style: TextStyle(
+                          color: colorRed,
+                        ),
+                      ),
+                    )
+                  : const SizedBox.shrink()
               : const SizedBox.shrink(),
-          if (emptyStateDisable && !isStarred && !isLoadingHomePage)
+          if (emptyStateDisable)
             const HomeRefreshButton()
           else
             const SizedBox.shrink(),
