@@ -95,6 +95,13 @@ class _MyAppState extends ConsumerState<MyApp> {
           ),
         ),
         //
+        filledButtonTheme: FilledButtonThemeData(
+          style: FilledButton.styleFrom(
+            backgroundColor: colorRed,
+            foregroundColor: Colors.white,
+          ),
+        ),
+        //
         appBarTheme: AppBarTheme(
           color: colorAppbarBackground,
           foregroundColor: colorAppbarForeground,

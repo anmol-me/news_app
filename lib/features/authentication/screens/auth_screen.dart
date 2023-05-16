@@ -129,7 +129,7 @@ class AuthScreen extends HookConsumerWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      ElevatedButton(
+                      FilledButton(
                         onPressed: () => authRepo.login(
                           formKey: formKey,
                           context: context,
