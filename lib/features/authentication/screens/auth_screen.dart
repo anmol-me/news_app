@@ -4,6 +4,7 @@ import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:news_app/common_widgets/common_widgets.dart';
+import 'package:news_app/components/app_text_form_field.dart';
 import 'package:news_app/features/authentication/repository/auth_repo.dart';
 
 import '../../../common/constants.dart';
@@ -85,34 +86,11 @@ class AuthScreen extends HookConsumerWidget {
                             ? usernameFocus.value = true
                             : usernameFocus.value = false;
                       },
-                      child: TextFormField(
+                      child: AppTextFormField(
                         controller: usernameController,
-                        decoration: InputDecoration(
-                          labelText: 'Username',
-                          labelStyle: TextStyle(
-                            color: usernameFocus.value
-                                ? colorRed
-                                : colorAppbarForeground,
-                          ),
-                          focusedBorder: UnderlineInputBorder(
-                            borderSide: BorderSide(
-                              width: 1.5,
-                              color: colorRed,
-                            ),
-                          ),
-                          errorBorder: UnderlineInputBorder(
-                            borderSide: BorderSide(
-                              color: Theme.of(context).colorScheme.error,
-                            ),
-                          ),
-                        ),
-                        validator: (val) {
-                          if (usernameController.text.isEmpty) {
-                            return ErrorString.username.value;
-                          } else {
-                            return null;
-                          }
-                        },
+                        labelText: 'Username',
+                        focus: usernameFocus,
+                        errorMessage: ErrorString.username.value,
                       ),
                     ),
                   ),
@@ -123,26 +101,11 @@ class AuthScreen extends HookConsumerWidget {
                             ? passwordFocus.value = true
                             : passwordFocus.value = false;
                       },
-                      child: TextFormField(
+                      child: AppTextFormField(
                         controller: passwordController,
-                        decoration: InputDecoration(
-                          labelText: 'Password',
-                          floatingLabelStyle: TextStyle(
-                            color: passwordFocus.value
-                                ? colorRed
-                                : colorAppbarForeground,
-                          ),
-                          focusedBorder: UnderlineInputBorder(
-                            borderSide: BorderSide(color: colorLabel),
-                          ),
-                        ),
-                        validator: (val) {
-                          if (passwordController.text.isEmpty) {
-                            return ErrorString.password.value;
-                          } else {
-                            return null;
-                          }
-                        },
+                        labelText: 'Password',
+                        focus: passwordFocus,
+                        errorMessage: ErrorString.password.value,
                       ),
                     ),
                   ),
@@ -154,27 +117,11 @@ class AuthScreen extends HookConsumerWidget {
                               ? urlFocus.value = true
                               : urlFocus.value = false;
                         },
-                        child: TextFormField(
+                        child: AppTextFormField(
                           controller: urlController,
-                          decoration: InputDecoration(
-                            hintText: defaultUrlHint,
-                            labelText: 'URL',
-                            floatingLabelStyle: TextStyle(
-                              color: urlFocus.value
-                                  ? colorRed
-                                  : colorAppbarForeground,
-                            ),
-                            focusedBorder: UnderlineInputBorder(
-                              borderSide: BorderSide(color: colorLabel),
-                            ),
-                          ),
-                          validator: (val) {
-                            if (urlController.text.isNotEmpty) {
-                              return null;
-                            } else {
-                              return ErrorString.validUrl.value;
-                            }
-                          },
+                          labelText: 'URL',
+                          focus: urlFocus,
+                          errorMessage: ErrorString.validUrl.value,
                         ),
                       ),
                     ),

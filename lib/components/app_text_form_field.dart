@@ -7,7 +7,9 @@ class AppTextFormField extends StatelessWidget {
   final TextEditingController controller;
   final String labelText;
   final TextStyle? labelStyle;
-  final String errorMessage;
+  final String? errorMessage;
+  final String? Function(String?)? validator;
+  final ValueNotifier<bool>? focus;
 
   const AppTextFormField({
     super.key,
@@ -15,6 +17,8 @@ class AppTextFormField extends StatelessWidget {
     required this.labelText,
     this.labelStyle,
     this.errorMessage = 'Field cannot be empty',
+    this.validator,
+    this.focus,
   });
 
   @override
@@ -23,7 +27,10 @@ class AppTextFormField extends StatelessWidget {
       controller: controller,
       decoration: InputDecoration(
         labelText: labelText,
-        labelStyle: labelStyle,
+        labelStyle: labelStyle ??
+            TextStyle(
+              color: focus!.value ? colorRed : colorAppbarForeground,
+            ),
         focusedBorder: UnderlineInputBorder(
           borderSide: BorderSide(
             width: 1.5,
@@ -36,13 +43,14 @@ class AppTextFormField extends StatelessWidget {
           ),
         ),
       ),
-      validator: (val) {
-        if (controller.text.isEmpty) {
-          return errorMessage;
-        } else {
-          return null;
-        }
-      },
+      validator: validator ??
+          (val) {
+            if (controller.text.isEmpty) {
+              return errorMessage;
+            } else {
+              return null;
+            }
+          },
     );
   }
 }
