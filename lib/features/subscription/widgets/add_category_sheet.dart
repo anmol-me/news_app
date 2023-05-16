@@ -17,12 +17,17 @@ class AddCatSheetButton extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final formKey = GlobalKey<FormState>();
+
     bool isLoading = false;
     bool titleFocus = false;
 
     final mediaQuery = MediaQuery.of(context);
 
     void createCategory(StateSetter setState) {
+      final isValid = formKey.currentState!.validate();
+      if (!isValid) return;
+
       final categoryListController =
           ref.read(subscriptionNotifierProvider.notifier);
 
@@ -66,70 +71,73 @@ class AddCatSheetButton extends ConsumerWidget {
           ),
           builder: (context) => StatefulBuilder(
             builder: (BuildContext context, StateSetter set) {
-              return Padding(
-                padding: EdgeInsets.only(bottom: mediaQuery.viewInsets.bottom),
+              return Form(
+                key: formKey,
                 child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: SizedBox(
-                    height: mediaQuery.size.height * 0.45,
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Focus(
-                          onFocusChange: (hasFocus) {
-                            if (hasFocus) {
-                              set(() {
-                                titleFocus = true;
-                              });
-                            } else {
-                              set(() {
-                                titleFocus = false;
-                              });
-                            }
-                          },
-                          child: AppTextFormField(
-                            controller: catNameController,
-                            labelText: 'Category Name',
-                            labelStyle: TextStyle(
-                              color:
-                                  titleFocus ? colorRed : colorAppbarForeground,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 20),
-                        Column(
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(bottom: 5),
-                              child: ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: colorRed,
-                                ),
-                                onPressed: () => createCategory(set),
-                                child: isLoading
-                                    ? const CircularLoading()
-                                    : const Text('Create Category'),
+                  padding: EdgeInsets.only(bottom: mediaQuery.viewInsets.bottom),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: SizedBox(
+                      height: mediaQuery.size.height * 0.45,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Focus(
+                            onFocusChange: (hasFocus) {
+                              if (hasFocus) {
+                                set(() {
+                                  titleFocus = true;
+                                });
+                              } else {
+                                set(() {
+                                  titleFocus = false;
+                                });
+                              }
+                            },
+                            child: AppTextFormField(
+                              controller: catNameController,
+                              labelText: 'Category Name',
+                              labelStyle: TextStyle(
+                                color:
+                                    titleFocus ? colorRed : colorAppbarForeground,
                               ),
                             ),
-                            isLoading
-                                ? TextButton(
-                                    style: TextButton.styleFrom(
-                                      foregroundColor: colorDisabled,
-                                    ),
-                                    onPressed: null,
-                                    child: const Text('Close'),
-                                  )
-                                : TextButton(
-                                    style: TextButton.styleFrom(
-                                      foregroundColor: colorRed,
-                                    ),
-                                    onPressed: () =>
-                                        Navigator.of(context).pop(),
-                                    child: const Text('Close'),
+                          ),
+                          const SizedBox(height: 20),
+                          Column(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(bottom: 5),
+                                child: ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: colorRed,
                                   ),
-                          ],
-                        ),
-                      ],
+                                  onPressed: () => createCategory(set),
+                                  child: isLoading
+                                      ? const CircularLoading()
+                                      : const Text('Create Category'),
+                                ),
+                              ),
+                              isLoading
+                                  ? TextButton(
+                                      style: TextButton.styleFrom(
+                                        foregroundColor: colorDisabled,
+                                      ),
+                                      onPressed: null,
+                                      child: const Text('Close'),
+                                    )
+                                  : TextButton(
+                                      style: TextButton.styleFrom(
+                                        foregroundColor: colorRed,
+                                      ),
+                                      onPressed: () =>
+                                          Navigator.of(context).pop(),
+                                      child: const Text('Close'),
+                                    ),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),

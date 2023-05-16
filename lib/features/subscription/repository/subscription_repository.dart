@@ -120,15 +120,6 @@ class SubscriptionNotifier extends Notifier<List<CategoryList>> {
     String categoryTitle,
     BuildContext context,
   ) async {
-    if (categoryTitle == '') {
-      showErrorSnackBar(
-        context: context,
-        text: ErrorString.emptyField.value,
-      );
-      Navigator.of(context).pop();
-      return;
-    }
-
     try {
       final userPassEncoded = userPrefs.getAuthData()!;
       final baseUrl = userPrefs.getUrlData()!;
