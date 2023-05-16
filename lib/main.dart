@@ -12,17 +12,7 @@ import 'features/authentication/repository/user_preferences.dart';
 import 'features/settings/repository/settings_repository.dart';
 import 'package:window_manager/window_manager.dart';
 
-final themeModeProvider = Provider<ThemeMode>((ref) {
-  final isDarkModeEnabled = ref.watch(userSettingsProvider);
 
-  if (isDarkModeEnabled == null) {
-    return ThemeMode.light;
-  } else if (isDarkModeEnabled) {
-    return ThemeMode.dark;
-  } else {
-    return ThemeMode.light;
-  }
-});
 
 void main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();

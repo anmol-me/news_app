@@ -20,24 +20,17 @@ class CardHeaderRow extends StatelessWidget {
       children: [
         Text(
           categoryTitle,
-          style: TextStyle(
-            color: colorRed,
-            fontSize: 15,
-          ),
+          style: Theme.of(context).textTheme.labelLarge!.copyWith(
+                color: colorRed,
+              ),
         ),
         Text(
           ' / ',
-          style: TextStyle(
-            color: colorSubtitle,
-            fontSize: 15,
-          ),
+          style: Theme.of(context).textTheme.labelLarge,
         ),
         Text(
           '$feedDate at $feedTime',
-          style: TextStyle(
-            color: colorSubtitle,
-            fontSize: 15,
-          ),
+          style: Theme.of(context).textTheme.labelLarge,
         ),
       ],
     );

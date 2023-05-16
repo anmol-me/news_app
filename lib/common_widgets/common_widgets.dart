@@ -9,6 +9,7 @@ import '../features/home/providers/home_providers.dart';
 import '../features/search/repository/search_repo.dart';
 import '../common/constants.dart';
 import '../common/enums.dart';
+import '../themes.dart';
 
 class LinearLoader extends StatelessWidget {
   const LinearLoader({super.key});
@@ -284,10 +285,10 @@ class OpenLinkButton extends ConsumerWidget {
   }
 }
 
-class TextBar extends StatelessWidget {
+class TextBar extends ConsumerWidget {
   final String text;
-  final double size;
-  final Color textColor;
+  final double? size;
+  final Color? textColor;
 
   const TextBar({
     super.key,
@@ -297,41 +298,47 @@ class TextBar extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final themeMode = ref.watch(themeModeProvider);
+    final isLight = themeMode == ThemeMode.light;
+
     return Text(
       text,
-      style: TextStyle(
-        fontSize: size,
-        color: textColor,
-      ),
+      style: Theme.of(context).textTheme.labelLarge!.copyWith(
+            color: isLight ? textColor : Colors.white,
+            fontSize: size,
+          ),
     );
   }
 }
 
-class TextBarButton extends StatelessWidget {
+class AppTextButton extends ConsumerWidget {
   final String text;
-  final double size;
-  final Color textColor;
-  final VoidCallback onTap;
+  final double? size;
+  final Color? textColor;
+  final VoidCallback? onTap;
 
-  const TextBarButton({
+  const AppTextButton({
     super.key,
     required this.text,
     this.size = 17,
     this.textColor = Colors.black87,
-    required this.onTap,
+    this.onTap,
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final themeMode = ref.watch(themeModeProvider);
+    final isLight = themeMode == ThemeMode.light;
+
     return InkWell(
       onTap: onTap,
       child: Text(
         text,
-        style: TextStyle(
-          fontSize: size,
-          color: textColor,
-        ),
+        style: Theme.of(context).textTheme.labelLarge!.copyWith(
+              color: isLight ? textColor : Colors.white,
+              fontSize: size,
+            ),
       ),
     );
   }

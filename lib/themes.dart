@@ -1,19 +1,48 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'common/constants.dart';
+import 'features/settings/repository/settings_repository.dart';
+
+final themeModeProvider = Provider<ThemeMode>((ref) {
+  final isDarkModeEnabled = ref.watch(userSettingsProvider);
+
+  if (isDarkModeEnabled == null) {
+    return ThemeMode.light;
+  } else if (isDarkModeEnabled) {
+    return ThemeMode.dark;
+  } else {
+    return ThemeMode.light;
+  }
+});
 
 @immutable
-class AppTheme{
+class AppTheme {
+  final TextStyle? headlineLarge = const TextStyle(
+    fontSize: 26,
+    fontWeight: FontWeight.w600,
+  );
+
+  final TextStyle? bodyLarge = const TextStyle(
+    fontSize: 19,
+    height: 1.4,
+  );
+
+  final TextStyle? labelLarge = TextStyle(
+    color: colorSubtitle,
+    fontSize: 17,
+    fontWeight: FontWeight.w400,
+  );
+
   ThemeData lightThemeData() {
     return ThemeData(
       brightness: Brightness.light,
       useMaterial3: true,
       //
-      textTheme: const TextTheme(
-        headlineLarge: TextStyle(
-          fontSize: 26,
-          fontWeight: FontWeight.w600,
-        ),
+      textTheme: TextTheme(
+        headlineLarge: headlineLarge,
+        bodyLarge: bodyLarge,
+        labelLarge: labelLarge,
       ),
       //
       colorScheme: ColorScheme.fromSwatch().copyWith(
@@ -54,11 +83,10 @@ class AppTheme{
     return ThemeData(
       brightness: Brightness.dark,
       useMaterial3: true,
-      textTheme: const TextTheme(
-        headlineLarge: TextStyle(
-          fontSize: 26,
-          fontWeight: FontWeight.w600,
-        ),
+      textTheme: TextTheme(
+        headlineLarge: headlineLarge,
+        bodyLarge: bodyLarge,
+        labelLarge: labelLarge,
       ),
     );
   }

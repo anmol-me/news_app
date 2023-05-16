@@ -65,11 +65,10 @@ class CheckAgainWidget extends HookConsumerWidget {
                 : const Text('Check Again'),
           ),
           const SizedBox(height: 10),
-          TextBarButton(
+          AppTextButton(
             text: 'Home',
             textColor: colorRed,
             onTap: () {
-              if (ref.read(emptyStateDisableProvider)) {}
               ref.read(refreshProvider).refreshAllMain(context);
             },
           ),

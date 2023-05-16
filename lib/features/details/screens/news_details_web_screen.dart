@@ -115,11 +115,7 @@ class NewsDetailsWebScreen extends ConsumerWidget {
                   ),
                   Text(
                     newsItem.titleText,
-                    style: const TextStyle(
-                      color: Colors.black,
-                      fontSize: 26,
-                      fontWeight: FontWeight.w600,
-                    ),
+                    style: Theme.of(context).textTheme.headlineLarge,
                   ),
                   newsItem.imageUrl == ''
                       ? const SizedBox(height: 10)
@@ -129,9 +125,10 @@ class NewsDetailsWebScreen extends ConsumerWidget {
                         ),
                   Text(
                     newsItem.content,
-                    style: const TextStyle(
-                      fontSize: 18,
-                    ),
+                    style: Theme.of(context).textTheme.bodyLarge,
+                    // style: const TextStyle(
+                    //   fontSize: 18,
+                    // ),
                   ),
                 ],
               ),

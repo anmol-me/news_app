@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:news_app/common_widgets/common_widgets.dart';
 
 import '../common/constants.dart';
 import '../common/enums.dart';
-import '../features/authentication/repository/user_preferences.dart';
 import '../features/home/providers/home_providers.dart';
 import '../features/category/repository/category_repo.dart';
-import '../main.dart';
+import '../themes.dart';
 
 class BuildPopupMenuButton extends ConsumerWidget {
   final bool isShowRead;
