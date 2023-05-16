@@ -99,15 +99,22 @@ class SelectSubscriptionScreen extends HookConsumerWidget {
                     )
                   : const SubscriptionRefreshButton()
               : const SizedBox.shrink(),
-          IconButton(
-            onPressed: () => !isLoadingSubs
-                ? context.pushNamed(AddSubscription.routeNamed)
-                : null,
-            icon: Icon(
-              Icons.add,
-              color: isLoadingSubs ? colorDisabled : colorRed,
-            ),
-          ),
+          !isLoadingSubs
+              ? IconButton(
+                  onPressed: () =>
+                      context.pushNamed(AddSubscription.routeNamed),
+                  icon: Icon(
+                    Icons.add,
+                    color: colorRed,
+                  ),
+                )
+              : Padding(
+                padding: const EdgeInsets.only(right: 8.0),
+                child: Icon(
+                    Icons.add,
+                    color: colorDisabled,
+                  ),
+              ),
         ],
       ),
       body: isLoadingSubs
