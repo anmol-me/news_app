@@ -89,13 +89,21 @@ class AuthScreen extends HookConsumerWidget {
                         controller: usernameController,
                         decoration: InputDecoration(
                           labelText: 'Username',
-                          floatingLabelStyle: TextStyle(
+                          labelStyle: TextStyle(
                             color: usernameFocus.value
                                 ? colorRed
                                 : colorAppbarForeground,
                           ),
                           focusedBorder: UnderlineInputBorder(
-                            borderSide: BorderSide(color: colorLabel),
+                            borderSide: BorderSide(
+                              width: 1.5,
+                              color: colorRed,
+                            ),
+                          ),
+                          errorBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(
+                              color: Theme.of(context).colorScheme.error,
+                            ),
                           ),
                         ),
                         validator: (val) {
