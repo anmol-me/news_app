@@ -136,6 +136,10 @@ class AuthRepo {
         }
       }
       isLoadingLoginController.update((state) => false);
+
+      usernameController.clear();
+      passwordController.clear();
+      urlController.clear();
     } on SocketException catch (_) {
       isLoadingLoginController.update((state) => false);
       userPrefs.clearPrefs();

@@ -62,7 +62,7 @@ class AuthScreen extends HookConsumerWidget {
               userPrefs.setIsDemo(true);
               userPrefs.setAuthData('demo');
               userPrefs.setUrlData('demo');
-              context.push('/home');
+              context.go('/home');
             },
             child: const Text(
               'Demo',
