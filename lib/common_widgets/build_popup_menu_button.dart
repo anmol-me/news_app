@@ -35,9 +35,7 @@ class BuildPopupMenuButton extends ConsumerWidget {
     return PopupMenuButton<DropItems>(
       icon: Icon(
         Icons.filter_alt,
-        color: isShowRead || sort == Sort.ascending
-            ? colorRed
-            : colorAppbarForeground,
+        color: isShowRead || sort == Sort.ascending ? colorRed : null,
       ),
       itemBuilder: (context) => [
         PopupMenuItem(

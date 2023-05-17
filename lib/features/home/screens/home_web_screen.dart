@@ -127,9 +127,9 @@ class _HomeWebScreenState extends ConsumerState<HomeWebScreen> {
           else
             const SizedBox.shrink(),
           emptyStateDisable
-              ? IconButton(
-                  onPressed: null,
-                  icon: Icon(
+              ? Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Icon(
                     Icons.search,
                     color: colorDisabled,
                   ),
