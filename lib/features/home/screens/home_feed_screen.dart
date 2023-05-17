@@ -67,6 +67,7 @@ class _HomeFeedScreenState extends ConsumerState<HomeFeedScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDemoUser = ref.watch(userPrefsProvider).getIsDemo() ?? false;
     final isLoadingHomePage = ref.watch(homePageLoadingProvider);
     final isStarred = ref.watch(isStarredProvider);
 
@@ -75,7 +76,9 @@ class _HomeFeedScreenState extends ConsumerState<HomeFeedScreen> {
           ref.read(emptyStateDisableProvider.notifier);
       final disableFilterController = ref.read(disableFilterProvider.notifier);
 
-      if (next.isEmpty && !isStarred && isLoadingHomePage) {
+      if (!isDemoUser) {
+        emptyStateDisableController.update((state) => false);
+      } else if (next.isEmpty && !isStarred && isLoadingHomePage) {
         emptyStateDisableController.update((state) => true);
       } else if (next.isEmpty && isStarred) {
         emptyStateDisableController.update((state) => false);
@@ -105,8 +108,6 @@ class _HomeFeedScreenState extends ConsumerState<HomeFeedScreen> {
     final homeMethods = ref.watch(homeMethodsProvider(context));
     final emptyStateDisable = ref.watch(emptyStateDisableProvider);
     final disableFilter = ref.watch(disableFilterProvider);
-
-    final isDemoUser = ref.watch(userPrefsProvider).getIsDemo() ?? false;
 
     return Scaffold(
       appBar: AppBar(
