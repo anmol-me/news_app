@@ -196,7 +196,7 @@ class CategoryScreen extends HookConsumerWidget {
                     itemBuilder: (context, index) {
                       final newsItem = catNewsNotifier[index];
 
-                      return buildExpansionWidget(
+                      return buildTileExpansionWidget(
                         'category',
                         newsItem,
                         context,

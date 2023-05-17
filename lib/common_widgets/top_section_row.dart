@@ -33,22 +33,18 @@ Widget topSectionRow(
         },
         child: Text(
           newsItem.categoryTitle,
-          style: TextStyle(
-            color: colorRed,
-          ),
+          style: Theme.of(context).textTheme.labelLarge!.copyWith(
+                color: colorRed,
+              ),
         ),
       ),
       Text(
         ' / ',
-        style: TextStyle(
-          color: colorSubtitle,
-        ),
+        style: Theme.of(context).textTheme.labelLarge,
       ),
       Text(
         dateTime,
-        style: TextStyle(
-          color: colorSubtitle,
-        ),
+        style: Theme.of(context).textTheme.labelLarge,
       ),
     ],
   );

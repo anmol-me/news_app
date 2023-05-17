@@ -1,6 +1,6 @@
 import 'dart:async';
 
-export '../../../common_widgets/build_expansion_widget.dart';
+export '../../../common_widgets/build_title_expansion_widget.dart';
 
 import 'package:news_app/components/clear_button.dart';
 
@@ -8,7 +8,7 @@ import '../../../common/common_methods.dart';
 import '../../../common/common_providers.dart';
 import '../../../common_widgets/build_popup_menu_button.dart';
 import '../../../common_widgets/build_top_bar.dart';
-import '../../../common_widgets/build_expansion_widget.dart';
+import '../../../common_widgets/build_title_expansion_widget.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
@@ -189,7 +189,7 @@ class _HomeFeedScreenState extends ConsumerState<HomeFeedScreen> {
                               itemBuilder: (context, index) {
                                 final newsItem = newsNotifier[index];
 
-                                return buildExpansionWidget(
+                                return buildTileExpansionWidget(
                                   'home',
                                   newsItem,
                                   context,

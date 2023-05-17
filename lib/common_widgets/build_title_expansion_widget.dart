@@ -18,7 +18,7 @@ import '../models/news.dart';
 import 'expansion_widget.dart';
 import 'package:news_app/features/details/screens/news_details_screen.dart';
 
-Widget buildExpansionWidget(
+Widget buildTileExpansionWidget(
   String screenName,
   News newsItem,
   BuildContext context,
@@ -112,11 +112,7 @@ Widget buildExpansionWidget(
                   children: [
                     Text(
                       newsItem.titleText,
-                      style: const TextStyle(
-                        fontSize: 19,
-                        fontWeight: FontWeight.w600,
-                        height: 1.1,
-                      ),
+                      style: Theme.of(context).textTheme.titleMedium,
                     ),
                     Padding(
                       padding: const EdgeInsets.only(

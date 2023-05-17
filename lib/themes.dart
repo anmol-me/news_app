@@ -34,6 +34,13 @@ class AppTheme {
     fontWeight: FontWeight.w400,
   );
 
+  final TextStyle? titleMedium = const TextStyle(
+    fontSize: 19,
+    fontWeight: FontWeight.w600,
+    height: 1.1,
+  );
+
+
   ThemeData lightThemeData() {
     return ThemeData(
       brightness: Brightness.light,
@@ -43,6 +50,7 @@ class AppTheme {
         headlineLarge: headlineLarge,
         bodyLarge: bodyLarge,
         labelLarge: labelLarge,
+        titleMedium: titleMedium,
       ),
       //
       colorScheme: ColorScheme.fromSwatch().copyWith(
@@ -87,6 +95,7 @@ class AppTheme {
         headlineLarge: headlineLarge,
         bodyLarge: bodyLarge,
         labelLarge: labelLarge,
+        titleMedium: titleMedium,
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ButtonStyle(

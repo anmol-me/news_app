@@ -86,7 +86,7 @@ class SearchScreen extends HookConsumerWidget {
                                   itemBuilder: (context, index) {
                                     final newsItem = searchNotifier[index];
 
-                                    return buildExpansionWidget(
+                                    return buildTileExpansionWidget(
                                       'search',
                                       newsItem,
                                       context,
