@@ -2,6 +2,8 @@ import 'dart:async';
 
 export '../../../common_widgets/build_expansion_widget.dart';
 
+import 'package:news_app/components/clear_button.dart';
+
 import '../../../common/common_methods.dart';
 import '../../../common/common_providers.dart';
 import '../../../common_widgets/build_popup_menu_button.dart';
@@ -115,15 +117,7 @@ class _HomeFeedScreenState extends ConsumerState<HomeFeedScreen> {
         actions: [
           isDemoUser
               ? newsNotifier.isNotEmpty
-                  ? TextButton(
-                      onPressed: () => ref.refresh(homeFeedProvider),
-                      child: Text(
-                        'Clear',
-                        style: TextStyle(
-                          color: colorRed,
-                        ),
-                      ),
-                    )
+                  ? const HomeClearButton()
                   : const SizedBox.shrink()
               : const SizedBox.shrink(),
           if (emptyStateDisable)

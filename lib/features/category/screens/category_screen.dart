@@ -3,6 +3,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:news_app/common_widgets/common_widgets.dart';
+import 'package:news_app/components/clear_button.dart';
 import 'package:news_app/features/category/repository/category_repo.dart';
 import 'package:news_app/features/app_bar/app_drawer.dart';
 
@@ -112,17 +113,7 @@ class CategoryScreen extends HookConsumerWidget {
               leading: const AppBackButton(controller: false),
               actions: [
                 isDemoUser
-                    ? TextButton(
-                        onPressed: () => ref
-                            .refresh(categoryNotifierProvider.notifier)
-                            .clearCategoryState(),
-                        child: Text(
-                          'Clear',
-                          style: TextStyle(
-                            color: colorRed,
-                          ),
-                        ),
-                      )
+                    ? const CategoryClearButton()
                     : const SizedBox.shrink(),
                 IconButton(
                   onPressed: () => context.pushNamed(SearchScreen.routeNamed),
@@ -142,17 +133,7 @@ class CategoryScreen extends HookConsumerWidget {
               title: Text(catTitle),
               actions: [
                 isDemoUser
-                    ? TextButton(
-                        onPressed: () => ref
-                            .refresh(categoryNotifierProvider.notifier)
-                            .clearCategoryState(),
-                        child: Text(
-                          'Clear',
-                          style: TextStyle(
-                            color: colorRed,
-                          ),
-                        ),
-                      )
+                    ? const CategoryClearButton()
                     : const SizedBox.shrink(),
                 IconButton(
                   onPressed: () => context.pushNamed(SearchScreen.routeNamed),

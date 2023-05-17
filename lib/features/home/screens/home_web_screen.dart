@@ -2,6 +2,7 @@ import 'dart:async';
 
 export '../../../common_widgets/build_expansion_widget.dart';
 
+import 'package:news_app/components/clear_button.dart';
 import 'package:news_app/features/home/widgets/home_refresh_button.dart';
 
 import '../../../common/common_methods.dart';
@@ -118,15 +119,7 @@ class _HomeWebScreenState extends ConsumerState<HomeWebScreen> {
         actions: [
           isDemoUser
               ? newsNotifier.isNotEmpty
-                  ? TextButton(
-                      onPressed: () => ref.refresh(homeFeedProvider),
-                      child: Text(
-                        'Clear',
-                        style: TextStyle(
-                          color: colorRed,
-                        ),
-                      ),
-                    )
+                  ? const HomeClearButton()
                   : const SizedBox.shrink()
               : const SizedBox.shrink(),
           if (emptyStateDisable)

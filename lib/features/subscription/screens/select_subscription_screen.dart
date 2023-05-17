@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:news_app/components/clear_button.dart';
 import 'package:news_app/features/subscription/widgets/subscription_refresh_button.dart';
 import 'package:universal_platform/universal_platform.dart';
 
@@ -86,17 +87,7 @@ class SelectSubscriptionScreen extends HookConsumerWidget {
         actions: [
           isDemoPref
               ? categoryListNotifier.isNotEmpty
-                  ? TextButton(
-                      onPressed: () => ref
-                          .refresh(subscriptionNotifierProvider.notifier)
-                          .clearState(),
-                      child: Text(
-                        'Clear',
-                        style: TextStyle(
-                          color: colorRed,
-                        ),
-                      ),
-                    )
+                  ? const SubscriptionClearButton()
                   : const SubscriptionRefreshButton()
               : const SizedBox.shrink(),
           !isLoadingSubs
