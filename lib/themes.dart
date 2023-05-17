@@ -88,6 +88,11 @@ class AppTheme {
         bodyLarge: bodyLarge,
         labelLarge: labelLarge,
       ),
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ButtonStyle(
+          foregroundColor: MaterialStateProperty.all(Colors.white),
+        ),
+      ),
     );
   }
 }

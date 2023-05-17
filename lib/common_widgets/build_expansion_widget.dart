@@ -2,6 +2,8 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:news_app/components/read_button.dart';
+import 'package:news_app/components/starred_button.dart';
 import 'package:news_app/common_widgets/top_section_row.dart';
 import 'package:news_app/features/category/repository/category_repo.dart';
 

@@ -10,6 +10,7 @@ import 'package:news_app/features/authentication/repository/auth_repo.dart';
 import '../../../common/constants.dart';
 import '../../../common/enums.dart';
 import '../../../common/sizer.dart';
+import '../../../components/app_text_button.dart';
 import '../repository/user_preferences.dart';
 
 /// Providers
@@ -142,8 +143,8 @@ class AuthScreen extends HookConsumerWidget {
                             : const Text('Login'),
                       ),
                       const SizedBox(width: 10),
-                      TextButton(
-                        style: TextButton.styleFrom(foregroundColor: colorRed),
+                      AppTextButton(
+                        modeText,
                         onPressed: () {
                           if (mode == Mode.basic) {
                             modeController.update((state) => Mode.advanced);
@@ -153,7 +154,6 @@ class AuthScreen extends HookConsumerWidget {
                             modeController.update((state) => Mode.basic);
                           }
                         },
-                        child: Text(modeText),
                       ),
                     ],
                   ),

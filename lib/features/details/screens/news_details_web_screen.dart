@@ -3,8 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/rendering.dart';
 import 'package:intl/intl.dart';
 
-import 'package:news_app/common_widgets/common_widgets.dart';
 import '../../../common/constants.dart';
+import '../../../components/app_button.dart';
+import '../../../components/read_button.dart';
 import '../../../models/news.dart';
 import '../../authentication/repository/user_preferences.dart';
 import '../../category/repository/category_repo.dart';
@@ -41,6 +42,8 @@ class NewsDetailsWebScreen extends ConsumerWidget {
     final categoryController = ref.watch(categoryNotifierProvider.notifier);
     final searchController = ref.watch(searchNotifierProvider.notifier);
 
+    final newsDetails = ref.watch(newsDetailsProvider);
+
     bool isFav = false;
 
     if (screenName == 'search') {
@@ -69,7 +72,11 @@ class NewsDetailsWebScreen extends ConsumerWidget {
         actions: [
           Row(
             children: [
-              OpenLinkButton(url: newsItem.link),
+              AppButton(
+                'Open link',
+                icon: Icons.link,
+                onTap: () => newsDetails.openLink(newsItem.link, context),
+              ),
               const SizedBox(width: 10),
               ReadButton(
                 entryId: newsItem.entryId,
@@ -80,7 +87,6 @@ class NewsDetailsWebScreen extends ConsumerWidget {
           ),
         ],
       ),
-
       body: NotificationListener<UserScrollNotification>(
         onNotification: (notification) {
           if (notification.direction == ScrollDirection.forward) {
@@ -126,9 +132,6 @@ class NewsDetailsWebScreen extends ConsumerWidget {
                   Text(
                     newsItem.content,
                     style: Theme.of(context).textTheme.bodyLarge,
-                    // style: const TextStyle(
-                    //   fontSize: 18,
-                    // ),
                   ),
                 ],
               ),
@@ -136,8 +139,6 @@ class NewsDetailsWebScreen extends ConsumerWidget {
           ),
         ),
       ),
-      // ),
-      // ),
       floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
       floatingActionButton: isFabButton
           ? FloatingActionButton(

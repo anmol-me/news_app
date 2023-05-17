@@ -7,6 +7,7 @@ import 'package:news_app/common_widgets/common_widgets.dart';
 
 import '../../../common/common_methods.dart';
 import '../../../common/constants.dart';
+import '../../../components/app_text_button.dart';
 import '../../authentication/repository/user_preferences.dart';
 import '../providers/home_providers.dart';
 
@@ -66,11 +67,8 @@ class CheckAgainWidget extends HookConsumerWidget {
           ),
           const SizedBox(height: 10),
           AppTextButton(
-            text: 'Home',
-            textColor: colorRed,
-            onTap: () {
-              ref.read(refreshProvider).refreshAllMain(context);
-            },
+            'Home',
+            onPressed: () => ref.read(refreshProvider).refreshAllMain(context),
           ),
         ],
       ),
