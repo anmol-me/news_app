@@ -57,6 +57,7 @@ class SettingsScreen extends HookConsumerWidget {
           ),
           SwitchListTile(
             title: const Text('Enable Dark Mode'),
+            activeColor: Colors.red.shade500,
             value: themeState ?? false,
             onChanged: (val) {
               themeStateController.setThemeMode(val);
