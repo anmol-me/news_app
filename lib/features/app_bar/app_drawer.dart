@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
-import 'package:universal_platform/universal_platform.dart';
 
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:news_app/common/common_methods.dart';
@@ -11,6 +10,7 @@ import 'package:news_app/features/subscription/screens/select_subscription_scree
 
 import '../../common/common_providers.dart';
 import '../../common/constants.dart';
+import '../../themes.dart';
 import '../authentication/repository/auth_repo.dart';
 import '../authentication/repository/user_preferences.dart';
 import '../home/providers/home_providers.dart';
@@ -78,17 +78,14 @@ class AppDrawer extends HookConsumerWidget {
     final isStarred = ref.watch(isStarredProvider);
     final emptyStateDisable = ref.watch(emptyStateDisableProvider);
 
+    final themeMode = ref.watch(themeModeProvider);
+    final isLight = themeMode == ThemeMode.light;
+
     return Drawer(
       child: SingleChildScrollView(
         child: Column(
           children: [
-            const BuildHeader(),
-            Divider(
-              color: colorRed,
-              thickness: 1.5,
-              indent: 60,
-              endIndent: 60,
-            ),
+            const BuildDrawerHeader(),
             Wrap(
               runSpacing: 1,
               children: [
@@ -154,8 +151,8 @@ class AppDrawer extends HookConsumerWidget {
                     context.pushNamed(SelectSubscriptionScreen.routeNamed);
                   },
                 ),
-                const Divider(
-                  color: Colors.black54,
+                Divider(
+                  color: isLight ? Colors.black87 : Colors.white,
                   thickness: 0.6,
                   indent: 60,
                   endIndent: 60,
@@ -179,51 +176,41 @@ class AppDrawer extends HookConsumerWidget {
   }
 }
 
-class BuildHeader extends HookConsumerWidget {
-  const BuildHeader({super.key});
+class BuildDrawerHeader extends HookConsumerWidget {
+  const BuildDrawerHeader({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final isLoadingName = ref.watch(isLoadingNameProvider);
 
-    final size = MediaQuery.of(context).size;
-
-    final double height;
-    if (UniversalPlatform.isDesktop) {
-      height = size.height * 0.17;
-    } else if (UniversalPlatform.isWeb) {
-      height = size.height * 0.17;
-    } else {
-      height = size.height * 0.20;
-    }
-
     final userNameLoaded =
         ref.watch(userNotifierProvider)?.username.capitalize() ?? ' Loading...';
 
-    return Material(
-      child: Container(
-        height: height,
-        padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top + 40),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Column(
-              children: [
-                const Text(
-                  'Feeds',
-                  style: TextStyle(fontSize: 26),
-                ),
-                Text(
-                  isLoadingName ? 'Loading...' : 'Welcome $userNameLoaded',
-                  style: const TextStyle(
-                    fontSize: 16,
-                    color: Colors.grey,
-                  ),
-                ),
-              ],
-            ),
-          ],
+    return DrawerHeader(
+      decoration: BoxDecoration(
+        border: Border(
+          bottom: Divider.createBorderSide(
+            context,
+            color: colorRed,
+            width: 1.5,
+          ),
         ),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Text(
+            'Feeds',
+            style: TextStyle(fontSize: 26),
+          ),
+          Text(
+            isLoadingName ? 'Loading...' : 'Welcome $userNameLoaded',
+            style: const TextStyle(
+              fontSize: 16,
+              color: Colors.grey,
+            ),
+          ),
+        ],
       ),
     );
   }
