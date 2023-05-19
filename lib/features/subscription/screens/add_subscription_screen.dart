@@ -211,7 +211,10 @@ class DiscoveryItem extends HookConsumerWidget {
       title: Text(subsItem.title),
       leading: isLoading.value
           ? CircularLoading(color: colorRed)
-          : const Icon(Icons.circle),
+          : Icon(
+              Icons.circle,
+              color: colorAppbarForeground,
+            ),
       onTap: () => discoveryNotifier.submitFeed(
         context,
         isLoading,
