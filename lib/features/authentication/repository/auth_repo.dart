@@ -7,21 +7,35 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:news_app/common/common_methods.dart';
+import 'package:news_app/common/common_providers.dart';
 import 'package:news_app/features/authentication/repository/user_preferences.dart';
 
 import 'package:news_app/features/authentication/screens/auth_screen.dart';
+import 'package:news_app/features/category/screens/edit_feed_screen.dart';
+import 'package:news_app/features/details/components/providers.dart';
+import 'package:news_app/features/subscription/screens/add_subscription_screen.dart';
+import 'package:news_app/themes.dart';
 import '../../../common/error.dart';
 import '../../../common_widgets/common_widgets.dart';
 import '../../../common/constants.dart';
 import '../../../common/enums.dart';
 import '../../../common/api_methods.dart';
+import '../../app_bar/app_bar_repo.dart';
 import '../../app_bar/user_repository.dart';
 import '../../category/repository/category_repo.dart';
 import '../../category/repository/manage_category_repository.dart';
+import '../../category/screens/category_screen.dart';
+import '../../category/screens/manage_category_screen.dart';
 import '../../home/providers/home_providers.dart';
+import '../../home/repository/home_methods.dart';
 import '../../home/screens/home_feed_screen.dart';
+import '../../search/repository/search_repo.dart';
+import '../../search/screens/search_screen.dart';
 import '../../settings/repository/settings_repository.dart';
+import '../../settings/screens/settings_screen.dart';
+import '../../subscription/repository/discovery_repository.dart';
 import '../../subscription/repository/subscription_repository.dart';
+import '../../subscription/screens/edit_subscription_screen.dart';
 
 final authRepoProvider = Provider(
   (ref) {
@@ -165,14 +179,59 @@ class AuthRepo {
     userPrefs.clearPrefs();
 
     ref.invalidate(userNotifierProvider);
-    ref.invalidate(homePageLoadingProvider);
+    ref.invalidate(emptyStateDisableProvider);
+    ref.invalidate(disableFilterProvider);
+    ref.invalidate(userPrefsProvider);
+    ref.invalidate(modeProvider);
+    ref.invalidate(themeModeProvider);
+    ref.invalidate(appBarRepoProvider);
+    ref.invalidate(catPageHandlerProvider);
+    ref.invalidate(catMaxPagesProvider);
+    ref.invalidate(catIsNextProvider);
+    ref.invalidate(isRefreshAllLoadingProvider);
+
+    ref.invalidate(refreshProvider);
+
     ref.invalidate(homeFeedProvider);
+    ref.invalidate(homeMethodsProvider);
+    ref.invalidate(homePageLoadingProvider);
+    ref.invalidate(homeOffsetProvider);
+    ref.invalidate(homeSortDirectionProvider);
+    ref.invalidate(homeIsShowReadProvider);
+    ref.invalidate(homeIsLoadingBookmarkProvider);
+
+    ref.invalidate(newsDetailsProvider);
+    ref.invalidate(discoveryProvider);
+    ref.invalidate(selectedCategoryProvider);
+    ref.invalidate(showAsteriskProvider);
+
+    ref.invalidate(searchNotifierProvider);
+    ref.invalidate(showNoResultsProvider);
+    ref.invalidate(showSearchLoaderProvider);
+    ref.invalidate(showFirstSearchProvider);
+
     ref.invalidate(subscriptionNotifierProvider);
+
     ref.invalidate(categoryNotifierProvider);
+    ref.invalidate(catSortProvider);
+    ref.invalidate(catOffsetProvider);
     ref.invalidate(manageCateNotifierProvider);
+
     ref.invalidate(userSettingsProvider);
     ref.invalidate(authRepoProvider);
+
     ref.invalidate(isStarredProvider);
+    ref.invalidate(isDiscoverLoadingProvider);
+    ref.invalidate(isLoadingLoginProvider);
+    ref.invalidate(isCatLoadingProvider);
+    ref.invalidate(isDeletingCatProvider);
+    ref.invalidate(isFeedLoadingProvider);
+    ref.invalidate(isFabButtonProvider);
+    ref.invalidate(isTitleUpdatingProvider);
+    ref.invalidate(isFeedTitleUpdatingProvider);
+    ref.invalidate(isManageLoadingProvider);
+    ref.invalidate(isManageProcessingProvider);
+
 
     if (ref.read(isHomeDrawerOpened)) {
       if (context.mounted) Navigator.of(context).pop();

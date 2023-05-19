@@ -34,15 +34,6 @@ Future showModelSheet({
                 onTap: () {
                   Navigator.of(context).pop();
 
-                  // final isDemoPref =
-                  //     ref.read(userPrefsProvider).getIsDemo() ?? false;
-                  // if (isDemoPref) {
-                  //   showErrorSnackBar(
-                  //       context: context,
-                  //       text: ErrorString.demoEditCategory.value);
-                  //   return;
-                  // }
-
                   context.pushNamed(
                     EditSubscriptionScreen.routeNamed,
                     queryParameters: {
@@ -163,7 +154,6 @@ Widget customTile({
   required double fontSize,
 }) {
   return Container(
-    // color: Colors.grey,
     padding: const EdgeInsets.symmetric(
       vertical: 4,
       horizontal: 10,

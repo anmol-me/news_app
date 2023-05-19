@@ -5,7 +5,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:news_app/common/enums.dart';
-import 'package:news_app/features/app_bar/app_drawer.dart';
 
 import '../../../common/common_methods.dart';
 import '../../../common_widgets/common_widgets.dart';

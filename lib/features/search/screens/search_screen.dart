@@ -8,7 +8,6 @@ import 'package:news_app/features/search/components/first_search_widget.dart';
 import 'package:news_app/features/search/components/no_search_results.dart';
 import 'package:news_app/features/search/repository/search_repo.dart';
 
-import '../../home/providers/home_providers.dart';
 import '../components/search_text_field.dart';
 
 /// Providers

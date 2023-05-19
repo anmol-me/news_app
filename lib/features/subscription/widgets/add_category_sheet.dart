@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:news_app/components/app_text_form_field.dart';
 import 'package:news_app/features/subscription/repository/subscription_repository.dart';
-import '../../../common/enums.dart';
 import '../../../common_widgets/common_widgets.dart';
 import '../../../common/constants.dart';
 import '../../authentication/repository/user_preferences.dart';

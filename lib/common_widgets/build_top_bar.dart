@@ -3,8 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:news_app/common/constants.dart';
 import 'package:news_app/common_widgets/disabled_button_widgets.dart';
 
-import '../features/authentication/repository/user_preferences.dart';
-
 Widget buildTopBar(
   bool isLoadingPage,
   bool canGoToPreviousPage,

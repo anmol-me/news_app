@@ -50,7 +50,6 @@ class EditSubscriptionScreen extends HookConsumerWidget {
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Column(
-                  // crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Focus(
                       onFocusChange: (hasFocus) {
