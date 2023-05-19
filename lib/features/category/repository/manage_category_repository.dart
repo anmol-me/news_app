@@ -45,22 +45,16 @@ class ManageCategoryRepository extends Notifier<List<CategoryList>> {
         throw ServerErrorException(res);
       }
 
-      final List<CategoryList> list = [];
+      List<CategoryList> fetchedCategories = [];
 
       if (res.statusCode == 200) {
         List<dynamic> decodedData = jsonDecode(res.body);
 
-        for (var i = 0; i < decodedData.length; i++) {
-          final data = CategoryList(
-            id: decodedData[i]['id'],
-            title: decodedData[i]['title'],
-          );
-
-          list.add(data);
-        }
+        fetchedCategories =
+            decodedData.map((e) => CategoryList.fromJson(e)).toList();
       }
 
-      return state = list;
+      return state = fetchedCategories;
     } on SocketException catch (_) {
       showErrorSnackBar(
           context: context, text: ErrorString.checkInternet.value);
