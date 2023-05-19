@@ -32,7 +32,7 @@ class SettingsScreen extends HookConsumerWidget {
     final isDemoPref = ref.watch(userPrefsProvider).getIsDemo() ?? false;
 
     final isWeb = UniversalPlatform.isWeb;
-    final color = isWeb ? colorDisabled : colorAppbarForeground;
+    final color = isWeb ? colorDisabled : Colors.black;
 
     final clearCacheTile = ListTile(
       title: Text(
@@ -44,7 +44,7 @@ class SettingsScreen extends HookConsumerWidget {
       subtitle: Text(
         '(Web not supported)',
         style: TextStyle(
-          color: color,
+          color: colorSubtitle,
         ),
       ),
       trailing: isWeb
