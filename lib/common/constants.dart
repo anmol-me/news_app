@@ -5,8 +5,6 @@ Color colorAppbarBackground = Colors.grey.shade50;
 Color colorAppbarForeground = Colors.grey.shade700;
 Color colorDisabled = Colors.grey.shade500;
 Color colorSubtitle = Colors.grey.shade600;
-Color colorLabel = Colors.black;
-
 
 const staticUsername = 'anmol';
 const staticPassword = 'P4%RqM&eZq8V^ADWKc4vF52y2ujtB!AF';
