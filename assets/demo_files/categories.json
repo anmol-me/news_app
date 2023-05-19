@@ -10,5 +10,11 @@
     "title": "Verge",
     "user_id": 7,
     "hide_globally": false
+  },
+  {
+    "id": 185,
+    "title": "Life Hacker",
+    "user_id": 7,
+    "hide_globally": false
   }
 ]

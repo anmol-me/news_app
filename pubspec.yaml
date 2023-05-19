@@ -28,7 +28,7 @@ dependencies:
   flutter_slidable: ^3.0.0
   shared_preferences: ^2.1.1
   fade_shimmer: ^2.2.0
-  share_plus: ^7.0.0
+  share_plus: ^7.0.1
   universal_platform: ^1.0.0+1
   path_provider: ^2.0.15
   path: ^1.8.3
