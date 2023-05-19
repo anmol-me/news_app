@@ -44,6 +44,10 @@ class _HomeWebScreenState extends ConsumerState<HomeWebScreen> {
   @override
   initState() {
     super.initState();
+    Future.delayed(Duration.zero).then(
+      (_) => ref.read(emptyStateDisableProvider.notifier).update((state) => false),
+    );
+
     Timer(const Duration(seconds: 20), () => FlutterNativeSplash.remove());
 
     final isDemoPref = ref.read(userPrefsProvider).getIsDemo() ?? false;
