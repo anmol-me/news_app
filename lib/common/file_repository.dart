@@ -1,7 +1,9 @@
 import 'dart:io';
 
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:news_app/common_widgets/common_widgets.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:universal_platform/universal_platform.dart';
 
@@ -69,6 +71,33 @@ class FileRepository {
 
     final file = await _initializeFile(assetName, path);
     await file.writeAsString(data);
+  }
+
+  Future<void> deleteFile({
+    required String assetName,
+    required BuildContext context,
+  }) async {
+    try {
+      final localDirectory = (await getApplicationDocumentsDirectory()).path;
+      final file = File('$localDirectory\\$assetName');
+      if (await file.exists()) {
+        await file.delete();
+        if (context.mounted) {
+          showSnackBar(
+              context: context, text: 'Category cache cleared successfully');
+        }
+        return;
+      } else {
+        if (context.mounted) {
+          showSnackBar(context: context, text: 'File does not exist');
+        }
+      }
+    } catch (_) {
+      if (context.mounted) {
+        showErrorSnackBar(
+            context: context, text: 'Could not delete cache file');
+      }
+    }
   }
 
   String _getPath(String assetName) {

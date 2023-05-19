@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:news_app/common/constants.dart';
+import 'package:news_app/common/file_repository.dart';
+import 'package:universal_platform/universal_platform.dart';
 
 import '../../../common/enums.dart';
 import '../../../common_widgets/common_widgets.dart';
@@ -26,6 +29,37 @@ class SettingsScreen extends HookConsumerWidget {
     final isRefreshAllLoadingController =
         ref.watch(isRefreshAllLoadingProvider.notifier);
 
+    final isDemoPref = ref.watch(userPrefsProvider).getIsDemo() ?? false;
+
+    final isWeb = UniversalPlatform.isWeb;
+    final color = isWeb ? colorDisabled : colorAppbarForeground;
+
+    final clearCacheTile = ListTile(
+      title: Text(
+        'Clear demo category cache',
+        style: TextStyle(
+          color: color,
+        ),
+      ),
+      subtitle: Text(
+        '(Web not supported)',
+        style: TextStyle(
+          color: color,
+        ),
+      ),
+      trailing: isWeb
+          ? Icon(Icons.clear_all, color: colorDisabled)
+          : IconButton(
+              icon: const Icon(Icons.clear_all),
+              onPressed: () {
+                ref.read(fileRepositoryProvider).deleteFile(
+                      assetName: AssetFileName.categories.value,
+                      context: context,
+                    );
+              },
+            ),
+    );
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Settings'),
@@ -39,9 +73,10 @@ class SettingsScreen extends HookConsumerWidget {
             title: const Text('Refresh all feeds\n(in the background)'),
             trailing: IconButton(
               onPressed: () {
-                final isDemoPref = ref.read(userPrefsProvider).getIsDemo() ?? false;
                 if (isDemoPref) {
-                  showErrorSnackBar(context: context, text: ErrorString.demoRefreshSettings.value);
+                  showErrorSnackBar(
+                      context: context,
+                      text: ErrorString.demoRefreshSettings.value);
                   return;
                 }
 
@@ -55,6 +90,7 @@ class SettingsScreen extends HookConsumerWidget {
               ),
             ),
           ),
+          isDemoPref ? clearCacheTile : const SizedBox.shrink(),
           SwitchListTile(
             title: const Text('Enable Dark Mode'),
             activeColor: Colors.red.shade500,
