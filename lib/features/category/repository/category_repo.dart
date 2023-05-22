@@ -162,7 +162,7 @@ class CategoryNotifier extends Notifier<List<News>> {
         }
       }
 
-      state = fetchedNewsList;
+      state = fetchedNewsList.reversed.toList();
     } catch (_) {
       showErrorSnackBar(
           context: context, text: ErrorString.somethingWrongAdmin.value);
