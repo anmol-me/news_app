@@ -25,13 +25,11 @@ final categoryNotifierProvider =
 /// Notifier Class
 class CategoryNotifier extends Notifier<List<News>> {
   late UserPreferences userPrefs;
-  late Sort catSort;
   late StateController<bool> isCatLoadingController;
 
   @override
   List<News> build() {
     userPrefs = ref.watch(userPrefsProvider);
-    catSort = ref.watch(catSortProvider);
     isCatLoadingController = ref.watch(isCatLoadingProvider.notifier);
     return [];
   }
@@ -46,6 +44,7 @@ class CategoryNotifier extends Notifier<List<News>> {
     final baseUrl = userPrefs.getUrlData()!;
 
     final catOffset = ref.read(catOffsetProvider);
+    final catSort = ref.read(catSortProvider);
     final isShowReadCat = ref.read(isShowReadCatProvider);
 
     Uri uri = Uri.https(baseUrl, 'v1/categories/$id/entries', {
