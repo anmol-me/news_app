@@ -47,6 +47,8 @@ final catIsNextProvider = StateProvider.family<bool, int>(
   },
 );
 
+// final GlobalKey<ScaffoldState> drawerscaffoldkey = GlobalKey<ScaffoldState>();
+
 /// Widgets
 class CategoryScreen extends HookConsumerWidget {
   static const routeNamed = '/category-screen';
@@ -64,6 +66,8 @@ class CategoryScreen extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final drawerKey = useMemoized(GlobalKey<ScaffoldState>.new, const []);
+
     final isCatLoading = ref.watch(isCatLoadingProvider);
     final isCatLoadingController = ref.watch(isCatLoadingProvider.notifier);
 
@@ -108,48 +112,39 @@ class CategoryScreen extends HookConsumerWidget {
     final scrollController = useScrollController();
 
     return Scaffold(
-      appBar: isBackButton == true
-          ? AppBar(
-              title: Text(catTitle),
-              leading: const AppBackButton(controller: false),
-              actions: [
-                isDemoUser
-                    ? CategoryClearButton(catId: catId)
-                    : const SizedBox.shrink(),
-                IconButton(
-                  onPressed: () => context.pushNamed(SearchScreen.routeNamed),
-                  icon: const Icon(Icons.search),
-                ),
-                BuildPopupMenuButton(
-                  isShowRead: isShowReadCat,
-                  sort: catSort,
-                  sortFunction: () =>
-                      categoryNotifier.sortCatFunction(catId, context),
-                  readFunction: () =>
-                      categoryNotifier.readCatFunction(catId, context),
-                ),
-              ],
-            )
-          : AppBar(
-              title: Text(catTitle),
-              actions: [
-                isDemoUser
-                    ? CategoryClearButton(catId: catId)
-                    : const SizedBox.shrink(),
-                IconButton(
-                  onPressed: () => context.pushNamed(SearchScreen.routeNamed),
-                  icon: const Icon(Icons.search),
-                ),
-                BuildPopupMenuButton(
-                  isShowRead: isShowReadCat,
-                  sort: catSort,
-                  sortFunction: () =>
-                      categoryNotifier.sortCatFunction(catId, context),
-                  readFunction: () =>
-                      categoryNotifier.readCatFunction(catId, context),
-                ),
-              ],
-            ),
+      key: drawerKey,
+      appBar: AppBar(
+        title: Text(catTitle),
+        leading: isBackButton
+            ? const AppBackButton(controller: false)
+            : IconButton(
+                onPressed: () {
+                  if (drawerKey.currentState!.isDrawerOpen) {
+                    Navigator.pop(context);
+                  } else {
+                    drawerKey.currentState!.openDrawer();
+                  }
+                },
+                icon: const Icon(Icons.menu),
+              ),
+        actions: [
+          isDemoUser
+              ? CategoryClearButton(catId: catId)
+              : const SizedBox.shrink(),
+          IconButton(
+            onPressed: () => context.pushNamed(SearchScreen.routeNamed),
+            icon: const Icon(Icons.search),
+          ),
+          BuildPopupMenuButton(
+            isShowRead: isShowReadCat,
+            sort: catSort,
+            sortFunction: () =>
+                categoryNotifier.sortCatFunction(catId, context),
+            readFunction: () =>
+                categoryNotifier.readCatFunction(catId, context),
+          ),
+        ],
+      ),
       drawer: const AppDrawer(),
       onDrawerChanged: (isOpened) {
         ref.read(isDrawerOpenProvider.notifier).update((state) => isOpened);
