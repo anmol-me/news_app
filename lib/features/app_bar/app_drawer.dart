@@ -107,7 +107,7 @@ class AppDrawer extends HookConsumerWidget {
                         leading: const Icon(Icons.home_outlined),
                         title: const Text('All Items'),
                         onTap: () => ref
-                            .refresh(refreshProvider)
+                            .read(refreshProvider)
                             .refreshAllMain(context),
                       ),
                 emptyStateDisable

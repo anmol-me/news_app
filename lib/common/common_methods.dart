@@ -25,21 +25,24 @@ class RefreshMethods {
   Future<void> refreshAllMain(
     BuildContext context,
   ) async {
+    final currentLocation = GoRouterState.of(context).name;
+
     final isDrawerOpened = ref.read(isDrawerOpenProvider);
     if (isDrawerOpened) Navigator.of(context).pop();
 
     final isDemoPref = ref.read(userPrefsProvider).getIsDemo() ?? false;
     if (isDemoPref) {
       ref.read(homeMethodsProvider(context)).refreshHomeProviders();
-      ref.refresh(homeFeedProvider.notifier).fetchDemoEntries(context);
-      // context.push('/home');
+      ref.read(homeFeedProvider.notifier).fetchDemoEntries(context);
+
+      if (currentLocation != '/home-feed-screen' &&
+          currentLocation != '/home-web-screen') context.go('/home');
+
       return;
     }
 
     final isLoadingHomePageController =
         ref.read(homePageLoadingProvider.notifier);
-
-    final currentLocation = GoRouterState.of(context).name;
 
     isLoadingHomePageController.update((state) => true);
 
