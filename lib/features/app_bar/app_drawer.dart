@@ -144,7 +144,7 @@ class AppDrawer extends HookConsumerWidget {
                   leading: const Icon(Icons.subscriptions_rounded),
                   title: const Text('Subscription'),
                   onTap: () {
-                    if (ref.read(isHomeDrawerOpened)) {
+                    if (ref.read(isDrawerOpenProvider)) {
                       Navigator.of(context).pop();
                     }
                     ref.refresh(catSortProvider).value;

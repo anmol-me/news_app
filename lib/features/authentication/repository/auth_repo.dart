@@ -233,7 +233,7 @@ class AuthRepo {
     ref.invalidate(isManageProcessingProvider);
 
 
-    if (ref.read(isHomeDrawerOpened)) {
+    if (ref.read(isDrawerOpenProvider)) {
       if (context.mounted) Navigator.of(context).pop();
     }
 

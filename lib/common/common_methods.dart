@@ -5,14 +5,13 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:html/parser.dart' as html_parser;
+import 'package:news_app/common/common_providers.dart';
 
 import 'package:news_app/features/home/repository/home_methods.dart';
 import '../features/authentication/repository/user_preferences.dart';
 import '../features/home/providers/home_providers.dart';
 import '../features/home/screens/home_feed_screen.dart';
 import '../models/news.dart';
-
-final isHomeDrawerOpened = StateProvider((ref) => false);
 
 final refreshProvider = Provider((ref) {
   return RefreshMethods(ref);
@@ -26,14 +25,14 @@ class RefreshMethods {
   Future<void> refreshAllMain(
     BuildContext context,
   ) async {
-    final isDrawerOpened = ref.read(isHomeDrawerOpened);
+    final isDrawerOpened = ref.read(isDrawerOpenProvider);
     if (isDrawerOpened) Navigator.of(context).pop();
 
     final isDemoPref = ref.read(userPrefsProvider).getIsDemo() ?? false;
     if (isDemoPref) {
       ref.read(homeMethodsProvider(context)).refreshHomeProviders();
       ref.refresh(homeFeedProvider.notifier).fetchDemoEntries(context);
-      context.push('/home');
+      // context.push('/home');
       return;
     }
 

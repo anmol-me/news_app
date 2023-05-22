@@ -157,7 +157,7 @@ class _HomeWebScreenState extends ConsumerState<HomeWebScreen> {
       ),
       drawer: currentWidth <= 650 ? const AppDrawer() : null,
       onDrawerChanged: (isOpened) {
-        ref.read(isHomeDrawerOpened.notifier).update((state) => isOpened);
+        ref.read(isDrawerOpenProvider.notifier).update((state) => isOpened);
       },
       body: Row(
         children: [
