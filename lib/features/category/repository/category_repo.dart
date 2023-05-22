@@ -286,17 +286,30 @@ class CategoryNotifier extends Notifier<List<News>> {
     int catId,
     BuildContext context,
   ) {
-    isCatLoadingController.update((state) => true);
+    final isDemoPref = ref.read(userPrefsProvider).getIsDemo() ?? false;
 
     final isShowReadCatController = ref.read(isShowReadCatProvider.notifier);
     isShowReadCatController.update((state) => state = !state);
 
-    ref
-        .read(categoryNotifierProvider.notifier)
-        .fetchCategoryEntries(catId, context)
-        .then(
-          (_) => isCatLoadingController.update((state) => false),
-        );
+    if (!isDemoPref) {
+      isCatLoadingController.update((state) => true);
+
+      ref
+          .read(categoryNotifierProvider.notifier)
+          .fetchCategoryEntries(catId, context)
+          .then(
+            (_) => isCatLoadingController.update((state) => false),
+          );
+    } else {
+      // Demo
+      final isShowReadCat = ref.read(isShowReadCatProvider);
+
+      if (isShowReadCat) {
+        state = state.where((e) => e.status == Status.read).toList();
+      } else {
+        fetchDemoCategoryEntries(catId, context);
+      }
+    }
   }
 
   void toggleFavStatus(
