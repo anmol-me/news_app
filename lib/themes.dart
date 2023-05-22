@@ -40,7 +40,6 @@ class AppTheme {
     height: 1.1,
   );
 
-
   ThemeData lightThemeData() {
     return ThemeData(
       brightness: Brightness.light,
@@ -76,6 +75,12 @@ class AppTheme {
         style: FilledButton.styleFrom(
           backgroundColor: colorRed,
           foregroundColor: Colors.white,
+        ),
+      ),
+      //
+      textButtonTheme: TextButtonThemeData(
+        style: TextButton.styleFrom(
+          foregroundColor: colorRed,
         ),
       ),
       //

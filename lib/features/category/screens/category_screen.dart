@@ -113,7 +113,7 @@ class CategoryScreen extends HookConsumerWidget {
               leading: const AppBackButton(controller: false),
               actions: [
                 isDemoUser
-                    ? const CategoryClearButton()
+                    ? CategoryClearButton(catId: catId)
                     : const SizedBox.shrink(),
                 IconButton(
                   onPressed: () => context.pushNamed(SearchScreen.routeNamed),
@@ -133,7 +133,7 @@ class CategoryScreen extends HookConsumerWidget {
               title: Text(catTitle),
               actions: [
                 isDemoUser
-                    ? const CategoryClearButton()
+                    ? CategoryClearButton(catId: catId)
                     : const SizedBox.shrink(),
                 IconButton(
                   onPressed: () => context.pushNamed(SearchScreen.routeNamed),

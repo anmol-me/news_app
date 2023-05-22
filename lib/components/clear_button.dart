@@ -30,6 +30,28 @@ class ClearButton extends ConsumerWidget {
   }
 }
 
+class AppRefreshButton extends ConsumerWidget {
+  final IconData? icon;
+  final void Function()? onPressed;
+
+  const AppRefreshButton({
+    super.key,
+    this.icon,
+    required this.onPressed,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return TextButton(
+      onPressed: onPressed,
+      child: Icon(
+        icon ?? Icons.refresh,
+        color: colorRed,
+      ),
+    );
+  }
+}
+
 class HomeClearButton extends ConsumerWidget {
   const HomeClearButton({super.key});
 
@@ -42,14 +64,28 @@ class HomeClearButton extends ConsumerWidget {
 }
 
 class CategoryClearButton extends ConsumerWidget {
-  const CategoryClearButton({super.key});
+  final int catId;
+
+  const CategoryClearButton({
+    super.key,
+    required this.catId,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return ClearButton(
-      onPressed: () =>
-          ref.refresh(categoryNotifierProvider.notifier).clearCategoryState(),
-    );
+    final catNotifier = ref.watch(categoryNotifierProvider);
+
+    return catNotifier.isNotEmpty
+        ? ClearButton(
+            onPressed: () => ref
+                .read(categoryNotifierProvider.notifier)
+                .clearOrRefreshDemo(catId, context),
+          )
+        : AppRefreshButton(
+            onPressed: () => ref
+                .read(categoryNotifierProvider.notifier)
+                .clearOrRefreshDemo(catId, context),
+          );
   }
 }
 

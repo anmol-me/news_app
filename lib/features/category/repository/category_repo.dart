@@ -395,7 +395,16 @@ class CategoryNotifier extends Notifier<List<News>> {
     }
   }
 
-  void readDemoCatEntries() {
-    state = state.where((e) => e.status == Status.read).toList();
+  void clearOrRefreshDemo(
+    int catId,
+    BuildContext context,
+  ) {
+    if (state.isNotEmpty) {
+      state = [];
+    } else {
+      ref
+          .refresh(categoryNotifierProvider.notifier)
+          .fetchDemoCategoryEntries(catId, context);
+    }
   }
 }
