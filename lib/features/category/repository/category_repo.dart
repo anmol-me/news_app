@@ -248,9 +248,9 @@ class CategoryNotifier extends Notifier<List<News>> {
     int catId,
     BuildContext context,
   ) {
-    isCatLoadingController.update((state) => true);
-    ref.refresh(catOffsetProvider.notifier).update((state) => 0);
+    final isDemoPref = ref.read(userPrefsProvider).getIsDemo() ?? false;
 
+    final catSort = ref.read(catSortProvider);
     final catSortController = ref.read(catSortProvider.notifier);
 
     if (catSort == Sort.ascending) {
@@ -259,15 +259,28 @@ class CategoryNotifier extends Notifier<List<News>> {
       catSortController.update((state) => state = Sort.ascending);
     }
 
-    Future.delayed(const Duration(seconds: 0)).then((_) {
-      ref
-          .refresh(categoryNotifierProvider.notifier)
-          .fetchCategoryEntries(catId, context)
-          .then(
-            (_) => isCatLoadingController.update((state) => false),
-          );
-      return null;
-    });
+    if (!isDemoPref) {
+      isCatLoadingController.update((state) => true);
+      ref.refresh(catOffsetProvider.notifier).update((state) => 0);
+
+      Future.delayed(const Duration(seconds: 0)).then((_) {
+        ref
+            .refresh(categoryNotifierProvider.notifier)
+            .fetchCategoryEntries(catId, context)
+            .then(
+              (_) => isCatLoadingController.update((state) => false),
+            );
+        return null;
+      });
+    } else {
+      // Demo
+
+      if (catSort == Sort.descending) {
+        state.sort((a, b) => a.publishedTime.compareTo(b.publishedTime));
+      } else {
+        state.sort((a, b) => b.publishedTime.compareTo(a.publishedTime));
+      }
+    }
   }
 
   void readCatFunction(
@@ -288,9 +301,9 @@ class CategoryNotifier extends Notifier<List<News>> {
   }
 
   void toggleFavStatus(
-      int newsId,
-      BuildContext context,
-      ) async {
+    int newsId,
+    BuildContext context,
+  ) async {
     try {
       final userPassEncoded = userPrefs.getAuthData()!;
 
@@ -330,10 +343,10 @@ class CategoryNotifier extends Notifier<List<News>> {
   }
 
   void toggleRead(
-      int newsId,
-      Status stat,
-      BuildContext context,
-      ) async {
+    int newsId,
+    Status stat,
+    BuildContext context,
+  ) async {
     try {
       state = [
         for (final news in state)
@@ -368,5 +381,9 @@ class CategoryNotifier extends Notifier<List<News>> {
     } catch (e) {
       showErrorSnackBar(context: context, text: ErrorString.generalError.value);
     }
+  }
+
+  void readDemoCatEntries() {
+    state = state.where((e) => e.status == Status.read).toList();
   }
 }
