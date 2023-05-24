@@ -61,7 +61,6 @@ class _MyAppState extends ConsumerState<MyApp> {
         },
       ),
       debugShowCheckedModeBanner: false,
-      // Todo: Set name
       title: 'Open Feed',
       themeMode: themeMode,
       darkTheme: themeData.darkThemeData(),
