@@ -94,8 +94,8 @@ BEGIN
             VALUE "FileVersion", VERSION_AS_STRING "\0"
             VALUE "InternalName", "news_app" "\0"
             VALUE "LegalCopyright", "Copyright (C) 2022 com.example. All rights reserved." "\0"
-            VALUE "OriginalFilename", "news_app.exe" "\0"
-            VALUE "ProductName", "news_app" "\0"
+            VALUE "OriginalFilename", "Open Feed.exe" "\0"
+            VALUE "ProductName", "Open Feed" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END
