@@ -44,11 +44,12 @@ dependencies:
   universal_io: ^2.2.0
 
 flutter_native_splash:
-  color: "#ff8a80"
+  color: "#ffffff"
   image: assets/splash.png
+  image_web: assets/splash_web.png
 
   android_12:
-    color: "#ff8a80"
+    color: "#ffffff"
     image: assets/splash.png
 
 dev_dependencies:
@@ -64,6 +65,7 @@ flutter:
 
   assets:
     - assets/splash.png
+    - assets/splash_web.png
     - assets/images/
     - assets/demo_files/
 
