@@ -80,6 +80,12 @@ class AuthScreen extends HookConsumerWidget {
             child: SingleChildScrollView(
               child: Column(
                 children: [
+                  Image.asset(
+                    'assets/splash_web.png',
+                    fit: BoxFit.cover,
+                    height: 200,
+                    width: 200,
+                  ),
                   Sizer(
                     child: Focus(
                       onFocusChange: (hasFocus) {
