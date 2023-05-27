@@ -64,11 +64,9 @@ flutter_launcher_icons:
   android: "ic_launcher"
   adaptive_background_color: #FF5252
   image_path: "assets/ic_launcher.png"
-#  web:
-#    generate: true
-#    image_path: "path/to/image.png"
-#    background_color: "#hexcode"
-#    theme_color: "#hexcode"
+  web:
+    generate: true
+    image_path: "assets/ic_launcher.png"
 #  windows:
 #    generate: true
 #    image_path: "path/to/image.png"
