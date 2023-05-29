@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:developer' show log;
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -51,10 +50,7 @@ class AuthRepo {
 
   AuthRepo(this.ref, this.userPrefs);
 
-  bool get isAuthenticated {
-    print('Authenticated: ${userPrefs.getIsAuth()}');
-    return isAuth = userPrefs.getIsAuth()!;
-  }
+  bool get isAuthenticated => isAuth = userPrefs.getIsAuth()!;
 
   Future authUrlChecker(String userPassEncoded, String urlData) async {
     Uri uri = Uri.https(urlData, 'v1/me');
@@ -87,7 +83,6 @@ class AuthRepo {
       if (isTestUser) {
         // Test Mode
         await userPrefs.setUrlData(staticUrl);
-        log('Login prefs test url : ${userPrefs.getUrlData()}');
 
         userPassEncoded = 'Basic ${base64.encode(utf8.encode(
           '$staticUsername:$staticPassword',
@@ -96,7 +91,6 @@ class AuthRepo {
         // Basic Mode
         if (mode == Mode.basic) {
           await userPrefs.setUrlData(defaultUrl);
-          log('Basic login Default url has been set: ${userPrefs.getUrlData()}');
         } else {
           // Advanced Mode
           String? url;
@@ -112,7 +106,6 @@ class AuthRepo {
             url = urlController.text;
           }
           await userPrefs.setUrlData(url!);
-          log('Advanced login Custom url has been set: ${userPrefs.getUrlData()}');
         }
 
         userPassEncoded = 'Basic ${base64.encode(
@@ -123,8 +116,6 @@ class AuthRepo {
       }
 
       final isAuthSet = await userPrefs.setAuthData(userPassEncoded);
-
-      log('Login Prefs auth: ${userPrefs.getAuthData()}');
 
       final authData = userPrefs.getAuthData();
       final urlData = userPrefs.getUrlData();
@@ -146,8 +137,6 @@ class AuthRepo {
       }
 
       final res = await authUrlChecker(authData, urlData);
-
-      log('Login Status: ${res.statusCode}');
 
       if (res.statusCode >= 400 && res.statusCode <= 599) {
         isLoadingLoginController.update((state) => false);

@@ -1,5 +1,3 @@
-import 'dart:developer' show log;
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -49,8 +47,6 @@ final goRouterProvider = Provider(
           name: AuthScreen.routeNamed,
           builder: (context, state) => const AuthScreen(),
           redirect: (BuildContext context, state) {
-            log('AUTH-> isAuth: ${authRepo.isAuthenticated}');
-
             return authRepo.isAuthenticated ? '/home' : '/';
           },
         ),

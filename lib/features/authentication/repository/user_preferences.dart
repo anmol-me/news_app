@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -20,45 +18,25 @@ class UserPreferences {
     return await prefs!.setBool(keyIsDemoUser, isDemoUser);
   }
 
-  bool? getIsDemo() {
-    log('P: isDemoUser --> ${prefs!.getBool(keyIsDemoUser)}');
-    return prefs?.getBool(keyIsDemoUser) ?? false;
-  }
+  bool? getIsDemo() => prefs?.getBool(keyIsDemoUser) ?? false;
 
   Future<bool> setAuthData(String userPassEncoded) async {
     return await prefs!.setString(keyAuthData, userPassEncoded);
   }
 
-  String? getAuthData() {
-    log('P: userAuthData --> ${prefs!.getString(keyAuthData)}');
-    return prefs?.getString(keyAuthData);
-  }
+  String? getAuthData() => prefs?.getString(keyAuthData);
 
-  Future<bool> setIsAuth(bool isAuth) async {
-    log('SET: $isAuth');
-    return await prefs!.setBool(keyIsAuthData, isAuth);
-  }
+  Future<bool> setIsAuth(bool isAuth) async => await prefs!.setBool(keyIsAuthData, isAuth);
 
-  bool? getIsAuth() {
-    log('GET: ${prefs!.getBool(keyIsAuthData)}');
-    return prefs?.getBool(keyIsAuthData) ?? false;
-  }
+  bool? getIsAuth() => prefs?.getBool(keyIsAuthData) ?? false;
 
-  Future<bool> setUrlData(String urlData) async {
-    return await prefs!.setString(keyUrlData, urlData);
-  }
+  Future<bool> setUrlData(String urlData) async => await prefs!.setString(keyUrlData, urlData);
 
   String? getUrlData() => prefs!.getString(keyUrlData);
 
-  Future<bool> setUsername(String username) async {
-    log('P: SET username --> $username');
-    return await prefs!.setString(keyUsername, username);
-  }
+  Future<bool> setUsername(String username) async => await prefs!.setString(keyUsername, username);
 
-  String? getUsername() {
-    log('P: username --> ${prefs!.getString(keyUsername)}');
-    return prefs?.getString(keyUsername);
-  }
+  String? getUsername() => prefs?.getString(keyUsername);
 
   void clearPrefs() => prefs?.clear();
 }

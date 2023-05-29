@@ -42,14 +42,7 @@ class AddSubscription extends HookConsumerWidget {
       }
     });
 
-    /// Todo: New Subs Addresses
-    // final urlController =
-    //     useTextEditingController(text: 'https://news.google.com');
-    // final urlController = useTextEditingController(
-    //     text: 'https://feeds.feedburner.com/TheHackersNews');
-
-    final urlController =
-        useTextEditingController(text: 'https://rss.art19.com/apology-line');
+    final urlController = useTextEditingController();
     final catNameController = useTextEditingController();
 
     final discoverSubscription = ref.watch(discoveryProvider);

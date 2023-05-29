@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:developer' show log;
 import 'package:http/http.dart' as http;
 
 Future<http.Response> getHttpResp(Uri uri, String userPassEncoded) async =>
@@ -57,8 +56,6 @@ Future<http.Response> postHttpResp({
   userPassEncoded,
 }) async {
   if (url != null && bodyMap != null) {
-    // Todo: Cleanup
-    log('POST 1');
     return await http.post(
       url,
       body: jsonEncode(bodyMap),
@@ -68,7 +65,6 @@ Future<http.Response> postHttpResp({
       },
     );
   } else if (url != null) {
-    log('POST 2');
     return await http.post(
       Uri.parse('https://$url'),
       headers: {
@@ -77,7 +73,6 @@ Future<http.Response> postHttpResp({
       },
     );
   } else if (uri != null) {
-    log('POST 3');
     return await http.post(
       uri,
       headers: {
@@ -86,7 +81,6 @@ Future<http.Response> postHttpResp({
       },
     );
   }
-  log('4: Default');
   return await http.post(
     url!,
     body: jsonEncode(bodyMap),
