@@ -67,10 +67,10 @@ class SubscriptionNotifier extends Notifier<List<CategoryList>> {
           decodedData.map((e) => CategoryList.fromJson(e)).toList();
 
       return state = fetchedCategories;
-    } on SocketException catch (_) {
+    } on SocketException catch (e) {
       showErrorSnackBar(
         context: context,
-        text: ErrorString.checkInternet.value,
+        text: e.message,
       );
       return [];
     } on TimeoutException catch (_) {

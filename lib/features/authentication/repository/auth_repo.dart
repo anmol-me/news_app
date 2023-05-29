@@ -99,7 +99,19 @@ class AuthRepo {
           log('Basic login Default url has been set: ${userPrefs.getUrlData()}');
         } else {
           // Advanced Mode
-          await userPrefs.setUrlData(urlController.text);
+          String? url;
+          if (urlController.text.startsWith('http://')) {
+            isLoadingLoginController.update((state) => false);
+            showErrorSnackBar(
+                context: context,
+                text: 'Unsecure http link is not supported in the app');
+            return;
+          } else if (urlController.text.startsWith('https://')) {
+            url = urlController.text.replaceFirst('https://', '');
+          } else {
+            url = urlController.text;
+          }
+          await userPrefs.setUrlData(url!);
           log('Advanced login Custom url has been set: ${userPrefs.getUrlData()}');
         }
 
@@ -154,16 +166,20 @@ class AuthRepo {
       usernameController.clear();
       passwordController.clear();
       urlController.clear();
-    } on SocketException catch (_) {
+    } on SocketException catch (e) {
       isLoadingLoginController.update((state) => false);
       userPrefs.clearPrefs();
       showErrorSnackBar(
-          context: context, text: ErrorString.checkInternet.value);
+          context: context, text: e.message);
     } on TimeoutException catch (_) {
       isLoadingLoginController.update((state) => false);
       userPrefs.clearPrefs();
       showErrorSnackBar(
           context: context, text: ErrorString.requestTimeout.value);
+    } on FormatException catch (_) {
+      isLoadingLoginController.update((state) => false);
+      userPrefs.clearPrefs();
+      showErrorSnackBar(context: context, text: ErrorString.validUrl.value);
     } on ServerErrorException catch (e) {
       isLoadingLoginController.update((state) => false);
       userPrefs.clearPrefs();
@@ -231,7 +247,6 @@ class AuthRepo {
     ref.invalidate(isFeedTitleUpdatingProvider);
     ref.invalidate(isManageLoadingProvider);
     ref.invalidate(isManageProcessingProvider);
-
 
     if (ref.read(isDrawerOpenProvider)) {
       if (context.mounted) Navigator.of(context).pop();

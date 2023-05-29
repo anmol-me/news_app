@@ -36,9 +36,9 @@ class AuthScreen extends HookConsumerWidget {
 
     final formKey = useMemoized(GlobalKey<FormState>.new, const []);
 
-    final usernameController = useTextEditingController(text: demoUser);
-    final passwordController = useTextEditingController(text: demoPassword);
-    final urlController = useTextEditingController();
+    final usernameController = useTextEditingController(text: staticUsername);
+    final passwordController = useTextEditingController(text: staticPassword);
+    final urlController = useTextEditingController(text: staticUrl);
 
     final usernameFocus = useState(false);
     final passwordFocus = useState(false);
