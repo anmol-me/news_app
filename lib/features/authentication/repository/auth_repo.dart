@@ -76,18 +76,6 @@ class AuthRepo {
     try {
       String userPassEncoded;
 
-      final bool isTestUser = usernameController.text == demoUser &&
-          passwordController.text == demoPassword &&
-          mode == Mode.basic;
-
-      if (isTestUser) {
-        // Test Mode
-        await userPrefs.setUrlData(staticUrl);
-
-        userPassEncoded = 'Basic ${base64.encode(utf8.encode(
-          '$staticUsername:$staticPassword',
-        ))}';
-      } else {
         // Basic Mode
         if (mode == Mode.basic) {
           await userPrefs.setUrlData(defaultUrl);
@@ -105,7 +93,7 @@ class AuthRepo {
           } else {
             url = urlController.text;
           }
-          await userPrefs.setUrlData(url!);
+          await userPrefs.setUrlData(url);
         }
 
         userPassEncoded = 'Basic ${base64.encode(
@@ -113,7 +101,7 @@ class AuthRepo {
             '${usernameController.text}:${passwordController.text}',
           ),
         )}';
-      }
+
 
       final isAuthSet = await userPrefs.setAuthData(userPassEncoded);
 
