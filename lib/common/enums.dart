@@ -44,9 +44,10 @@ enum ErrorString {
 }
 
 enum Message {
-  categoryEmpty('No category feed available.'),
-  catCreated('Category successfully created.'),
-  feedAdded('Subscription feed successfully added');
+  categoryEmpty('No category feed available'),
+  catCreated('Category successfully created'),
+  feedAdded('Subscription feed successfully added'),
+  feedEmpty('No feed available to manage');
 
   final String value;
 

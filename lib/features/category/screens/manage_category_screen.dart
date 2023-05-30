@@ -5,6 +5,8 @@ import 'package:go_router/go_router.dart';
 
 import 'package:news_app/common_widgets/common_widgets.dart';
 import '../../../common/constants.dart';
+import '../../../common/enums.dart';
+import '../../../common_widgets/app_image.dart';
 import '../../../components/app_back_button.dart';
 import '../../subscription/screens/add_subscription_screen.dart';
 import '../repository/manage_category_repository.dart';
@@ -89,9 +91,20 @@ class ManageCategoryScreen extends HookConsumerWidget {
           ? const LinearLoader()
           : Stack(
               children: [
-                /// Todo: List Empty
                 if (!isManageProcessing && isManageNotifier.isEmpty)
-                  const Text('List is Empty')
+                  Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const AppImage(
+                          'assets/images/items_not_found.png',
+                          height: 250,
+                          width: 250,
+                        ),
+                        Text(Message.feedEmpty.value),
+                      ],
+                    ),
+                  )
                 else if (isManageProcessing)
                   const LinearLoader()
                 else
