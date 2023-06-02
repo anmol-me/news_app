@@ -172,8 +172,8 @@ class AuthRepo {
     userPrefs.clearPrefs();
 
     ref.invalidate(userNotifierProvider);
-    ref.invalidate(emptyStateDisableProvider);
-    ref.invalidate(disableFilterProvider);
+    ref.read(emptyStateDisableProvider.notifier).update((state) => false);
+    ref.read(disableFilterProvider.notifier).update((state) => false);
     ref.invalidate(userPrefsProvider);
     ref.invalidate(modeProvider);
     ref.invalidate(themeModeProvider);
@@ -181,17 +181,17 @@ class AuthRepo {
     ref.invalidate(catPageHandlerProvider);
     ref.invalidate(catMaxPagesProvider);
     ref.invalidate(catIsNextProvider);
-    ref.invalidate(isRefreshAllLoadingProvider);
+    ref.read(isRefreshAllLoadingProvider.notifier).update((state) => false);
 
     ref.invalidate(refreshProvider);
 
     ref.invalidate(homeFeedProvider);
     ref.invalidate(homeMethodsProvider);
-    ref.invalidate(homePageLoadingProvider);
+    ref.read(homePageLoadingProvider.notifier).update((state) => false);
     ref.invalidate(homeOffsetProvider);
     ref.invalidate(homeSortDirectionProvider);
     ref.invalidate(homeIsShowReadProvider);
-    ref.invalidate(homeIsLoadingBookmarkProvider);
+    ref.read(homeIsLoadingBookmarkProvider.notifier).update((state) => false);
 
     ref.invalidate(newsDetailsProvider);
     ref.invalidate(discoveryProvider);
@@ -213,7 +213,7 @@ class AuthRepo {
     ref.invalidate(userSettingsProvider);
     ref.invalidate(authRepoProvider);
 
-    ref.invalidate(isStarredProvider);
+    ref.read(isStarredProvider.notifier).update((state) => false);
     ref.invalidate(isDiscoverLoadingProvider);
     ref.invalidate(isLoadingLoginProvider);
     ref.invalidate(isCatLoadingProvider);

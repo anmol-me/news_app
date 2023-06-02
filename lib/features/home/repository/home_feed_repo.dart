@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../common/common_methods.dart';
 import '../../../common_widgets/common_widgets.dart';
@@ -12,7 +13,10 @@ import '../../../common/error.dart';
 import '../../../common/api_methods.dart';
 import '../../../common/frontend_methods.dart';
 import '../../../models/news.dart';
+import '../../../router.dart';
+import '../../authentication/repository/auth_repo.dart';
 import '../../authentication/repository/user_preferences.dart';
+import '../../authentication/screens/auth_screen.dart';
 import '../../details/components/methods.dart';
 import '../providers/home_providers.dart';
 
@@ -34,12 +38,22 @@ class HomeFeedNotifier extends Notifier<List<News>> {
   Future<void> fetchEntries(BuildContext context) async {
     clearHomeState();
 
-    final userPassEncoded = userPrefs.getAuthData()!;
-    final baseUrl = userPrefs.getUrlData()!;
+    final userPassEncoded = userPrefs.getAuthData() ?? '';
+    final baseUrl = userPrefs.getUrlData() ?? '';
 
     final direction = ref.read(homeSortDirectionProvider);
     final isRead = ref.read(homeIsShowReadProvider);
     final isStarred = ref.read(isStarredProvider);
+
+    if (userPassEncoded.isEmpty || baseUrl.isEmpty) {
+      debugPrint('EMPTY');
+      // ref.read(homePageLoadingProvider.notifier).update((state) => false);
+      scheduleMicrotask(() {
+        // context.goNamed(AuthScreen.routeNamed);
+        ref.read(authRepoProvider).logout(context);
+      });
+      return;
+    }
 
     Uri uri = Uri.https(baseUrl, 'v1/entries', {
       'order': orderBy.value,
@@ -113,7 +127,6 @@ class HomeFeedNotifier extends Notifier<List<News>> {
       }
     }
   }
-
 
   Future<void> refreshAll(
     BuildContext context,
@@ -284,7 +297,7 @@ class HomeFeedNotifier extends Notifier<List<News>> {
         final contentFormatted = getContentJson(info['content']);
 
         Status status =
-        info['status'] == 'unread' ? Status.unread : Status.read;
+            info['status'] == 'unread' ? Status.unread : Status.read;
 
         final createdNews = News(
           entryId: info['id'],
@@ -316,7 +329,7 @@ class HomeFeedNotifier extends Notifier<List<News>> {
   void sortDemoEntries() {
     final sortAs = ref.read(homeSortDirectionProvider);
     final sortDirectionController =
-    ref.read(homeSortDirectionProvider.notifier);
+        ref.read(homeSortDirectionProvider.notifier);
 
     if (sortAs == Sort.descending) {
       state.sort((a, b) => a.publishedTime.compareTo(b.publishedTime));

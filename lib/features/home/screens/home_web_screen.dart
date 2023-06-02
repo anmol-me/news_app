@@ -45,7 +45,8 @@ class _HomeWebScreenState extends ConsumerState<HomeWebScreen> {
   initState() {
     super.initState();
     Future.delayed(Duration.zero).then(
-      (_) => ref.read(emptyStateDisableProvider.notifier).update((state) => false),
+      (_) =>
+          ref.read(emptyStateDisableProvider.notifier).update((state) => false),
     );
 
     Timer(const Duration(seconds: 20), () => FlutterNativeSplash.remove());
@@ -83,6 +84,9 @@ class _HomeWebScreenState extends ConsumerState<HomeWebScreen> {
 
       final disableFilterController = ref.read(disableFilterProvider.notifier);
 
+      final isLoadingHomePageController =
+          ref.read(homePageLoadingProvider.notifier);
+
       if (!isDemoUser) {
         emptyStateDisableController.update((state) => false);
       } else if (next.isEmpty && !isStarred && !isLoadingHomePage) {
@@ -93,6 +97,7 @@ class _HomeWebScreenState extends ConsumerState<HomeWebScreen> {
       } else {
         emptyStateDisableController.update((state) => false);
         disableFilterController.update((state) => false);
+        isLoadingHomePageController.update((state) => false);
       }
     });
 
