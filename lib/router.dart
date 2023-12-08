@@ -142,7 +142,6 @@ final goRouterProvider = Provider(
             listContext: state.extra! as BuildContext,
           ),
         ),
-
       ],
     );
   },
