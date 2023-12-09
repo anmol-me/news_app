@@ -77,6 +77,7 @@ class AuthRepo {
     try {
       String userPassEncoded;
 
+      /// Sets url according to Modes
       // Basic Mode
       if (mode == Mode.basic) {
         await userPrefs.setUrlData(defaultUrl);
@@ -97,6 +98,7 @@ class AuthRepo {
         await userPrefs.setUrlData(url);
       }
 
+      /// Sets user info
       userPassEncoded = 'Basic ${base64.encode(
         utf8.encode(
           '${usernameController.text}:${passwordController.text}',
@@ -105,6 +107,7 @@ class AuthRepo {
 
       final isAuthSet = await userPrefs.setAuthData(userPassEncoded);
 
+      /// Handles errors
       final authData = userPrefs.getAuthData();
       final urlData = userPrefs.getUrlData();
 
@@ -124,6 +127,7 @@ class AuthRepo {
         return;
       }
 
+      /// Checks validity on Miniflux server & handles in-authentication
       final res = await authUrlChecker(authData, urlData);
 
       if (res.statusCode >= 400 && res.statusCode <= 599) {
@@ -131,6 +135,7 @@ class AuthRepo {
         throw ServerErrorException(res);
       }
 
+      /// When authenticated
       if (res.statusCode == 200) {
         userPrefs.setIsAuth(true);
 
