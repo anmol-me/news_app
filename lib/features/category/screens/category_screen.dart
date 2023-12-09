@@ -47,7 +47,7 @@ final catIsNextProvider = StateProvider.family<bool, int>(
   },
 );
 
-// final GlobalKey<ScaffoldState> drawerscaffoldkey = GlobalKey<ScaffoldState>();
+// final GlobalKey<ScaffoldState> drawerScaffoldKey = GlobalKey<ScaffoldState>();
 
 /// Widgets
 class CategoryScreen extends HookConsumerWidget {

@@ -13,7 +13,7 @@ import 'package:news_app/features/authentication/screens/auth_screen.dart';
 import 'package:news_app/features/category/screens/edit_feed_screen.dart';
 import 'package:news_app/features/details/components/providers.dart';
 import 'package:news_app/features/subscription/screens/add_subscription_screen.dart';
-import 'package:news_app/themes.dart';
+import 'package:news_app/config/themes.dart';
 import '../../../common/error.dart';
 import '../../../common_widgets/common_widgets.dart';
 import '../../../common/constants.dart';
@@ -65,6 +65,7 @@ class AuthRepo {
     required TextEditingController passwordController,
     required TextEditingController urlController,
   }) async {
+    final mounted = context.mounted;
     final isValid = formKey.currentState!.validate();
     if (!isValid) return;
 
@@ -76,32 +77,31 @@ class AuthRepo {
     try {
       String userPassEncoded;
 
-        // Basic Mode
-        if (mode == Mode.basic) {
-          await userPrefs.setUrlData(defaultUrl);
+      // Basic Mode
+      if (mode == Mode.basic) {
+        await userPrefs.setUrlData(defaultUrl);
+      } else {
+        // Advanced Mode
+        String? url;
+        if (urlController.text.startsWith('http://')) {
+          isLoadingLoginController.update((state) => false);
+          showErrorSnackBar(
+              context: context,
+              text: 'Unsecure http link is not supported in the app');
+          return;
+        } else if (urlController.text.startsWith('https://')) {
+          url = urlController.text.replaceFirst('https://', '');
         } else {
-          // Advanced Mode
-          String? url;
-          if (urlController.text.startsWith('http://')) {
-            isLoadingLoginController.update((state) => false);
-            showErrorSnackBar(
-                context: context,
-                text: 'Unsecure http link is not supported in the app');
-            return;
-          } else if (urlController.text.startsWith('https://')) {
-            url = urlController.text.replaceFirst('https://', '');
-          } else {
-            url = urlController.text;
-          }
-          await userPrefs.setUrlData(url);
+          url = urlController.text;
         }
+        await userPrefs.setUrlData(url);
+      }
 
-        userPassEncoded = 'Basic ${base64.encode(
-          utf8.encode(
-            '${usernameController.text}:${passwordController.text}',
-          ),
-        )}';
-
+      userPassEncoded = 'Basic ${base64.encode(
+        utf8.encode(
+          '${usernameController.text}:${passwordController.text}',
+        ),
+      )}';
 
       final isAuthSet = await userPrefs.setAuthData(userPassEncoded);
 
@@ -134,7 +134,7 @@ class AuthRepo {
       if (res.statusCode == 200) {
         userPrefs.setIsAuth(true);
 
-        if (context.mounted) {
+        if (mounted) {
           context.goNamed(HomeFeedScreen.routeNamed);
         }
       }
@@ -146,25 +146,35 @@ class AuthRepo {
     } on SocketException catch (e) {
       isLoadingLoginController.update((state) => false);
       userPrefs.clearPrefs();
-      showErrorSnackBar(
-          context: context, text: e.message);
+      if (mounted) {
+        showErrorSnackBar(context: context, text: e.message);
+      }
     } on TimeoutException catch (_) {
       isLoadingLoginController.update((state) => false);
       userPrefs.clearPrefs();
-      showErrorSnackBar(
-          context: context, text: ErrorString.requestTimeout.value);
+      if (mounted) {
+        showErrorSnackBar(
+            context: context, text: ErrorString.requestTimeout.value);
+      }
     } on FormatException catch (_) {
       isLoadingLoginController.update((state) => false);
       userPrefs.clearPrefs();
-      showErrorSnackBar(context: context, text: ErrorString.validUrl.value);
+      if (mounted) {
+        showErrorSnackBar(context: context, text: ErrorString.validUrl.value);
+      }
     } on ServerErrorException catch (e) {
       isLoadingLoginController.update((state) => false);
       userPrefs.clearPrefs();
-      showErrorSnackBar(context: context, text: '$e');
+      if (mounted) {
+        showErrorSnackBar(context: context, text: '$e');
+      }
     } catch (e) {
       isLoadingLoginController.update((state) => false);
       userPrefs.clearPrefs();
-      showErrorSnackBar(context: context, text: ErrorString.generalError.value);
+      if (mounted) {
+        showErrorSnackBar(
+            context: context, text: ErrorString.generalError.value);
+      }
     }
   }
 

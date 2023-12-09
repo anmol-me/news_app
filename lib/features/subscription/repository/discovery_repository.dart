@@ -56,12 +56,19 @@ class DiscoveryNotifier
         state = fetchedCategories;
       }
     } on TimeoutException catch (_) {
-      showErrorSnackBar(
-          context: context, text: ErrorString.requestTimeout.value);
+      if (context.mounted) {
+        showErrorSnackBar(
+            context: context, text: ErrorString.requestTimeout.value);
+      }
     } on ServerErrorException catch (e) {
-      showErrorSnackBar(context: context, text: '$e');
+      if (context.mounted) {
+        showErrorSnackBar(context: context, text: '$e');
+      }
     } catch (e) {
-      showErrorSnackBar(context: context, text: ErrorString.generalError.value);
+      if (context.mounted) {
+        showErrorSnackBar(
+            context: context, text: ErrorString.generalError.value);
+      }
     }
   }
 
@@ -134,12 +141,19 @@ class DiscoveryNotifier
         }
       }
     } on TimeoutException catch (_) {
-      showErrorSnackBar(
-          context: context, text: ErrorString.requestTimeout.value);
+      if (context.mounted) {
+        showErrorSnackBar(
+            context: context, text: ErrorString.requestTimeout.value);
+      }
     } on ServerErrorException catch (e) {
-      showErrorSnackBar(context: context, text: '$e');
+      if (context.mounted) {
+        showErrorSnackBar(context: context, text: '$e');
+      }
     } catch (e) {
-      showErrorSnackBar(context: context, text: ErrorString.generalError.value);
+      if (context.mounted) {
+        showErrorSnackBar(
+            context: context, text: ErrorString.generalError.value);
+      }
     }
   }
 

@@ -128,6 +128,7 @@ class HomeFeedNotifier extends Notifier<List<News>> {
   Future<void> refreshAll(
     BuildContext context,
   ) async {
+    final mounted = context.mounted;
     final userPassEncoded = userPrefs.getAuthData()!;
     final baseUrl = userPrefs.getUrlData()!;
 
@@ -145,15 +146,24 @@ class HomeFeedNotifier extends Notifier<List<News>> {
         throw ServerErrorException(res);
       }
     } on SocketException catch (_) {
-      showErrorSnackBar(
-          context: context, text: ErrorString.checkInternet.value);
+      if (mounted) {
+        showErrorSnackBar(
+            context: context, text: ErrorString.checkInternet.value);
+      }
     } on TimeoutException catch (_) {
-      showErrorSnackBar(
-          context: context, text: ErrorString.requestTimeout.value);
+      if (mounted) {
+        showErrorSnackBar(
+            context: context, text: ErrorString.requestTimeout.value);
+      }
     } on ServerErrorException catch (e) {
-      showErrorSnackBar(context: context, text: '$e');
+      if (mounted) {
+        showErrorSnackBar(context: context, text: '$e');
+      }
     } catch (e) {
-      showErrorSnackBar(context: context, text: ErrorString.generalError.value);
+      if (mounted) {
+        showErrorSnackBar(
+            context: context, text: ErrorString.generalError.value);
+      }
     }
   }
 
@@ -161,6 +171,7 @@ class HomeFeedNotifier extends Notifier<List<News>> {
     int newsId,
     BuildContext context,
   ) async {
+    final mounted = context.mounted;
     final userPassEncoded = userPrefs.getAuthData()!;
     final baseUrl = userPrefs.getUrlData()!;
 
@@ -187,15 +198,24 @@ class HomeFeedNotifier extends Notifier<List<News>> {
         throw ServerErrorException(res);
       }
     } on SocketException catch (_) {
-      showErrorSnackBar(
-          context: context, text: ErrorString.checkInternet.value);
+      if (mounted) {
+        showErrorSnackBar(
+            context: context, text: ErrorString.checkInternet.value);
+      }
     } on TimeoutException catch (_) {
-      showErrorSnackBar(
-          context: context, text: ErrorString.requestTimeout.value);
+      if (mounted) {
+        showErrorSnackBar(
+            context: context, text: ErrorString.requestTimeout.value);
+      }
     } on ServerErrorException catch (e) {
-      showErrorSnackBar(context: context, text: '$e');
+      if (mounted) {
+        showErrorSnackBar(context: context, text: '$e');
+      }
     } catch (e) {
-      showErrorSnackBar(context: context, text: ErrorString.generalError.value);
+      if (mounted) {
+        showErrorSnackBar(
+            context: context, text: ErrorString.generalError.value);
+      }
     }
   }
 
@@ -204,6 +224,7 @@ class HomeFeedNotifier extends Notifier<List<News>> {
     Status stat,
     BuildContext context,
   ) async {
+    final mounted = context.mounted;
     final userPassEncoded = userPrefs.getAuthData()!;
     final baseUrl = userPrefs.getUrlData()!;
 
@@ -228,15 +249,24 @@ class HomeFeedNotifier extends Notifier<List<News>> {
         throw ServerErrorException(res);
       }
     } on SocketException catch (_) {
-      showErrorSnackBar(
-          context: context, text: ErrorString.checkInternet.value);
+      if (mounted) {
+        showErrorSnackBar(
+            context: context, text: ErrorString.checkInternet.value);
+      }
     } on TimeoutException catch (_) {
-      showErrorSnackBar(
-          context: context, text: ErrorString.requestTimeout.value);
+      if (mounted) {
+        showErrorSnackBar(
+            context: context, text: ErrorString.requestTimeout.value);
+      }
     } on ServerErrorException catch (e) {
-      showErrorSnackBar(context: context, text: '$e');
+      if (mounted) {
+        showErrorSnackBar(context: context, text: '$e');
+      }
     } catch (e) {
-      showErrorSnackBar(context: context, text: ErrorString.generalError.value);
+      if (mounted) {
+        showErrorSnackBar(
+            context: context, text: ErrorString.generalError.value);
+      }
     }
   }
 

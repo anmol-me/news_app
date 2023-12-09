@@ -68,25 +68,33 @@ class SubscriptionNotifier extends Notifier<List<CategoryList>> {
 
       return state = fetchedCategories;
     } on SocketException catch (e) {
-      showErrorSnackBar(
-        context: context,
-        text: e.message,
-      );
+      if (context.mounted) {
+        showErrorSnackBar(
+          context: context,
+          text: e.message,
+        );
+      }
       return [];
     } on TimeoutException catch (_) {
-      showErrorSnackBar(
-        context: context,
-        text: ErrorString.requestTimeout.value,
-      );
+      if (context.mounted) {
+        showErrorSnackBar(
+          context: context,
+          text: ErrorString.requestTimeout.value,
+        );
+      }
       return [];
     } on ServerErrorException catch (e) {
-      showErrorSnackBar(context: context, text: '$e');
+      if (context.mounted) {
+        showErrorSnackBar(context: context, text: '$e');
+      }
       return [];
     } catch (_) {
-      showErrorSnackBar(
-        context: context,
-        text: ErrorString.generalError.value,
-      );
+      if (context.mounted) {
+        showErrorSnackBar(
+          context: context,
+          text: ErrorString.generalError.value,
+        );
+      }
       return [];
     }
   }
@@ -108,10 +116,12 @@ class SubscriptionNotifier extends Notifier<List<CategoryList>> {
 
       return state = fetchedCategories;
     } catch (_) {
-      showErrorSnackBar(
-        context: context,
-        text: ErrorString.generalError.value,
-      );
+      if (context.mounted) {
+        showErrorSnackBar(
+          context: context,
+          text: ErrorString.generalError.value,
+        );
+      }
       return [];
     }
   }
@@ -264,26 +274,34 @@ class SubscriptionNotifier extends Notifier<List<CategoryList>> {
     } on ServerErrorException catch (e) {
       state = [...state]..insert(itemIndex, catItem);
 
-      showErrorSnackBar(context: listContext, text: '$e');
+      if (listContext.mounted) {
+        showErrorSnackBar(context: listContext, text: '$e');
+      }
     } on TimeoutException catch (_) {
       state = [...state]..insert(itemIndex, catItem);
 
-      showErrorSnackBar(
-          context: listContext,
-          text:
-              '${ErrorString.catNotDelete.value} ${ErrorString.requestTimeout.value}');
+      if (listContext.mounted) {
+        showErrorSnackBar(
+            context: listContext,
+            text:
+                '${ErrorString.catNotDelete.value} ${ErrorString.requestTimeout.value}');
+      }
     } on SocketException catch (_) {
       state = [...state]..insert(itemIndex, catItem);
 
-      showErrorSnackBar(
-        context: listContext,
-        text:
-            '${ErrorString.catNotDelete.value} ${ErrorString.checkInternet.value}',
-      );
+      if (listContext.mounted) {
+        showErrorSnackBar(
+          context: listContext,
+          text:
+              '${ErrorString.catNotDelete.value} ${ErrorString.checkInternet.value}',
+        );
+      }
     } catch (e) {
       state = [...state]..insert(itemIndex, catItem);
 
-      showErrorSnackBar(context: listContext, text: '$e');
+      if (listContext.mounted) {
+        showErrorSnackBar(context: listContext, text: '$e');
+      }
     }
   }
 
@@ -320,7 +338,10 @@ class SubscriptionNotifier extends Notifier<List<CategoryList>> {
         );
       }
     } catch (e) {
-      showErrorSnackBar(context: context, text: ErrorString.generalError.value);
+      if (context.mounted) {
+        showErrorSnackBar(
+            context: context, text: ErrorString.generalError.value);
+      }
     }
   }
 
@@ -368,15 +389,24 @@ class SubscriptionNotifier extends Notifier<List<CategoryList>> {
         throw ServerErrorException(res);
       }
     } on SocketException catch (_) {
-      showErrorSnackBar(
-          context: context, text: ErrorString.checkInternet.value);
+      if (context.mounted) {
+        showErrorSnackBar(
+            context: context, text: ErrorString.checkInternet.value);
+      }
     } on TimeoutException catch (_) {
-      showErrorSnackBar(
-          context: context, text: ErrorString.requestTimeout.value);
+      if (context.mounted) {
+        showErrorSnackBar(
+            context: context, text: ErrorString.requestTimeout.value);
+      }
     } on ServerErrorException catch (e) {
-      showErrorSnackBar(context: context, text: '$e');
+      if (context.mounted) {
+        showErrorSnackBar(context: context, text: '$e');
+      }
     } catch (e) {
-      showErrorSnackBar(context: context, text: ErrorString.generalError.value);
+      if (context.mounted) {
+        showErrorSnackBar(
+            context: context, text: ErrorString.generalError.value);
+      }
     }
   }
 
@@ -422,7 +452,10 @@ class SubscriptionNotifier extends Notifier<List<CategoryList>> {
         );
       }
     } catch (e) {
-      showErrorSnackBar(context: context, text: ErrorString.generalError.value);
+      if (context.mounted) {
+        showErrorSnackBar(
+            context: context, text: ErrorString.generalError.value);
+      }
     }
   }
 }

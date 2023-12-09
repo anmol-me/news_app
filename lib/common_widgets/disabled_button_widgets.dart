@@ -3,8 +3,8 @@ import 'package:news_app/common/constants.dart';
 
 class DisabledMoreButton extends StatelessWidget {
   const DisabledMoreButton({
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -31,8 +31,8 @@ class DisabledMoreButton extends StatelessWidget {
 
 class DisabledPreviousButton extends StatelessWidget {
   const DisabledPreviousButton({
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {

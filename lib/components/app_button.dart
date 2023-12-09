@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../common/constants.dart';
-import '../themes.dart';
+import '../config/themes.dart';
 
 class AppButton extends ConsumerWidget {
   final String text;

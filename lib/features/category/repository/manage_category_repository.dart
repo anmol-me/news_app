@@ -33,6 +33,7 @@ class ManageCategoryRepository extends Notifier<List<CategoryList>> {
     BuildContext context,
     int categoryId,
   ) async {
+    final mounted = context.mounted;
     try {
       final userPassEncoded = userPrefs.getAuthData()!;
       final baseUrl = userPrefs.getUrlData()!;
@@ -56,18 +57,27 @@ class ManageCategoryRepository extends Notifier<List<CategoryList>> {
 
       return state = fetchedCategories;
     } on SocketException catch (_) {
-      showErrorSnackBar(
-          context: context, text: ErrorString.checkInternet.value);
+      if (mounted) {
+        showErrorSnackBar(
+            context: context, text: ErrorString.checkInternet.value);
+      }
       return [];
     } on TimeoutException catch (_) {
-      showErrorSnackBar(
-          context: context, text: ErrorString.requestTimeout.value);
+      if (mounted) {
+        showErrorSnackBar(
+            context: context, text: ErrorString.requestTimeout.value);
+      }
       return [];
     } on ServerErrorException catch (e) {
-      showErrorSnackBar(context: context, text: '$e');
+      if (mounted) {
+        showErrorSnackBar(context: context, text: '$e');
+      }
       return [];
     } catch (e) {
-      showErrorSnackBar(context: context, text: ErrorString.generalError.value);
+      if (mounted) {
+        showErrorSnackBar(
+            context: context, text: ErrorString.generalError.value);
+      }
       return [];
     }
   }
@@ -77,6 +87,7 @@ class ManageCategoryRepository extends Notifier<List<CategoryList>> {
     BuildContext context,
     CategoryList categoryItem,
   ) async {
+    final mounted = context.mounted;
     final int itemId = categoryItem.id;
     final String catTitle = categoryItem.title;
 
@@ -121,22 +132,26 @@ class ManageCategoryRepository extends Notifier<List<CategoryList>> {
       }
     } on TimeoutException catch (_) {
       state = [...state]..insert(itemIndex, catItem);
-      showErrorSnackBar(
-          context: context,
-          text:
-              '${ErrorString.catNotDelete.value} ${ErrorString.requestTimeout.value}');
+      if (mounted) {
+        showErrorSnackBar(
+            context: context,
+            text:
+                '${ErrorString.catNotDelete.value} ${ErrorString.requestTimeout.value}');
+      }
     } on SocketException catch (_) {
       state = [...state]..insert(itemIndex, catItem);
 
-      showErrorSnackBar(
-        context: context,
-        text:
-            '${ErrorString.catNotDelete.value} ${ErrorString.checkInternet.value}',
-      );
+      if (mounted) {
+        showErrorSnackBar(
+          context: context,
+          text:
+              '${ErrorString.catNotDelete.value} ${ErrorString.checkInternet.value}',
+        );
+      }
     } catch (e) {
       state = [...state]..insert(itemIndex, catItem);
 
-      showErrorSnackBar(context: context, text: '$e');
+      if (mounted) showErrorSnackBar(context: context, text: '$e');
     }
   }
 
@@ -146,6 +161,7 @@ class ManageCategoryRepository extends Notifier<List<CategoryList>> {
     required int catId,
     required String newFeedTitle,
   }) async {
+    final mounted = listContext.mounted;
     try {
       final userPassEncoded = userPrefs.getAuthData()!;
       final baseUrl = userPrefs.getUrlData()!;
@@ -182,14 +198,20 @@ class ManageCategoryRepository extends Notifier<List<CategoryList>> {
         }
       }
     } on SocketException catch (_) {
-      showErrorSnackBar(
-          context: listContext, text: ErrorString.checkInternet.value);
+      if (mounted) {
+        showErrorSnackBar(
+            context: listContext, text: ErrorString.checkInternet.value);
+      }
     } on TimeoutException catch (_) {
-      showErrorSnackBar(
-          context: listContext, text: ErrorString.requestTimeout.value);
+      if (mounted) {
+        showErrorSnackBar(
+            context: listContext, text: ErrorString.requestTimeout.value);
+      }
     } catch (e) {
-      showErrorSnackBar(
-          context: listContext, text: ErrorString.generalError.value);
+      if (mounted) {
+        showErrorSnackBar(
+            context: listContext, text: ErrorString.generalError.value);
+      }
     }
   }
 }

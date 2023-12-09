@@ -40,6 +40,7 @@ class CategoryNotifier extends Notifier<List<News>> {
     int id,
     BuildContext context,
   ) async {
+    final mounted = context.mounted;
     final userPassEncoded = userPrefs.getAuthData()!;
     final baseUrl = userPrefs.getUrlData()!;
 
@@ -101,15 +102,24 @@ class CategoryNotifier extends Notifier<List<News>> {
       }
       state = fetchedCategoryList;
     } on SocketException catch (_) {
-      showErrorSnackBar(
-          context: context, text: ErrorString.checkInternet.value);
+      if (mounted) {
+        showErrorSnackBar(
+            context: context, text: ErrorString.checkInternet.value);
+      }
     } on TimeoutException catch (_) {
-      showErrorSnackBar(
-          context: context, text: ErrorString.requestTimeout.value);
+      if (mounted) {
+        showErrorSnackBar(
+            context: context, text: ErrorString.requestTimeout.value);
+      }
     } on ServerErrorException catch (e) {
-      showErrorSnackBar(context: context, text: '$e');
+      if (mounted) {
+        showErrorSnackBar(context: context, text: '$e');
+      }
     } catch (_) {
-      showErrorSnackBar(context: context, text: ErrorString.generalError.value);
+      if (mounted) {
+        showErrorSnackBar(
+            context: context, text: ErrorString.generalError.value);
+      }
     }
   }
 
@@ -163,8 +173,10 @@ class CategoryNotifier extends Notifier<List<News>> {
 
       state = fetchedNewsList.reversed.toList();
     } catch (_) {
-      showErrorSnackBar(
-          context: context, text: ErrorString.somethingWrongAdmin.value);
+      if (context.mounted) {
+        showErrorSnackBar(
+            context: context, text: ErrorString.somethingWrongAdmin.value);
+      }
     }
   }
 
@@ -316,6 +328,8 @@ class CategoryNotifier extends Notifier<List<News>> {
     int newsId,
     BuildContext context,
   ) async {
+    final mounted = context.mounted;
+
     try {
       final userPassEncoded = userPrefs.getAuthData()!;
 
@@ -342,15 +356,24 @@ class CategoryNotifier extends Notifier<List<News>> {
         throw ServerErrorException(res);
       }
     } on SocketException catch (_) {
-      showErrorSnackBar(
-          context: context, text: ErrorString.checkInternet.value);
+      if (mounted) {
+        showErrorSnackBar(
+            context: context, text: ErrorString.checkInternet.value);
+      }
     } on TimeoutException catch (_) {
-      showErrorSnackBar(
-          context: context, text: ErrorString.requestTimeout.value);
+      if (mounted) {
+        showErrorSnackBar(
+            context: context, text: ErrorString.requestTimeout.value);
+      }
     } on ServerErrorException catch (e) {
-      showErrorSnackBar(context: context, text: '$e');
+      if (mounted) {
+        showErrorSnackBar(context: context, text: '$e');
+      }
     } catch (e) {
-      showErrorSnackBar(context: context, text: ErrorString.generalError.value);
+      if (mounted) {
+        showErrorSnackBar(
+            context: context, text: ErrorString.generalError.value);
+      }
     }
   }
 
@@ -359,6 +382,7 @@ class CategoryNotifier extends Notifier<List<News>> {
     Status stat,
     BuildContext context,
   ) async {
+    final mounted = context.mounted;
     try {
       state = [
         for (final news in state)
@@ -383,15 +407,24 @@ class CategoryNotifier extends Notifier<List<News>> {
         throw ServerErrorException(res);
       }
     } on SocketException catch (_) {
-      showErrorSnackBar(
-          context: context, text: ErrorString.checkInternet.value);
+      if (mounted) {
+        showErrorSnackBar(
+            context: context, text: ErrorString.checkInternet.value);
+      }
     } on TimeoutException catch (_) {
-      showErrorSnackBar(
-          context: context, text: ErrorString.requestTimeout.value);
+      if (mounted) {
+        showErrorSnackBar(
+            context: context, text: ErrorString.requestTimeout.value);
+      }
     } on ServerErrorException catch (e) {
-      showErrorSnackBar(context: context, text: '$e');
+      if (mounted) {
+        showErrorSnackBar(context: context, text: '$e');
+      }
     } catch (e) {
-      showErrorSnackBar(context: context, text: ErrorString.generalError.value);
+      if (mounted) {
+        showErrorSnackBar(
+            context: context, text: ErrorString.generalError.value);
+      }
     }
   }
 

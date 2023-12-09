@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'common/constants.dart';
-import 'features/settings/repository/settings_repository.dart';
+import '../common/constants.dart';
+import '../features/settings/repository/settings_repository.dart';
 
 final themeModeProvider = Provider<ThemeMode>((ref) {
   final isDarkModeEnabled = ref.watch(userSettingsProvider);

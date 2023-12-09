@@ -10,7 +10,7 @@ import 'package:news_app/features/subscription/screens/select_subscription_scree
 
 import '../../common/common_providers.dart';
 import '../../common/constants.dart';
-import '../../themes.dart';
+import '../../config/themes.dart';
 import '../authentication/repository/auth_repo.dart';
 import '../authentication/repository/user_preferences.dart';
 import '../home/providers/home_providers.dart';

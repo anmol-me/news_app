@@ -103,18 +103,27 @@ class SearchNotifier extends AutoDisposeNotifier<List<News>> {
       }
       return [];
     } on SocketException catch (_) {
-      showErrorSnackBar(
-          context: context, text: ErrorString.checkInternet.value);
+      if (context.mounted) {
+        showErrorSnackBar(
+            context: context, text: ErrorString.checkInternet.value);
+      }
       return [];
     } on TimeoutException catch (_) {
-      showErrorSnackBar(
-          context: context, text: ErrorString.requestTimeout.value);
+      if (context.mounted) {
+        showErrorSnackBar(
+            context: context, text: ErrorString.requestTimeout.value);
+      }
       return [];
     } on ServerErrorException catch (e) {
-      showErrorSnackBar(context: context, text: '$e');
+      if (context.mounted) {
+        showErrorSnackBar(context: context, text: '$e');
+      }
       return [];
     } catch (e) {
-      showErrorSnackBar(context: context, text: ErrorString.generalError.value);
+      if (context.mounted) {
+        showErrorSnackBar(
+            context: context, text: ErrorString.generalError.value);
+      }
       return [];
     }
   }
@@ -149,15 +158,24 @@ class SearchNotifier extends AutoDisposeNotifier<List<News>> {
         throw ServerErrorException(res);
       }
     } on SocketException catch (_) {
-      showErrorSnackBar(
-          context: context, text: ErrorString.checkInternet.value);
+      if (context.mounted) {
+        showErrorSnackBar(
+            context: context, text: ErrorString.checkInternet.value);
+      }
     } on TimeoutException catch (_) {
-      showErrorSnackBar(
-          context: context, text: ErrorString.requestTimeout.value);
+      if (context.mounted) {
+        showErrorSnackBar(
+            context: context, text: ErrorString.requestTimeout.value);
+      }
     } on ServerErrorException catch (e) {
-      showErrorSnackBar(context: context, text: '$e');
+      if (context.mounted) {
+        showErrorSnackBar(context: context, text: '$e');
+      }
     } catch (e) {
-      showErrorSnackBar(context: context, text: ErrorString.generalError.value);
+      if (context.mounted) {
+        showErrorSnackBar(
+            context: context, text: ErrorString.generalError.value);
+      }
     }
   }
 
@@ -190,15 +208,24 @@ class SearchNotifier extends AutoDisposeNotifier<List<News>> {
         throw ServerErrorException(res);
       }
     } on SocketException catch (_) {
-      showErrorSnackBar(
-          context: context, text: ErrorString.checkInternet.value);
+      if (context.mounted) {
+        showErrorSnackBar(
+            context: context, text: ErrorString.checkInternet.value);
+      }
     } on TimeoutException catch (_) {
-      showErrorSnackBar(
-          context: context, text: ErrorString.requestTimeout.value);
+      if (context.mounted) {
+        showErrorSnackBar(
+            context: context, text: ErrorString.requestTimeout.value);
+      }
     } on ServerErrorException catch (e) {
-      showErrorSnackBar(context: context, text: '$e');
+      if (context.mounted) {
+        showErrorSnackBar(context: context, text: '$e');
+      }
     } catch (e) {
-      showErrorSnackBar(context: context, text: ErrorString.generalError.value);
+      if (context.mounted) {
+        showErrorSnackBar(
+            context: context, text: ErrorString.generalError.value);
+      }
     }
   }
 
