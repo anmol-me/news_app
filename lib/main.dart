@@ -3,7 +3,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:news_app/router.dart';
+import 'package:news_app/config/gorouter/router.dart';
 import 'package:news_app/themes.dart';
 import 'package:universal_platform/universal_platform.dart';
 import 'url_strategy/nonweb_url_strategy.dart'
@@ -11,8 +11,6 @@ import 'url_strategy/nonweb_url_strategy.dart'
 import 'features/authentication/repository/user_preferences.dart';
 import 'features/settings/repository/settings_repository.dart';
 import 'package:window_manager/window_manager.dart';
-
-
 
 void main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();

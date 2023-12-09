@@ -20,13 +20,13 @@ final fromSearchScreen = StateProvider((ref) => false);
 class NewsDetailsWebScreen extends ConsumerWidget {
   static const routeNamed = '/web-details';
 
-  final News newsItem;
   final String screenName;
+  final News newsItem;
 
   const NewsDetailsWebScreen({
     super.key,
-    required this.newsItem,
     required this.screenName,
+    required this.newsItem,
   });
 
   @override

@@ -76,8 +76,9 @@ Widget buildTileExpansionWidget(
 
             context.pushNamed(
               NewsDetailsScreen.routeNamed,
-              extra: newsItem,
               queryParameters: {'from': screenName},
+              pathParameters: {'title' : newsItem.titleText},
+              extra: newsItem,
             );
           },
           child: Row(

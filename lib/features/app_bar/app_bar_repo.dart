@@ -44,7 +44,7 @@ class AppBarRepository {
 
     ref.refresh(homeIsShowReadProvider.notifier).update((state) => false);
 
-    if (GoRouterState.of(context).location == '/home') {
+    if (GoRouterState.of(context).name == '/home') {
       ref.read(homeFeedProvider.notifier).fetchEntries(context).then(
             (_) => isLoadingPageController.update((state) => false),
           );
@@ -64,7 +64,7 @@ class AppBarRepository {
     ref.read(isStarredProvider.notifier).update((state) => !state);
     final isStarred = ref.read(isStarredProvider);
 
-    if (GoRouterState.of(context).location != '/home') {
+    if (GoRouterState.of(context).name != '/home') {
       context.goNamed(HomeFeedScreen.routeNamed);
     }
     if (isStarred) {

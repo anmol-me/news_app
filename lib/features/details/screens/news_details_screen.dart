@@ -20,13 +20,13 @@ import '../components/providers.dart';
 class NewsDetailsScreen extends ConsumerWidget {
   static const routeNamed = '/details';
 
-  final News newsItem;
   final String screenName;
+  final News newsItem;
 
   const NewsDetailsScreen({
     super.key,
-    required this.newsItem,
     required this.screenName,
+    required this.newsItem,
   });
 
   @override

@@ -1,5 +1,3 @@
-import 'dart:math';
-
 class CategoryList {
   final int id;
   final String title;

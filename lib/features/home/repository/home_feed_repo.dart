@@ -4,7 +4,6 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 
 import '../../../common/common_methods.dart';
 import '../../../common_widgets/common_widgets.dart';
@@ -13,10 +12,8 @@ import '../../../common/error.dart';
 import '../../../common/api_methods.dart';
 import '../../../common/frontend_methods.dart';
 import '../../../models/news.dart';
-import '../../../router.dart';
 import '../../authentication/repository/auth_repo.dart';
 import '../../authentication/repository/user_preferences.dart';
-import '../../authentication/screens/auth_screen.dart';
 import '../../details/components/methods.dart';
 import '../providers/home_providers.dart';
 
