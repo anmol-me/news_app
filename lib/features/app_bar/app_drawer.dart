@@ -165,7 +165,10 @@ class AppDrawer extends HookConsumerWidget {
                 ListTile(
                   leading: const Icon(Icons.logout),
                   title: const Text('Logout'),
-                  onTap: () => ref.read(authRepoProvider).logout(context),
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    ref.read(authRepoProvider).logout(context);
+                  },
                 ),
               ],
             ),

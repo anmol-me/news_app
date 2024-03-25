@@ -184,66 +184,67 @@ class AuthRepo {
   }
 
   void logout(BuildContext context) async {
-    userPrefs.clearPrefs();
-
-    ref.invalidate(userNotifierProvider);
-    ref.read(emptyStateDisableProvider.notifier).update((state) => false);
-    ref.read(disableFilterProvider.notifier).update((state) => false);
-    ref.invalidate(userPrefsProvider);
-    ref.invalidate(modeProvider);
-    ref.invalidate(themeModeProvider);
-    ref.invalidate(appBarRepoProvider);
-    ref.invalidate(catPageHandlerProvider);
-    ref.invalidate(catMaxPagesProvider);
-    ref.invalidate(catIsNextProvider);
-    ref.read(isRefreshAllLoadingProvider.notifier).update((state) => false);
-
-    ref.invalidate(refreshProvider);
-
-    ref.invalidate(homeFeedProvider);
-    ref.invalidate(homeMethodsProvider);
-    ref.read(homePageLoadingProvider.notifier).update((state) => false);
-    ref.invalidate(homeOffsetProvider);
-    ref.invalidate(homeSortDirectionProvider);
-    ref.invalidate(homeIsShowReadProvider);
-    ref.read(homeIsLoadingBookmarkProvider.notifier).update((state) => false);
-
-    ref.invalidate(newsDetailsProvider);
-    ref.invalidate(discoveryProvider);
-    ref.invalidate(selectedCategoryProvider);
-    ref.invalidate(showAsteriskProvider);
-
-    ref.invalidate(searchNotifierProvider);
-    ref.invalidate(showNoResultsProvider);
-    ref.invalidate(showSearchLoaderProvider);
-    ref.invalidate(showFirstSearchProvider);
-
-    ref.invalidate(subscriptionNotifierProvider);
-
-    ref.invalidate(categoryNotifierProvider);
-    ref.invalidate(catSortProvider);
-    ref.invalidate(catOffsetProvider);
-    ref.invalidate(manageCateNotifierProvider);
-
-    ref.invalidate(userSettingsProvider);
-    ref.invalidate(authRepoProvider);
-
-    ref.read(isStarredProvider.notifier).update((state) => false);
-    ref.invalidate(isDiscoverLoadingProvider);
-    ref.invalidate(isLoadingLoginProvider);
-    ref.invalidate(isCatLoadingProvider);
-    ref.invalidate(isDeletingCatProvider);
-    ref.invalidate(isFeedLoadingProvider);
-    ref.invalidate(isFabButtonProvider);
-    ref.invalidate(isTitleUpdatingProvider);
-    ref.invalidate(isFeedTitleUpdatingProvider);
-    ref.invalidate(isManageLoadingProvider);
-    ref.invalidate(isManageProcessingProvider);
-
-    if (ref.read(isDrawerOpenProvider)) {
-      if (context.mounted) Navigator.of(context).pop();
-    }
-
-    context.goNamed(AuthScreen.routeNamed);
+      ref.read(logoutProvider(context));
   }
 }
+
+final logoutProvider =
+    Provider.family<Future<Null>, BuildContext>((ref, context) async {
+      ref.watch(userPrefsProvider).clearPrefs();
+
+      ref.invalidate(userNotifierProvider);
+      ref.invalidate(emptyStateDisableProvider);
+      ref.invalidate(disableFilterProvider);
+      ref.invalidate(userPrefsProvider);
+      ref.invalidate(modeProvider);
+      ref.invalidate(themeModeProvider);
+      ref.invalidate(appBarRepoProvider);
+      ref.invalidate(catPageHandlerProvider);
+      ref.invalidate(catMaxPagesProvider);
+      ref.invalidate(catIsNextProvider);
+      ref.invalidate(isRefreshAllLoadingProvider);
+
+      ref.invalidate(refreshProvider);
+
+      ref.invalidate(homeFeedProvider);
+      ref.invalidate(homeMethodsProvider);
+      ref.invalidate(homePageLoadingProvider);
+      ref.invalidate(homeOffsetProvider);
+      ref.invalidate(homeSortDirectionProvider);
+      ref.invalidate(homeIsShowReadProvider);
+      ref.invalidate(homeIsLoadingBookmarkProvider);
+
+      ref.invalidate(newsDetailsProvider);
+      ref.invalidate(discoveryProvider);
+      ref.invalidate(selectedCategoryProvider);
+      ref.invalidate(showAsteriskProvider);
+
+      ref.invalidate(searchNotifierProvider);
+      ref.invalidate(showNoResultsProvider);
+      ref.invalidate(showSearchLoaderProvider);
+      ref.invalidate(showFirstSearchProvider);
+
+      ref.invalidate(subscriptionNotifierProvider);
+
+      ref.invalidate(categoryNotifierProvider);
+      ref.invalidate(catSortProvider);
+      ref.invalidate(catOffsetProvider);
+      ref.invalidate(manageCateNotifierProvider);
+
+      ref.invalidate(userSettingsProvider);
+      ref.invalidate(authRepoProvider);
+
+      ref.invalidate(isStarredProvider);
+      ref.invalidate(isDiscoverLoadingProvider);
+      ref.invalidate(isLoadingLoginProvider);
+      ref.invalidate(isCatLoadingProvider);
+      ref.invalidate(isDeletingCatProvider);
+      ref.invalidate(isFeedLoadingProvider);
+      ref.invalidate(isFabButtonProvider);
+      ref.invalidate(isTitleUpdatingProvider);
+      ref.invalidate(isFeedTitleUpdatingProvider);
+      ref.invalidate(isManageLoadingProvider);
+      ref.invalidate(isManageProcessingProvider);
+
+      context.goNamed(AuthScreen.routeNamed);
+    });

@@ -43,10 +43,8 @@ class HomeFeedNotifier extends Notifier<List<News>> {
     final isStarred = ref.read(isStarredProvider);
 
     if (userPassEncoded.isEmpty || baseUrl.isEmpty) {
-      debugPrint('EMPTY');
-      // ref.read(homePageLoadingProvider.notifier).update((state) => false);
+      ref.read(homePageLoadingProvider.notifier).update((state) => false);
       scheduleMicrotask(() {
-        // context.goNamed(AuthScreen.routeNamed);
         ref.read(authRepoProvider).logout(context);
       });
       return;
