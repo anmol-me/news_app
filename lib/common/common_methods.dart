@@ -107,7 +107,8 @@ String getImageUrl(info) {
 
   if (imageUrl.isNotEmpty) {
     final url = imageUrl[0].attributes['src'] ?? '';
-    final proxyImageUrl = 'https://corsproxy.io/?$url';
+    /// Add below url for cross proxy service
+    final proxyImageUrl = '$url';
     if (kIsWeb) return proxyImageUrl;
     return url;
   } else {
