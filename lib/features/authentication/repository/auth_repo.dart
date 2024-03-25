@@ -65,7 +65,6 @@ class AuthRepo {
     required TextEditingController passwordController,
     required TextEditingController urlController,
   }) async {
-    final mounted = context.mounted;
     final isValid = formKey.currentState!.validate();
     if (!isValid) return;
 
@@ -139,7 +138,7 @@ class AuthRepo {
       if (res.statusCode == 200) {
         userPrefs.setIsAuth(true);
 
-        if (mounted) {
+        if (context.mounted) {
           context.goNamed(HomeFeedScreen.routeNamed);
         }
       }
@@ -151,32 +150,32 @@ class AuthRepo {
     } on SocketException catch (e) {
       isLoadingLoginController.update((state) => false);
       userPrefs.clearPrefs();
-      if (mounted) {
+      if (context.mounted) {
         showErrorSnackBar(context: context, text: e.message);
       }
     } on TimeoutException catch (_) {
       isLoadingLoginController.update((state) => false);
       userPrefs.clearPrefs();
-      if (mounted) {
+      if (context.mounted) {
         showErrorSnackBar(
             context: context, text: ErrorString.requestTimeout.value);
       }
     } on FormatException catch (_) {
       isLoadingLoginController.update((state) => false);
       userPrefs.clearPrefs();
-      if (mounted) {
+      if (context.mounted) {
         showErrorSnackBar(context: context, text: ErrorString.validUrl.value);
       }
     } on ServerErrorException catch (e) {
       isLoadingLoginController.update((state) => false);
       userPrefs.clearPrefs();
-      if (mounted) {
+      if (context.mounted) {
         showErrorSnackBar(context: context, text: '$e');
       }
     } catch (e) {
       isLoadingLoginController.update((state) => false);
       userPrefs.clearPrefs();
-      if (mounted) {
+      if (context.mounted) {
         showErrorSnackBar(
             context: context, text: ErrorString.generalError.value);
       }
