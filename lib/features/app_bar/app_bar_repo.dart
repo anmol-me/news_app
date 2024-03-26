@@ -28,7 +28,6 @@ class AppBarRepository {
     final isStarredController = ref.read(isStarredProvider.notifier);
 
     isLoadingPageController.update((state) => true);
-    Navigator.of(context).pop();
 
     isStarredController.update((state) => !state);
 
@@ -59,8 +58,6 @@ class AppBarRepository {
   void starredDemoFunction(
     BuildContext context,
   ) {
-    Navigator.of(context).pop();
-
     ref.read(isStarredProvider.notifier).update((state) => !state);
     final isStarred = ref.read(isStarredProvider);
 

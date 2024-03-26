@@ -34,6 +34,8 @@ class AppDrawer extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final currentWidth = MediaQuery.of(context).size.width;
+
     // Using useEffect in place of init()
     // Fetches User data only once
     useEffect(
@@ -130,6 +132,10 @@ class AppDrawer extends HookConsumerWidget {
                         ),
                         title: const Text('Starred Items'),
                         onTap: () {
+                          if (currentWidth <= 650) {
+                            Navigator.of(context).pop();
+                          }
+
                           final isDemoPref =
                               ref.read(userPrefsProvider).getIsDemo() ?? false;
                           if (isDemoPref) {
