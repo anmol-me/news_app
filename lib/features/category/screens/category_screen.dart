@@ -7,7 +7,6 @@ import 'package:news_app/components/clear_button.dart';
 import 'package:news_app/features/category/repository/category_repo.dart';
 import 'package:news_app/features/app_bar/app_drawer.dart';
 
-import '../../../common/common_providers.dart';
 import '../../../common/constants.dart';
 import '../../../common/enums.dart';
 import '../../../common_widgets/app_image.dart';
@@ -146,9 +145,6 @@ class CategoryScreen extends HookConsumerWidget {
         ],
       ),
       drawer: const AppDrawer(),
-      onDrawerChanged: (isOpened) {
-        ref.read(isDrawerOpenProvider.notifier).update((state) => isOpened);
-      },
       body: Column(
         children: [
           // Top Column

@@ -5,7 +5,6 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:html/parser.dart' as html_parser;
-import 'package:news_app/common/common_providers.dart';
 
 import 'package:news_app/features/home/repository/home_methods.dart';
 import '../features/authentication/repository/user_preferences.dart';
@@ -26,9 +25,6 @@ class RefreshMethods {
     BuildContext context,
   ) async {
     final currentLocation = GoRouterState.of(context).name;
-
-    final isDrawerOpened = ref.read(isDrawerOpenProvider);
-    if (isDrawerOpened) Navigator.of(context).pop();
 
     final isDemoPref = ref.read(userPrefsProvider).getIsDemo() ?? false;
     if (isDemoPref) {

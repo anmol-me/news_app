@@ -155,9 +155,6 @@ class _HomeFeedScreenState extends ConsumerState<HomeFeedScreen> {
         ],
       ),
       drawer: const AppDrawer(),
-      onDrawerChanged: (isOpened) {
-        ref.read(isDrawerOpenProvider.notifier).update((state) => isOpened);
-      },
       body: Column(
         children: [
           // Top Column Bar

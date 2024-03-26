@@ -108,9 +108,15 @@ class AppDrawer extends HookConsumerWidget {
                     : ListTile(
                         leading: const Icon(Icons.home_outlined),
                         title: const Text('All Items'),
-                        onTap: () => ref
+                        onTap: () {
+                          if (currentWidth <= 650) {
+                            Navigator.of(context).pop();
+                          }
+
+                          ref
                             .read(refreshProvider)
-                            .refreshAllMain(context),
+                            .refreshAllMain(context);
+                        },
                       ),
                 emptyStateDisable
                     ? ListTile(
@@ -150,9 +156,10 @@ class AppDrawer extends HookConsumerWidget {
                   leading: const Icon(Icons.subscriptions_rounded),
                   title: const Text('Subscription'),
                   onTap: () {
-                    if (ref.read(isDrawerOpenProvider)) {
+                    if (currentWidth <= 650) {
                       Navigator.of(context).pop();
                     }
+
                     ref.refresh(catSortProvider).value;
                     context.pushNamed(SelectSubscriptionScreen.routeNamed);
                   },
