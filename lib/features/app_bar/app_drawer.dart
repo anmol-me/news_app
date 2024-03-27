@@ -34,8 +34,6 @@ class AppDrawer extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final currentWidth = MediaQuery.of(context).size.width;
-
     // Using useEffect in place of init()
     // Fetches User data only once
     useEffect(
@@ -109,13 +107,12 @@ class AppDrawer extends HookConsumerWidget {
                         leading: const Icon(Icons.home_outlined),
                         title: const Text('All Items'),
                         onTap: () {
-                          if (currentWidth <= 650) {
+                          final width = MediaQuery.sizeOf(context).width;
+                          if (width <= 650) {
                             Navigator.of(context).pop();
                           }
 
-                          ref
-                            .read(refreshProvider)
-                            .refreshAllMain(context);
+                          ref.read(refreshProvider).refreshAllMain(context);
                         },
                       ),
                 emptyStateDisable
@@ -138,7 +135,8 @@ class AppDrawer extends HookConsumerWidget {
                         ),
                         title: const Text('Starred Items'),
                         onTap: () {
-                          if (currentWidth <= 650) {
+                          final width = MediaQuery.sizeOf(context).width;
+                          if (width <= 650) {
                             Navigator.of(context).pop();
                           }
 
@@ -156,7 +154,8 @@ class AppDrawer extends HookConsumerWidget {
                   leading: const Icon(Icons.subscriptions_rounded),
                   title: const Text('Subscription'),
                   onTap: () {
-                    if (currentWidth <= 650) {
+                    final width = MediaQuery.sizeOf(context).width;
+                    if (width <= 650) {
                       Navigator.of(context).pop();
                     }
 

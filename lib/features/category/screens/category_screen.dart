@@ -109,12 +109,13 @@ class CategoryScreen extends HookConsumerWidget {
     final isDemoUser = ref.watch(userPrefsProvider).getIsDemo() ?? false;
 
     final scrollController = useScrollController();
+    final isMobile = MediaQuery.sizeOf(context).width <= 650;
 
     return Scaffold(
       key: drawerKey,
       appBar: AppBar(
         title: Text(catTitle),
-        leading: isBackButton
+        leading: isBackButton || !isMobile
             ? const AppBackButton(controller: false)
             : IconButton(
                 onPressed: () {
@@ -144,64 +145,71 @@ class CategoryScreen extends HookConsumerWidget {
           ),
         ],
       ),
-      drawer: const AppDrawer(),
-      body: Column(
+      drawer: isMobile ? const AppDrawer() : null,
+      body: Row(
         children: [
-          // Top Column
-          buildTopBar(
-            isCatLoading,
-            canGoToPreviousPage,
-            () => categoryNotifier.previous(catId, context),
-            canGoToNextPage,
-            () => categoryNotifier.next(catId, context),
-            isDemoUser,
-            ref,
-          ),
+          if (!isMobile) const AppDrawer(),
+          Expanded(
+            child: Column(
+              children: [
+                // Top Column
+                buildTopBar(
+                  isCatLoading,
+                  canGoToPreviousPage,
+                  () => categoryNotifier.previous(catId, context),
+                  canGoToNextPage,
+                  () => categoryNotifier.next(catId, context),
+                  isDemoUser,
+                  ref,
+                ),
 
-          // DISPLAY BODY //
-          if (isCatLoading || isCatLoading)
-            const LinearLoader()
-          else if (catNewsNotifier.isEmpty)
-            Expanded(
-              child: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const AppImage(
-                      'assets/images/items_not_found.png',
-                      height: 250,
-                      width: 250,
+                // DISPLAY BODY //
+                if (isCatLoading || isCatLoading)
+                  const LinearLoader()
+                else if (catNewsNotifier.isEmpty)
+                  Expanded(
+                    child: Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const AppImage(
+                            'assets/images/items_not_found.png',
+                            height: 250,
+                            width: 250,
+                          ),
+                          Text(Message.categoryEmpty.value),
+                        ],
+                      ),
                     ),
-                    Text(Message.categoryEmpty.value),
-                  ],
-                ),
-              ),
-            )
-          else
-            Expanded(
-              child: RefreshIndicator(
-                onRefresh: () => categoryNotifier.refresh(catId, context),
-                color: colorRed,
-                child: Scrollbar(
-                  controller: scrollController,
-                  child: ListView.builder(
-                    controller: scrollController,
-                    shrinkWrap: true,
-                    itemCount: catNewsNotifier.length,
-                    itemBuilder: (context, index) {
-                      final newsItem = catNewsNotifier[index];
+                  )
+                else
+                  Expanded(
+                    child: RefreshIndicator(
+                      onRefresh: () => categoryNotifier.refresh(catId, context),
+                      color: colorRed,
+                      child: Scrollbar(
+                        controller: scrollController,
+                        child: ListView.builder(
+                          controller: scrollController,
+                          shrinkWrap: true,
+                          itemCount: catNewsNotifier.length,
+                          itemBuilder: (context, index) {
+                            final newsItem = catNewsNotifier[index];
 
-                      return buildTileExpansionWidget(
-                        'category',
-                        newsItem,
-                        context,
-                        ref,
-                      );
-                    },
+                            return buildTileExpansionWidget(
+                              'category',
+                              newsItem,
+                              context,
+                              ref,
+                            );
+                          },
+                        ),
+                      ),
+                    ),
                   ),
-                ),
-              ),
+              ],
             ),
+          ),
         ],
       ),
     );

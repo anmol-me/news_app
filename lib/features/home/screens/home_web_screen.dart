@@ -107,8 +107,6 @@ class _HomeWebScreenState extends ConsumerState<HomeWebScreen> {
       }
     });
 
-    final currentWidth = MediaQuery.of(context).size.width;
-
     /// Providers ///
 
     final newsNotifier = ref.watch(homeFeedProvider);
@@ -121,6 +119,8 @@ class _HomeWebScreenState extends ConsumerState<HomeWebScreen> {
 
     final homeMethods = ref.watch(homeMethodsProvider(context));
     final emptyStateDisable = ref.watch(emptyStateDisableProvider);
+
+    final isMobile = MediaQuery.sizeOf(context).width <= 650;
 
     return Scaffold(
       appBar: AppBar(
@@ -160,11 +160,10 @@ class _HomeWebScreenState extends ConsumerState<HomeWebScreen> {
                 ),
         ],
       ),
-      drawer: currentWidth <= 650 ? const AppDrawer() : null,
+      drawer: isMobile ? const AppDrawer() : null,
       body: Row(
         children: [
-          if (currentWidth > 650) const AppDrawer(),
-          if (currentWidth > 650) const SizedBox(width: 10),
+          if (!isMobile) const AppDrawer(),
           Expanded(
             child: Column(
               children: [
