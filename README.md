@@ -34,6 +34,15 @@ from your favorite sources and subscriptions.
 3. Run the App:
     - Connect a device or emulator and run the app using  `flutter run`  or through your IDE.
 
+## App Preview
+
+<div>
+  <img src="https://github.com/anmol-me/news_app/blob/master/assets/images/previews/desktop_preview.jpg" alt="Desktop Preview" width="50%" /><br>
+  <strong>Desktop & Tablet Preview</strong><br><br>
+  <img src="https://github.com/anmol-me/news_app/blob/master/assets/images/previews/mobile_preview.jpg" alt="Mobile Preview" width="20%" /><br>
+  <strong>Mobile Preview</strong>
+</div>
+
 ## Report issues
 
 If you encounter any issues with the project or have suggestions for improvements, please don't
