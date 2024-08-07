@@ -113,6 +113,7 @@ class AuthScreen extends HookConsumerWidget {
                         labelText: 'Password',
                         focus: passwordFocus,
                         errorMessage: ErrorString.password.value,
+                        obscureText: true,
                       ),
                     ),
                   ),

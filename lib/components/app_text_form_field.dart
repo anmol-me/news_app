@@ -8,6 +8,7 @@ class AppTextFormField extends StatelessWidget {
   final String? errorMessage;
   final String? Function(String?)? validator;
   final ValueNotifier<bool>? focus;
+  final bool obscureText;
 
   const AppTextFormField({
     super.key,
@@ -17,11 +18,13 @@ class AppTextFormField extends StatelessWidget {
     this.errorMessage = 'Field cannot be empty',
     this.validator,
     this.focus,
+    this.obscureText = false,
   });
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      obscureText: obscureText,
       controller: controller,
       decoration: InputDecoration(
         labelText: labelText,
